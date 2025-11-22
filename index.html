@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Reconocimiento Facial con Cámara - FaceNet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-left: 4px solid #007bff;
+            border-radius: 4px;
+        }
+        
+        .form-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        input[type="file"] {
+            display: block;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 14px;
+        }
+        
+        input[type="file"]:hover {
+            border-color: #007bff;
+        }
+        
+        .file-info {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        #compareBtn {
+            background-color: #28a745;
+            color: white;
+            flex: 1;
+        }
+        
+        #compareBtn:hover:not(:disabled) {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        #compareBtn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        #resetBtn {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        #resetBtn:hover {
+            background-color: #5a6268;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .results-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        
+        .statistics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: center;
+            border-left: 4px solid #007bff;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .matches-container {
+            margin-bottom: 30px;
+        }
+        
+        .matches-container h3 {
+            color: #28a745;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .match-item {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .match-file {
+            font-weight: bold;
+            color: #155724;
+        }
+        
+        .match-similarity {
+            background-color: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .non-matches-container {
+            margin-bottom: 30px;
+        }
+        
+        .non-matches-container h3 {
+            color: #dc3545;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .non-match-item {
+            background-color: #f8d7da;
+            border-left: 4px solid #dc3545;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .non-match-file {
+            font-weight: bold;
+            color: #721c24;
+        }
+        
+        .non-match-similarity {
+            background-color: #dc3545;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .non-match-reason {
+            font-size: 12px;
+            color: #721c24;
+            margin-top: 5px;
+        }
+        
+        .errors-container {
+            margin-bottom: 30px;
+        }
+        
+        .errors-container h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        
+        .error-item {
+            background-color: #ffe0e0;
+            border-left: 4px solid #ff6b6b;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        
+        .error-file {
+            font-weight: bold;
+            color: #c92a2a;
+        }
+        
+        .error-message {
+            font-size: 12px;
+            color: #c92a2a;
+            margin-top: 5px;
+        }
+        
+        .empty-message {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            font-style: italic;
+        }
+        
+        .error-alert {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success-alert {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Demo Reconocimiento Facial</h1>
+        <p class="subtitle">Comparación biométrica usando DeepFace + FaceNet + OpenCV</p>
+        
+        <div class="error-alert" id="errorAlert"></div>
+        <div class="success-alert" id="successAlert"></div>
+        
+        <form id="faceForm">
+            <!-- Sección Selfie -->
+            <div class="form-section">
+                <h2>1. Subir Selfie Base</h2>
+                <div class="form-group">
+                    <label for="selfieInput">Selecciona tu selfie (imagen principal):</label>
+                    <input 
+                        type="file" 
+                        id="selfieInput" 
+                        accept="image/*" 
+                        required
+                    >
+                    <div class="file-info">Formatos: JPG, PNG, GIF, BMP | Máximo: 5MB</div>
+                </div>
+                <div id="selfiePreview"></div>
+            </div>
+            
+            <!-- Sección Fotos Adicionales -->
+            <div class="form-section">
+                <h2>2. Subir Fotos Adicionales</h2>
+                <div class="form-group">
+                    <label for="photosInput">Selecciona múltiples fotos (4-10 imágenes):</label>
+                    <input 
+                        type="file" 
+                        id="photosInput" 
+                        accept="image/*" 
+                        multiple 
+                        required
+                    >
+                    <div class="file-info">Selecciona entre 4 y 10 imágenes | Máximo: 5MB cada una</div>
+                </div>
+                <div id="photosPreview"></div>
+            </div>
+            
+            <!-- Botones de Acción -->
+            <div class="button-group">
+                <button type="submit" id="compareBtn">Comparar Rostros</button>
+                <button type="reset" id="resetBtn">Limpiar</button>
+            </div>
+        </form>
+        
+        <!-- Indicador de Carga -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Procesando imágenes y extrayendo embeddings faciales...</p>
+        </div>
+        
+        <!-- Sección de Resultados -->
+        <div class="results-section" id="resultsSection">
+            <h2>📊 Resultados del Análisis</h2>
+            
+            <!-- Estadísticas -->
+            <div class="statistics" id="statistics"></div>
+            
+            <!-- Coincidencias -->
+            <div class="matches-container" id="matchesContainer"></div>
+            
+            <!-- No Coincidencias -->
+            <div class="non-matches-container" id="nonMatchesContainer"></div>
+            
+            <!-- Errores -->
+            <div class="errors-container" id="errorsContainer"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = "http://localhost:8000";
+        
+        // Elementos del DOM
+        const faceForm = document.getElementById("faceForm");
+        const selfieInput = document.getElementById("selfieInput");
+        const photosInput = document.getElementById("photosInput");
+        const compareBtn = document.getElementById("compareBtn");
+        const resetBtn = document.getElementById("resetBtn");
+        const loading = document.getElementById("loading");
+        const resultsSection = document.getElementById("resultsSection");
+        const errorAlert = document.getElementById("errorAlert");
+        const successAlert = document.getElementById("successAlert");
+        
+        // Event Listeners
+        faceForm.addEventListener("submit", handleSubmit);
+        resetBtn.addEventListener("click", resetForm);
+        selfieInput.addEventListener("change", updateSelfiePreview);
+        photosInput.addEventListener("change", updatePhotosPreview);
+        
+        /**
+         * Actualiza la vista previa del selfie
+         */
+        function updateSelfiePreview() {
+            const preview = document.getElementById("selfiePreview");
+            preview.innerHTML = "";
+            
+            if (selfieInput.files.length > 0) {
+                const file = selfieInput.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    preview.innerHTML = `
+                        <div style="margin-top: 10px; padding: 10px; background-color: #e8f4f8; border-radius: 4px;">
+                            <p style="font-size: 12px; color: #666;">✓ Selfie seleccionado: <strong>${file.name}</strong></p>
+                        </div>
+                    `;
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        /**
+         * Actualiza la vista previa de las fotos adicionales
+         */
+        function updatePhotosPreview() {
+            const preview = document.getElementById("photosPreview");
+            preview.innerHTML = "";
+            
+            if (photosInput.files.length > 0) {
+                const count = photosInput.files.length;
+                const fileNames = Array.from(photosInput.files)
+                    .map(f => f.name)
+                    .join(", ");
+                
+                preview.innerHTML = `
+                    <div style="margin-top: 10px; padding: 10px; background-color: #e8f4f8; border-radius: 4px;">
+                        <p style="font-size: 12px; color: #666;">✓ ${count} foto(s) seleccionada(s)</p>
+                        <p style="font-size: 11px; color: #999; margin-top: 5px; word-break: break-all;">${fileNames}</p>
+                    </div>
+                `;
+            }
+        }
+        
+        /**
+         * Maneja el envío del formulario
+         */
+        async function handleSubmit(e) {
+            e.preventDefault();
+            
+            // Validaciones
+            if (!selfieInput.files.length) {
+                showError("Por favor selecciona un selfie");
+                return;
+            }
+            
+            if (!photosInput.files.length) {
+                showError("Por favor selecciona al menos una foto adicional");
+                return;
+            }
+            
+            if (photosInput.files.length < 4) {
+                showError("Por favor selecciona al menos 4 fotos adicionales");
+                return;
+            }
+            
+            if (photosInput.files.length > 10) {
+                showError("Máximo 10 fotos adicionales permitidas");
+                return;
+            }
+            
+            // Preparar datos
+            const formData = new FormData();
+            formData.append("selfie", selfieInput.files[0]);
+            
+            for (let i = 0; i < photosInput.files.length; i++) {
+                formData.append("photos", photosInput.files[i]);
+            }
+            
+            // Enviar solicitud
+            await sendRequest(formData);
+        }
+        
+        /**
+         * Envía la solicitud al backend
+         */
+        async function sendRequest(formData) {
+            try {
+                // Mostrar indicador de carga
+                loading.style.display = "block";
+                resultsSection.style.display = "none";
+                errorAlert.style.display = "none";
+                successAlert.style.display = "none";
+                
+                // Realizar solicitud
+                const response = await fetch(`${API_URL}/compare-faces`, {
+                    method: "POST",
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || "Error en la solicitud");
+                }
+                
+                const data = await response.json();
+                
+                // Mostrar resultados
+                displayResults(data);
+                showSuccess("Análisis completado exitosamente");
+                
+            } catch (error) {
+                console.error("Error:", error);
+                showError(`Error: ${error.message}`);
+            } finally {
+                loading.style.display = "none";
+            }
+        }
+        
+        /**
+         * Muestra los resultados del análisis
+         */
+        function displayResults(data) {
+            // Mostrar sección de resultados
+            resultsSection.style.display = "block";
+            
+            // Mostrar estadísticas
+            displayStatistics(data.statistics);
+            
+            // Mostrar coincidencias
+            displayMatches(data.matches);
+            
+            // Mostrar no coincidencias
+            displayNonMatches(data.non_matches);
+            
+            // Mostrar errores
+            displayErrors(data.errors);
+            
+            // Scroll a resultados
+            resultsSection.scrollIntoView({ behavior: "smooth" });
+        }
+        
+        /**
+         * Muestra las estadísticas
+         */
+        function displayStatistics(stats) {
+            const container = document.getElementById("statistics");
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-value">${stats.total_photos}</div>
+                    <div class="stat-label">Total de Fotos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #28a745;">${stats.matches_count}</div>
+                    <div class="stat-label">Coincidencias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #dc3545;">${stats.non_matches_count}</div>
+                    <div class="stat-label">No Coincidencias</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #007bff;">${stats.match_percentage}%</div>
+                    <div class="stat-label">Porcentaje de Coincidencia</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" style="color: #ff6b6b;">${stats.threshold_used}%</div>
+                    <div class="stat-label">Umbral Utilizado</div>
+                </div>
+            `;
+        }
+        
+        /**
+         * Muestra las coincidencias
+         */
+        function displayMatches(matches) {
+            const container = document.getElementById("matchesContainer");
+            
+            if (matches.length === 0) {
+                container.innerHTML = '<div class="empty-message">No hay coincidencias</div>';
+                return;
+            }
+            
+            let html = "<h3>✓ Coincidencias Detectadas</h3>";
+            matches.forEach(match => {
+                html += `
+                    <div class="match-item">
+                        <span class="match-file">${match.file}</span>
+                        <span class="match-similarity">${match.similarity}%</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        /**
+         * Muestra las no coincidencias
+         */
+        function displayNonMatches(nonMatches) {
+            const container = document.getElementById("nonMatchesContainer");
+            
+            if (nonMatches.length === 0) {
+                container.innerHTML = '<div class="empty-message">No hay no coincidencias</div>';
+                return;
+            }
+            
+            let html = "<h3>✗ No Coincidencias Detectadas</h3>";
+            nonMatches.forEach(nonMatch => {
+                html += `
+                    <div class="non-match-item">
+                        <div>
+                            <span class="non-match-file">${nonMatch.file}</span>
+                            <div class="non-match-reason">${nonMatch.reason}</div>
+                        </div>
+                        <span class="non-match-similarity">${nonMatch.similarity}%</span>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        /**
+         * Muestra los errores
+         */
+        function displayErrors(errors) {
+            const container = document.getElementById("errorsContainer");
+            
+            if (errors.length === 0) {
+                container.innerHTML = "";
+                return;
+            }
+            
+            let html = "<h3>⚠️ Errores Procesados</h3>";
+            errors.forEach(error => {
+                html += `
+                    <div class="error-item">
+                        <span class="error-file">${error.file}</span>
+                        <div class="error-message">${error.error}</div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        /**
+         * Muestra un mensaje de error
+         */
+        function showError(message) {
+            errorAlert.textContent = message;
+            errorAlert.style.display = "block";
+            successAlert.style.display = "none";
+        }
+        
+        /**
+         * Muestra un mensaje de éxito
+         */
+        function showSuccess(message) {
+            successAlert.textContent = message;
+            successAlert.style.display = "block";
+            errorAlert.style.display = "none";
+        }
+        
+        /**
+         * Reinicia el formulario
+         */
+        function resetForm() {
+            faceForm.reset();
+            document.getElementById("selfiePreview").innerHTML = "";
+            document.getElementById("photosPreview").innerHTML = "";
+            resultsSection.style.display = "none";
+            errorAlert.style.display = "none";
+            successAlert.style.display = "none";
+        }
+        
+        // Verificar conexión con el servidor al cargar
+        window.addEventListener("load", async () => {
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("✓ Servidor conectado:", data);
+                }
+            } catch (error) {
+                console.error("✗ No se pudo conectar al servidor:", error);
+                showError("No se pudo conectar al servidor. Asegúrate de que FastAPI esté ejecutándose en http://localhost:8000");
+            }
+        });
+    </script>
+</body>
+</html>
