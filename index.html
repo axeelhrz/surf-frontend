@@ -560,22 +560,17 @@
             // Desarrollo local
             API_URL = "http://localhost:8000";
         } else {
-            // Producción - Detectar automáticamente o usar variable de entorno
-            // Intenta obtener la URL del backend desde localStorage o variable global
+            // Producción - Railway
             const storedURL = localStorage.getItem('backendURL');
             if (storedURL) {
                 API_URL = storedURL;
             } else {
-                // URL por defecto para Railway (actualizar según tu dominio)
-                API_URL = window.location.origin.replace('vercel.app', 'railway.app').replace('https://', 'https://surf-backend-production-');
-                // Si eso no funciona, usar la URL conocida
-                if (!API_URL.includes('railway.app')) {
-                    API_URL = "https://surf-backend-production-e2c1.up.railway.app";
-                }
+                // URL de Railway (configurada correctamente)
+                API_URL = "https://surf-backend-production-e2c1.up.railway.app";
             }
         }
         
-        console.log('API_URL configurada como:', API_URL);
+        console.log('🔗 API_URL configurada como:', API_URL);
         
         let selfieBlob = null;
         let photosFiles = [];

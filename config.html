@@ -367,6 +367,9 @@ app.add_middleware(
             const savedUrl = localStorage.getItem('backendURL');
             if (savedUrl) {
                 document.getElementById('backendUrl').value = savedUrl;
+            } else {
+                // Cargar URL por defecto
+                document.getElementById('backendUrl').value = 'https://surf-backend-production-e2c1.up.railway.app';
             }
         }
         
