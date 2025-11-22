@@ -396,7 +396,16 @@
     </div>
     
     <script>
-        const API_URL = "http://localhost:8000";
+        // Configurar URL del API según el entorno
+        let API_URL;
+        
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            // Desarrollo local
+            API_URL = "http://localhost:8000";
+        } else {
+            // Producción - Railway
+            API_URL = "https://surf-backend-production-e2c1.up.railway.app";
+        }
         
         // Elementos del DOM
         const faceForm = document.getElementById("faceForm");
