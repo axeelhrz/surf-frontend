@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Demo Reconocimiento Facial con Cámara - FaceNet</title>
+    <title>Reconocimiento Facial con Cámara - FaceNet</title>
     <style>
         * {
             margin: 0;
@@ -13,23 +13,28 @@
         
         body {
             font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
         }
         
         .container {
-            max-width: 1000px;
-            margin: 0 auto;
             background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 40px;
         }
         
         h1 {
             color: #333;
-            margin-bottom: 10px;
             text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
         }
         
         .subtitle {
@@ -39,44 +44,149 @@
             font-size: 14px;
         }
         
-        .form-section {
-            margin-bottom: 30px;
-            padding: 20px;
+        .camera-section {
             background-color: #f9f9f9;
-            border-left: 4px solid #007bff;
-            border-radius: 4px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
         }
         
-        .form-section h2 {
-            font-size: 18px;
+        .camera-section h2 {
             color: #333;
             margin-bottom: 15px;
+            font-size: 18px;
         }
         
-        .form-group {
-            margin-bottom: 15px;
+        #cameraContainer {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
         }
         
-        label {
+        #video {
+            width: 100%;
+            height: auto;
             display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: bold;
+            transform: scaleX(-1);
+        }
+        
+        #canvas {
+            display: none;
+        }
+        
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 12px 24px;
             font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover:not(:disabled) {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover:not(:disabled) {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover:not(:disabled) {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+        
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .selfie-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        .selfie-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 8px;
+            border: 2px solid #667eea;
+            margin-top: 10px;
+        }
+        
+        .selfie-preview p {
+            color: #666;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        
+        .upload-section {
+            background-color: #f9f9f9;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .upload-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .upload-section label {
+            display: block;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: bold;
         }
         
         input[type="file"] {
             display: block;
+            margin: 0 auto 10px;
             padding: 10px;
             border: 2px solid #ddd;
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
-            font-size: 14px;
-        }
-        
-        input[type="file"]:hover {
-            border-color: #007bff;
+            max-width: 400px;
         }
         
         .file-info {
@@ -85,59 +195,51 @@
             margin-top: 5px;
         }
         
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
+        .files-preview {
+            margin-top: 15px;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
         }
         
-        button {
-            padding: 12px 24px;
-            font-size: 16px;
-            border: none;
+        .files-preview p {
+            color: #666;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .file-list {
+            background-color: white;
+            border: 1px solid #ddd;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
+            padding: 10px;
+            max-height: 150px;
+            overflow-y: auto;
         }
         
-        #compareBtn {
-            background-color: #28a745;
-            color: white;
-            flex: 1;
+        .file-item {
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+            font-size: 12px;
+            color: #666;
         }
         
-        #compareBtn:hover:not(:disabled) {
-            background-color: #218838;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        #compareBtn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        
-        #resetBtn {
-            background-color: #6c757d;
-            color: white;
-        }
-        
-        #resetBtn:hover {
-            background-color: #5a6268;
+        .file-item:last-child {
+            border-bottom: none;
         }
         
         .loading {
             display: none;
             text-align: center;
             padding: 20px;
-            color: #007bff;
+            color: #667eea;
             font-weight: bold;
         }
         
         .spinner {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #007bff;
+            border-top: 4px solid #667eea;
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -153,34 +255,38 @@
         .results-section {
             display: none;
             margin-top: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 20px;
         }
         
         .results-section h2 {
             color: #333;
             margin-bottom: 20px;
-            border-bottom: 2px solid #007bff;
+            border-bottom: 2px solid #667eea;
             padding-bottom: 10px;
         }
         
         .statistics {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 15px;
             margin-bottom: 30px;
         }
         
         .stat-card {
-            background-color: #f0f0f0;
+            background-color: white;
             padding: 15px;
-            border-radius: 4px;
+            border-radius: 6px;
             text-align: center;
-            border-left: 4px solid #007bff;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         .stat-value {
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
-            color: #007bff;
+            color: #667eea;
         }
         
         .stat-label {
@@ -190,20 +296,20 @@
         }
         
         .matches-container {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .matches-container h3 {
             color: #28a745;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 16px;
         }
         
         .match-item {
             background-color: #d4edda;
             border-left: 4px solid #28a745;
-            padding: 12px;
-            margin-bottom: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
             border-radius: 4px;
             display: flex;
             justify-content: space-between;
@@ -218,27 +324,27 @@
         .match-similarity {
             background-color: #28a745;
             color: white;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         
         .non-matches-container {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .non-matches-container h3 {
             color: #dc3545;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             font-size: 16px;
         }
         
         .non-match-item {
             background-color: #f8d7da;
             border-left: 4px solid #dc3545;
-            padding: 12px;
-            margin-bottom: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
             border-radius: 4px;
             display: flex;
             justify-content: space-between;
@@ -253,145 +359,196 @@
         .non-match-similarity {
             background-color: #dc3545;
             color: white;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
         }
         
-        .non-match-reason {
-            font-size: 12px;
+        .alert {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
             color: #721c24;
-            margin-top: 5px;
         }
         
-        .errors-container {
-            margin-bottom: 30px;
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
         }
         
-        .errors-container h3 {
-            color: #ff6b6b;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        
-        .error-item {
-            background-color: #ffe0e0;
-            border-left: 4px solid #ff6b6b;
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-        }
-        
-        .error-file {
-            font-weight: bold;
-            color: #c92a2a;
-        }
-        
-        .error-message {
-            font-size: 12px;
-            color: #c92a2a;
-            margin-top: 5px;
+        .alert-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
         }
         
         .empty-message {
             text-align: center;
             color: #999;
-            padding: 20px;
+            padding: 15px;
             font-style: italic;
         }
         
-        .error-alert {
-            background-color: #f8d7da;
-            border: 1px solid #f5c6cb;
-            color: #721c24;
-            padding: 15px;
+        .images-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .image-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .image-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .image-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .image-info {
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .image-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: #333;
+            word-break: break-word;
+            margin-bottom: 5px;
+        }
+        
+        .image-similarity {
+            font-size: 14px;
+            font-weight: bold;
+            color: #28a745;
+            background-color: #d4edda;
+            padding: 5px;
             border-radius: 4px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .tab-btn {
+            padding: 10px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            color: #666;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
             display: none;
         }
         
-        .success-alert {
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            color: #155724;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔍 Demo Reconocimiento Facial</h1>
-        <p class="subtitle">Comparación biométrica usando DeepFace + FaceNet + OpenCV</p>
+        <h1>🎥 Reconocimiento Facial con Cámara</h1>
+        <p class="subtitle">Captura tu rostro y busca coincidencias en tus fotos</p>
         
-        <div class="error-alert" id="errorAlert"></div>
-        <div class="success-alert" id="successAlert"></div>
+        <div class="alert alert-error" id="errorAlert"></div>
+        <div class="alert alert-success" id="successAlert"></div>
+        <div class="alert alert-info" id="infoAlert"></div>
         
-        <form id="faceForm">
-            <!-- Sección Selfie -->
-            <div class="form-section">
-                <h2>1. Subir Selfie Base</h2>
-                <div class="form-group">
-                    <label for="selfieInput">Selecciona tu selfie (imagen principal):</label>
-                    <input 
-                        type="file" 
-                        id="selfieInput" 
-                        accept="image/*" 
-                        required
-                    >
-                    <div class="file-info">Formatos: JPG, PNG, GIF, BMP | Máximo: 5MB</div>
-                </div>
-                <div id="selfiePreview"></div>
-            </div>
-            
-            <!-- Sección Fotos Adicionales -->
-            <div class="form-section">
-                <h2>2. Subir Fotos Adicionales</h2>
-                <div class="form-group">
-                    <label for="photosInput">Selecciona múltiples fotos (4-10 imágenes):</label>
-                    <input 
-                        type="file" 
-                        id="photosInput" 
-                        accept="image/*" 
-                        multiple 
-                        required
-                    >
-                    <div class="file-info">Selecciona entre 4 y 10 imágenes | Máximo: 5MB cada una</div>
-                </div>
-                <div id="photosPreview"></div>
-            </div>
-            
-            <!-- Botones de Acción -->
-            <div class="button-group">
-                <button type="submit" id="compareBtn">Comparar Rostros</button>
-                <button type="reset" id="resetBtn">Limpiar</button>
-            </div>
-        </form>
-        
-        <!-- Indicador de Carga -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Procesando imágenes y extrayendo embeddings faciales...</p>
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('camera')">📷 Cámara</button>
+            <button class="tab-btn" onclick="switchTab('upload')">📁 Subir Fotos</button>
+            <button class="tab-btn" onclick="switchTab('results')">📊 Resultados</button>
         </div>
         
-        <!-- Sección de Resultados -->
-        <div class="results-section" id="resultsSection">
-            <h2>📊 Resultados del Análisis</h2>
+        <!-- Tab: Cámara -->
+        <div id="camera-tab" class="tab-content active">
+            <div class="camera-section">
+                <h2>Captura tu Rostro</h2>
+                <div id="cameraContainer">
+                    <video id="video" autoplay playsinline></video>
+                </div>
+                <canvas id="canvas"></canvas>
+                
+                <div class="camera-controls">
+                    <button class="btn-primary" id="startCameraBtn" onclick="startCamera()">Iniciar Cámara</button>
+                    <button class="btn-success" id="captureSelfieBtn" onclick="captureSelfie()" disabled>Capturar Selfie</button>
+                    <button class="btn-danger" id="stopCameraBtn" onclick="stopCamera()" disabled>Detener Cámara</button>
+                </div>
+                
+                <div class="selfie-preview" id="selfiePreview"></div>
+            </div>
+        </div>
+        
+        <!-- Tab: Subir Fotos -->
+        <div id="upload-tab" class="tab-content">
+            <div class="upload-section">
+                <h2>Subir Fotos para Comparar</h2>
+                <label for="photosInput">Selecciona múltiples fotos (4-10 imágenes):</label>
+                <input 
+                    type="file" 
+                    id="photosInput" 
+                    accept="image/*" 
+                    multiple 
+                />
+                <div class="file-info">Selecciona entre 4 y 10 imágenes | Máximo: 5MB cada una</div>
+                
+                <div class="files-preview" id="filesPreview"></div>
+                
+                <div class="camera-controls" style="margin-top: 20px;">
+                    <button class="btn-success" id="compareBtn" onclick="comparePhotos()" disabled>Comparar Rostros</button>
+                    <button class="btn-danger" id="clearBtn" onclick="clearPhotos()">Limpiar</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tab: Resultados -->
+        <div id="results-tab" class="tab-content">
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Procesando imágenes y extrayendo embeddings faciales...</p>
+            </div>
             
-            <!-- Estadísticas -->
-            <div class="statistics" id="statistics"></div>
-            
-            <!-- Coincidencias -->
-            <div class="matches-container" id="matchesContainer"></div>
-            
-            <!-- No Coincidencias -->
-            <div class="non-matches-container" id="nonMatchesContainer"></div>
-            
-            <!-- Errores -->
-            <div class="errors-container" id="errorsContainer"></div>
+            <div class="results-section" id="resultsSection">
+                <h2>📊 Resultados del Análisis</h2>
+                
+                <div class="statistics" id="statistics"></div>
+                <div class="matches-container" id="matchesContainer"></div>
+                <div class="non-matches-container" id="nonMatchesContainer"></div>
+            </div>
         </div>
     </div>
     
@@ -407,311 +564,330 @@
             API_URL = "https://surf-backend-production-e2c1.up.railway.app";
         }
         
-        // Elementos del DOM
-        const faceForm = document.getElementById("faceForm");
-        const selfieInput = document.getElementById("selfieInput");
-        const photosInput = document.getElementById("photosInput");
-        const compareBtn = document.getElementById("compareBtn");
-        const resetBtn = document.getElementById("resetBtn");
-        const loading = document.getElementById("loading");
-        const resultsSection = document.getElementById("resultsSection");
-        const errorAlert = document.getElementById("errorAlert");
-        const successAlert = document.getElementById("successAlert");
-        
-        // Event Listeners
-        faceForm.addEventListener("submit", handleSubmit);
-        resetBtn.addEventListener("click", resetForm);
-        selfieInput.addEventListener("change", updateSelfiePreview);
-        photosInput.addEventListener("change", updatePhotosPreview);
+        let selfieBlob = null;
+        let photosFiles = [];
+        let videoStream = null;
         
         /**
-         * Actualiza la vista previa del selfie
+         * Cambia entre tabs
          */
-        function updateSelfiePreview() {
-            const preview = document.getElementById("selfiePreview");
-            preview.innerHTML = "";
+        function switchTab(tabName) {
+            // Ocultar todos los tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
-            if (selfieInput.files.length > 0) {
-                const file = selfieInput.files[0];
-                const reader = new FileReader();
+            // Mostrar tab seleccionado
+            document.getElementById(tabName + '-tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        /**
+         * Inicia la cámara
+         */
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user' }
+                });
                 
+                const video = document.getElementById('video');
+                video.srcObject = stream;
+                videoStream = stream;
+                
+                document.getElementById('startCameraBtn').disabled = true;
+                document.getElementById('captureSelfieBtn').disabled = false;
+                document.getElementById('stopCameraBtn').disabled = false;
+                
+                showInfo('Cámara iniciada. Posiciónate frente a la cámara y haz clic en "Capturar Selfie"');
+            } catch (error) {
+                showError('Error al acceder a la cámara: ' + error.message);
+            }
+        }
+        
+        /**
+         * Captura el selfie
+         */
+        function captureSelfie() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Espejo horizontal
+            ctx.scale(-1, 1);
+            ctx.drawImage(video, -canvas.width, 0);
+            
+            // Convertir a blob
+            canvas.toBlob(blob => {
+                selfieBlob = blob;
+                
+                // Mostrar preview
+                const reader = new FileReader();
                 reader.onload = (e) => {
+                    const preview = document.getElementById('selfiePreview');
                     preview.innerHTML = `
-                        <div style="margin-top: 10px; padding: 10px; background-color: #e8f4f8; border-radius: 4px;">
-                            <p style="font-size: 12px; color: #666;">✓ Selfie seleccionado: <strong>${file.name}</strong></p>
-                        </div>
+                        <p>✓ Selfie capturado</p>
+                        <img src="${e.target.result}" alt="Selfie">
                     `;
                 };
+                reader.readAsDataURL(blob);
                 
-                reader.readAsDataURL(file);
-            }
+                showSuccess('Selfie capturado exitosamente');
+            });
         }
         
         /**
-         * Actualiza la vista previa de las fotos adicionales
+         * Detiene la cámara
          */
-        function updatePhotosPreview() {
-            const preview = document.getElementById("photosPreview");
-            preview.innerHTML = "";
-            
-            if (photosInput.files.length > 0) {
-                const count = photosInput.files.length;
-                const fileNames = Array.from(photosInput.files)
-                    .map(f => f.name)
-                    .join(", ");
-                
-                preview.innerHTML = `
-                    <div style="margin-top: 10px; padding: 10px; background-color: #e8f4f8; border-radius: 4px;">
-                        <p style="font-size: 12px; color: #666;">✓ ${count} foto(s) seleccionada(s)</p>
-                        <p style="font-size: 11px; color: #999; margin-top: 5px; word-break: break-all;">${fileNames}</p>
-                    </div>
-                `;
+        function stopCamera() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+                videoStream = null;
             }
+            
+            document.getElementById('startCameraBtn').disabled = false;
+            document.getElementById('captureSelfieBtn').disabled = true;
+            document.getElementById('stopCameraBtn').disabled = true;
+            
+            showInfo('Cámara detenida');
         }
         
         /**
-         * Maneja el envío del formulario
+         * Maneja la selección de fotos
          */
-        async function handleSubmit(e) {
-            e.preventDefault();
+        document.getElementById('photosInput').addEventListener('change', function(e) {
+            photosFiles = Array.from(e.target.files);
+            updateFilesPreview();
             
-            // Validaciones
-            if (!selfieInput.files.length) {
-                showError("Por favor selecciona un selfie");
+            if (photosFiles.length >= 4 && photosFiles.length <= 10) {
+                document.getElementById('compareBtn').disabled = false;
+            } else {
+                document.getElementById('compareBtn').disabled = true;
+            }
+        });
+        
+        /**
+         * Actualiza la vista previa de archivos
+         */
+        function updateFilesPreview() {
+            const preview = document.getElementById('filesPreview');
+            
+            if (photosFiles.length === 0) {
+                preview.innerHTML = '';
                 return;
             }
             
-            if (!photosInput.files.length) {
-                showError("Por favor selecciona al menos una foto adicional");
-                return;
-            }
+            let html = `<p>✓ ${photosFiles.length} foto(s) seleccionada(s)</p>`;
+            html += '<div class="file-list">';
             
-            if (photosInput.files.length < 4) {
-                showError("Por favor selecciona al menos 4 fotos adicionales");
-                return;
-            }
+            photosFiles.forEach(file => {
+                html += `<div class="file-item">📄 ${file.name}</div>`;
+            });
             
-            if (photosInput.files.length > 10) {
-                showError("Máximo 10 fotos adicionales permitidas");
-                return;
-            }
-            
-            // Preparar datos
-            const formData = new FormData();
-            formData.append("selfie", selfieInput.files[0]);
-            
-            for (let i = 0; i < photosInput.files.length; i++) {
-                formData.append("photos", photosInput.files[i]);
-            }
-            
-            // Enviar solicitud
-            await sendRequest(formData);
+            html += '</div>';
+            preview.innerHTML = html;
         }
         
         /**
-         * Envía la solicitud al backend
+         * Limpia las fotos seleccionadas
          */
-        async function sendRequest(formData) {
+        function clearPhotos() {
+            photosFiles = [];
+            document.getElementById('photosInput').value = '';
+            updateFilesPreview();
+            document.getElementById('compareBtn').disabled = true;
+        }
+        
+        /**
+         * Compara los rostros
+         */
+        async function comparePhotos() {
+            if (!selfieBlob) {
+                showError('Por favor captura un selfie primero');
+                return;
+            }
+            
+            if (photosFiles.length < 4 || photosFiles.length > 10) {
+                showError('Selecciona entre 4 y 10 fotos');
+                return;
+            }
+            
             try {
-                // Mostrar indicador de carga
-                loading.style.display = "block";
-                resultsSection.style.display = "none";
-                errorAlert.style.display = "none";
-                successAlert.style.display = "none";
+                // Cambiar a tab de resultados
+                switchTab('results');
+                document.querySelector('[onclick="switchTab(\'results\')"]').click();
                 
-                // Realizar solicitud
+                // Mostrar loading
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('resultsSection').style.display = 'none';
+                
+                // Preparar FormData
+                const formData = new FormData();
+                formData.append('selfie', selfieBlob, 'selfie.jpg');
+                
+                photosFiles.forEach(file => {
+                    formData.append('photos', file);
+                });
+                
+                // Enviar solicitud
                 const response = await fetch(`${API_URL}/compare-faces`, {
-                    method: "POST",
+                    method: 'POST',
                     body: formData
                 });
                 
                 if (!response.ok) {
                     const errorData = await response.json();
-                    throw new Error(errorData.detail || "Error en la solicitud");
+                    throw new Error(errorData.detail || 'Error en la solicitud');
                 }
                 
                 const data = await response.json();
                 
                 // Mostrar resultados
                 displayResults(data);
-                showSuccess("Análisis completado exitosamente");
+                showSuccess('Análisis completado exitosamente');
                 
             } catch (error) {
-                console.error("Error:", error);
-                showError(`Error: ${error.message}`);
+                showError('Error: ' + error.message);
             } finally {
-                loading.style.display = "none";
+                document.getElementById('loading').style.display = 'none';
             }
         }
         
         /**
-         * Muestra los resultados del análisis
+         * Muestra los resultados
          */
         function displayResults(data) {
-            // Mostrar sección de resultados
-            resultsSection.style.display = "block";
+            document.getElementById('resultsSection').style.display = 'block';
             
-            // Mostrar estadísticas
-            displayStatistics(data.statistics);
-            
-            // Mostrar coincidencias
-            displayMatches(data.matches);
-            
-            // Mostrar no coincidencias
-            displayNonMatches(data.non_matches);
-            
-            // Mostrar errores
-            displayErrors(data.errors);
-            
-            // Scroll a resultados
-            resultsSection.scrollIntoView({ behavior: "smooth" });
-        }
-        
-        /**
-         * Muestra las estadísticas
-         */
-        function displayStatistics(stats) {
-            const container = document.getElementById("statistics");
-            container.innerHTML = `
+            // Estadísticas
+            const statsHtml = `
                 <div class="stat-card">
-                    <div class="stat-value">${stats.total_photos}</div>
+                    <div class="stat-value">${data.statistics.total_photos}</div>
                     <div class="stat-label">Total de Fotos</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #28a745;">${stats.matches_count}</div>
+                    <div class="stat-value" style="color: #28a745;">${data.statistics.matches_count}</div>
                     <div class="stat-label">Coincidencias</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #dc3545;">${stats.non_matches_count}</div>
+                    <div class="stat-value" style="color: #dc3545;">${data.statistics.non_matches_count}</div>
                     <div class="stat-label">No Coincidencias</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" style="color: #007bff;">${stats.match_percentage}%</div>
-                    <div class="stat-label">Porcentaje de Coincidencia</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" style="color: #ff6b6b;">${stats.threshold_used}%</div>
-                    <div class="stat-label">Umbral Utilizado</div>
+                    <div class="stat-value" style="color: #667eea;">${data.statistics.match_percentage}%</div>
+                    <div class="stat-label">Coincidencia</div>
                 </div>
             `;
-        }
-        
-        /**
-         * Muestra las coincidencias
-         */
-        function displayMatches(matches) {
-            const container = document.getElementById("matchesContainer");
+            document.getElementById('statistics').innerHTML = statsHtml;
             
-            if (matches.length === 0) {
-                container.innerHTML = '<div class="empty-message">No hay coincidencias</div>';
-                return;
-            }
-            
-            let html = "<h3>✓ Coincidencias Detectadas</h3>";
-            matches.forEach(match => {
-                html += `
-                    <div class="match-item">
-                        <span class="match-file">${match.file}</span>
-                        <span class="match-similarity">${match.similarity}%</span>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        /**
-         * Muestra las no coincidencias
-         */
-        function displayNonMatches(nonMatches) {
-            const container = document.getElementById("nonMatchesContainer");
-            
-            if (nonMatches.length === 0) {
-                container.innerHTML = '<div class="empty-message">No hay no coincidencias</div>';
-                return;
-            }
-            
-            let html = "<h3>✗ No Coincidencias Detectadas</h3>";
-            nonMatches.forEach(nonMatch => {
-                html += `
-                    <div class="non-match-item">
-                        <div>
-                            <span class="non-match-file">${nonMatch.file}</span>
-                            <div class="non-match-reason">${nonMatch.reason}</div>
+            // Coincidencias
+            let matchesHtml = '<h3>✓ Coincidencias Detectadas</h3>';
+            if (data.matches.length === 0) {
+                matchesHtml += '<div class="empty-message">No hay coincidencias</div>';
+            } else {
+                data.matches.forEach(match => {
+                    matchesHtml += `
+                        <div class="match-item">
+                            <span class="match-file">${match.file}</span>
+                            <span class="match-similarity">${match.similarity}%</span>
                         </div>
-                        <span class="non-match-similarity">${nonMatch.similarity}%</span>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
-        }
-        
-        /**
-         * Muestra los errores
-         */
-        function displayErrors(errors) {
-            const container = document.getElementById("errorsContainer");
-            
-            if (errors.length === 0) {
-                container.innerHTML = "";
-                return;
+                    `;
+                });
+                
+                // Mostrar galería de imágenes coincidentes
+                matchesHtml += '<h4 style="margin-top: 20px; color: #28a745;">📸 Imágenes Coincidentes</h4>';
+                matchesHtml += '<div class="images-gallery">';
+                
+                data.matches.forEach(match => {
+                    const file = photosFiles.find(f => f.name === match.file);
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const gallery = document.querySelector('.images-gallery');
+                            const card = document.createElement('div');
+                            card.className = 'image-card';
+                            card.innerHTML = `
+                                <img src="${e.target.result}" alt="${match.file}">
+                                <div class="image-info">
+                                    <div class="image-name">${match.file}</div>
+                                    <div class="image-similarity">${match.similarity}%</div>
+                                </div>
+                            `;
+                            gallery.appendChild(card);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                });
+                
+                matchesHtml += '</div>';
             }
+            document.getElementById('matchesContainer').innerHTML = matchesHtml;
             
-            let html = "<h3>⚠️ Errores Procesados</h3>";
-            errors.forEach(error => {
-                html += `
-                    <div class="error-item">
-                        <span class="error-file">${error.file}</span>
-                        <div class="error-message">${error.error}</div>
-                    </div>
-                `;
-            });
-            
-            container.innerHTML = html;
+            // No coincidencias
+            let nonMatchesHtml = '<h3>✗ No Coincidencias Detectadas</h3>';
+            if (data.non_matches.length === 0) {
+                nonMatchesHtml += '<div class="empty-message">No hay no coincidencias</div>';
+            } else {
+                data.non_matches.forEach(nonMatch => {
+                    nonMatchesHtml += `
+                        <div class="non-match-item">
+                            <span class="non-match-file">${nonMatch.file}</span>
+                            <span class="non-match-similarity">${nonMatch.similarity}%</span>
+                        </div>
+                    `;
+                });
+            }
+            document.getElementById('nonMatchesContainer').innerHTML = nonMatchesHtml;
         }
         
         /**
          * Muestra un mensaje de error
          */
         function showError(message) {
-            errorAlert.textContent = message;
-            errorAlert.style.display = "block";
-            successAlert.style.display = "none";
+            const alert = document.getElementById('errorAlert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            document.getElementById('successAlert').style.display = 'none';
+            document.getElementById('infoAlert').style.display = 'none';
         }
         
         /**
          * Muestra un mensaje de éxito
          */
         function showSuccess(message) {
-            successAlert.textContent = message;
-            successAlert.style.display = "block";
-            errorAlert.style.display = "none";
+            const alert = document.getElementById('successAlert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            document.getElementById('errorAlert').style.display = 'none';
+            document.getElementById('infoAlert').style.display = 'none';
         }
         
         /**
-         * Reinicia el formulario
+         * Muestra un mensaje de información
          */
-        function resetForm() {
-            faceForm.reset();
-            document.getElementById("selfiePreview").innerHTML = "";
-            document.getElementById("photosPreview").innerHTML = "";
-            resultsSection.style.display = "none";
-            errorAlert.style.display = "none";
-            successAlert.style.display = "none";
+        function showInfo(message) {
+            const alert = document.getElementById('infoAlert');
+            alert.textContent = message;
+            alert.style.display = 'block';
+            document.getElementById('errorAlert').style.display = 'none';
+            document.getElementById('successAlert').style.display = 'none';
         }
         
-        // Verificar conexión con el servidor al cargar
-        window.addEventListener("load", async () => {
+        // Verificar conexión al cargar
+        window.addEventListener('load', async () => {
             try {
                 const response = await fetch(`${API_URL}/health`);
                 if (response.ok) {
-                    const data = await response.json();
-                    console.log("✓ Servidor conectado:", data);
+                    showInfo('✓ Servidor conectado. Listo para usar.');
                 }
             } catch (error) {
-                console.error("✗ No se pudo conectar al servidor:", error);
-                showError("No se pudo conectar al servidor. Asegúrate de que FastAPI esté ejecutándose en http://localhost:8000");
+                showError('✗ No se pudo conectar al servidor en ' + API_URL);
             }
         });
     </script>
