@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración del Backend - Reconocimiento Facial</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .info-box {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .error-box {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .success-box {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            padding: 12px 24px;
+            font-size: 14px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .btn-primary {
+            background-color: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.checking {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .status.connected {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .status.disconnected {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .code-block {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        
+        .copy-btn {
+            padding: 8px 16px;
+            font-size: 12px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #5568d3;
+        }
+        
+        .link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚙️ Configuración del Backend</h1>
+        <p class="subtitle">Configura la URL de tu servidor de reconocimiento facial</p>
+        
+        <!-- Sección de Diagnóstico -->
+        <div class="section">
+            <h2>🔍 Diagnóstico</h2>
+            <div id="diagnosticInfo" class="info-box">
+                <strong>Información del Navegador:</strong><br>
+                Hostname: <span id="hostname">-</span><br>
+                URL Actual: <span id="currentUrl">-</span><br>
+                API URL Detectada: <span id="detectedUrl">-</span>
+            </div>
+            
+            <label for="backendUrl">URL del Backend (Railway):</label>
+            <input 
+                type="text" 
+                id="backendUrl" 
+                placeholder="https://surf-backend-production-xxxx.up.railway.app"
+                value=""
+            />
+            
+            <div id="status" class="status checking" style="display: none;">
+                Verificando conexión...
+            </div>
+            
+            <button class="btn-primary" onclick="testConnection()">🔗 Probar Conexión</button>
+            <button class="btn-success" onclick="saveConfiguration()">💾 Guardar Configuración</button>
+            <button class="btn-danger" onclick="clearConfiguration()">🗑️ Limpiar Configuración</button>
+        </div>
+        
+        <!-- Sección de Instrucciones -->
+        <div class="section">
+            <h2>📋 Instrucciones</h2>
+            
+            <h3 style="color: #667eea; margin-top: 15px; margin-bottom: 10px;">1. Obtener la URL de Railway</h3>
+            <div class="info-box">
+                <strong>Pasos:</strong><br>
+                1. Ve a <a href="https://railway.app" target="_blank" class="link">railway.app</a><br>
+                2. Inicia sesión en tu cuenta<br>
+                3. Selecciona tu proyecto "Surf"<br>
+                4. Haz clic en el servicio del backend<br>
+                5. Busca la sección "Deployments" o "Settings"<br>
+                6. Copia la URL del dominio (ej: https://surf-backend-production-xxxx.up.railway.app)<br>
+                7. Pégala en el campo de arriba
+            </div>
+            
+            <h3 style="color: #667eea; margin-top: 15px; margin-bottom: 10px;">2. Verificar la Conexión</h3>
+            <div class="info-box">
+                Haz clic en "Probar Conexión" para verificar que el backend está funcionando correctamente.
+            </div>
+            
+            <h3 style="color: #667eea; margin-top: 15px; margin-bottom: 10px;">3. Guardar la Configuración</h3>
+            <div class="info-box">
+                Una vez que la conexión sea exitosa, haz clic en "Guardar Configuración" para almacenar la URL en tu navegador.
+            </div>
+        </div>
+        
+        <!-- Sección de Solución de Problemas -->
+        <div class="section">
+            <h2>🛠️ Solución de Problemas</h2>
+            
+            <h3 style="color: #dc3545; margin-top: 15px; margin-bottom: 10px;">Error: "No se pudo conectar al servidor"</h3>
+            <div class="error-box">
+                <strong>Posibles causas:</strong><br>
+                • La URL del backend es incorrecta<br>
+                • El backend no está desplegado en Railway<br>
+                • El backend está caído o en mantenimiento<br>
+                • Problema de CORS (Cross-Origin Resource Sharing)<br>
+                <br>
+                <strong>Soluciones:</strong><br>
+                1. Verifica que la URL sea correcta<br>
+                2. Comprueba que el backend está corriendo en Railway<br>
+                3. Intenta acceder a la URL directamente en el navegador<br>
+                4. Revisa la consola del navegador (F12) para más detalles
+            </div>
+            
+            <h3 style="color: #dc3545; margin-top: 15px; margin-bottom: 10px;">Error: "CORS Error"</h3>
+            <div class="error-box">
+                <strong>Solución:</strong><br>
+                El backend debe tener CORS habilitado. Verifica que en <code>backend/main.py</code> esté configurado:<br>
+                <div class="code-block">
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+                </div>
+            </div>
+            
+            <h3 style="color: #28a745; margin-top: 15px; margin-bottom: 10px;">✓ Conexión Exitosa</h3>
+            <div class="success-box">
+                Si ves este mensaje, significa que:<br>
+                • El backend está corriendo correctamente<br>
+                • La URL es válida<br>
+                • CORS está configurado correctamente<br>
+                • Puedes usar la aplicación normalmente
+            </div>
+        </div>
+        
+        <!-- Sección de URLs Comunes -->
+        <div class="section">
+            <h2>🔗 URLs Comunes de Railway</h2>
+            <div class="info-box">
+                <strong>Formato típico:</strong><br>
+                <code>https://surf-backend-production-[RANDOM_ID].up.railway.app</code><br>
+                <br>
+                <strong>Ejemplo:</strong><br>
+                <code>https://surf-backend-production-e2c1.up.railway.app</code><br>
+                <br>
+                <strong>Endpoint de salud:</strong><br>
+                <code>https://tu-url-aqui/health</code>
+            </div>
+        </div>
+        
+        <button class="btn-primary" onclick="goToApp()" style="margin-top: 20px;">← Volver a la Aplicación</button>
+    </div>
+    
+    <script>
+        // Mostrar información de diagnóstico
+        function updateDiagnostics() {
+            document.getElementById('hostname').textContent = window.location.hostname;
+            document.getElementById('currentUrl').textContent = window.location.href;
+            
+            // Detectar URL del backend
+            let detectedUrl = 'http://localhost:8000';
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                const storedURL = localStorage.getItem('backendURL');
+                if (storedURL) {
+                    detectedUrl = storedURL;
+                } else {
+                    detectedUrl = 'https://surf-backend-production-e2c1.up.railway.app (por defecto)';
+                }
+            }
+            document.getElementById('detectedUrl').textContent = detectedUrl;
+            
+            // Cargar URL guardada si existe
+            const savedUrl = localStorage.getItem('backendURL');
+            if (savedUrl) {
+                document.getElementById('backendUrl').value = savedUrl;
+            }
+        }
+        
+        // Probar conexión
+        async function testConnection() {
+            const url = document.getElementById('backendUrl').value.trim();
+            
+            if (!url) {
+                showStatus('Por favor ingresa una URL', 'disconnected');
+                return;
+            }
+            
+            showStatus('Verificando conexión...', 'checking');
+            
+            try {
+                const response = await fetch(`${url}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus('✓ Conexión exitosa. Servidor respondiendo correctamente.', 'connected');
+                } else {
+                    showStatus('✗ El servidor respondió con error: ' + response.status, 'disconnected');
+                }
+            } catch (error) {
+                showStatus('✗ Error de conexión: ' + error.message, 'disconnected');
+            }
+        }
+        
+        // Guardar configuración
+        function saveConfiguration() {
+            const url = document.getElementById('backendUrl').value.trim();
+            
+            if (!url) {
+                alert('Por favor ingresa una URL');
+                return;
+            }
+            
+            localStorage.setItem('backendURL', url);
+            alert('✓ Configuración guardada. La URL se usará en la aplicación.');
+        }
+        
+        // Limpiar configuración
+        function clearConfiguration() {
+            if (confirm('¿Estás seguro de que deseas limpiar la configuración?')) {
+                localStorage.removeItem('backendURL');
+                document.getElementById('backendUrl').value = '';
+                alert('✓ Configuración limpiada.');
+            }
+        }
+        
+        // Mostrar estado
+        function showStatus(message, status) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status ' + status;
+            statusDiv.style.display = 'block';
+        }
+        
+        // Ir a la aplicación
+        function goToApp() {
+            window.location.href = 'index.html';
+        }
+        
+        // Inicializar
+        window.addEventListener('load', updateDiagnostics);
+    </script>
+</body>
+</html>
