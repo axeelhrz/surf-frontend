@@ -1,0 +1,1642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administrador - SurfShot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f8fafc;
+            overflow: hidden;
+        }
+
+        /* Admin Container */
+        .admin-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 100;
+        }
+
+        .admin-sidebar-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .admin-sidebar-header i {
+            font-size: 24px;
+            color: #3b82f6;
+        }
+
+        .admin-sidebar-header h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .admin-nav {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .admin-nav-item {
+            margin-bottom: 10px;
+        }
+
+        .admin-nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 15px;
+            color: #cbd5e1;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .admin-nav-link:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+        }
+
+        .admin-nav-link.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .admin-nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .admin-main {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            background: #f8fafc;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 24px;
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .admin-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .admin-logout-btn {
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .admin-logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Content Wrapper */
+        .admin-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .admin-alerts {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .admin-content {
+            display: none;
+            flex: 0 1 auto;
+            min-height: 0;
+            overflow: visible;
+            width: 100%;
+        }
+
+        .admin-content.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .stat-card.green { border-left-color: #10b981; }
+        .stat-card.orange { border-left-color: #f59e0b; }
+        .stat-card.red { border-left-color: #ef4444; }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            color: #0f172a;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .stat-change {
+            color: #10b981;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            overflow: visible;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .table-container.upload-container {
+            overflow: visible;
+            max-height: none;
+        }
+        
+        .selected-photos-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .selected-photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        
+        .selected-photos-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .selected-photos-grid::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .selected-photos-grid::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .selected-photos-grid::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .selected-photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: white;
+            border: 2px solid #e2e8f0;
+            aspect-ratio: 1;
+        }
+        
+        .selected-photo-thumbnail {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            background: #f1f5f9;
+        }
+        
+        .selected-photo-thumbnail[loading="lazy"] {
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .selected-photo-thumbnail[loading="lazy"].loaded {
+            opacity: 1;
+        }
+        
+        .selected-photo-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+            padding: 8px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .table-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .table-header h2 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+        }
+
+        th {
+            padding: 12px 15px;
+            text-align: left;
+            color: #475569;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-warning { background: #fef3c7; color: #92400e; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #cffafe; color: #164e63; }
+
+        /* Action Buttons */
+        .action-btn {
+            padding: 5px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0 2px;
+        }
+
+        .action-btn-edit { background: #3b82f6; color: white; }
+        .action-btn-edit:hover { background: #2563eb; }
+        .action-btn-delete { background: #ef4444; color: white; }
+        .action-btn-delete:hover { background: #dc2626; }
+        .action-btn-view { background: #10b981; color: white; }
+        .action-btn-view:hover { background: #059669; }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #0f172a;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-group select {
+            cursor: pointer;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+            position: relative;
+            margin: auto;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: #0f172a;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 9px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 13px;
+        }
+
+        .btn-primary { background: #3b82f6; color: white; }
+        .btn-primary:hover { background: #2563eb; }
+        .btn-secondary { background: #e2e8f0; color: #0f172a; }
+        .btn-secondary:hover { background: #cbd5e1; }
+
+        /* Alerts */
+        .alert {
+            padding: 12px 15px;
+            border-radius: 8px;
+            display: none;
+            animation: slideDown 0.3s ease;
+            font-size: 13px;
+        }
+
+        .alert.active {
+            display: block;
+        }
+
+        .alert-success { background: #dcfce7; border: 1px solid #bbf7d0; color: #166534; }
+        .alert-error { background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; }
+        .alert-info { background: #cffafe; border: 1px solid #a5f3fc; color: #164e63; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Settings Form */
+        .settings-form {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 30px 20px;
+            text-align: center;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            min-height: 150px;
+            max-height: none;
+        }
+        
+        .upload-area.has-selected {
+            min-height: auto;
+            padding: 20px;
+        }
+        
+        .upload-area-content {
+            width: 100%;
+        }
+
+        .upload-area:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #3b82f6;
+            background: #dbeafe;
+            transform: scale(1.02);
+        }
+
+        .upload-area-icon {
+            font-size: 48px;
+            color: #3b82f6;
+            margin-bottom: 15px;
+        }
+
+        .upload-area-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .upload-area-subtext {
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .upload-options {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .upload-option-btn {
+            padding: 12px 24px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            color: #0f172a;
+        }
+
+        .upload-option-btn:hover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+
+        .upload-option-btn i {
+            margin-right: 8px;
+        }
+
+        /* Upload Progress Modal */
+        .upload-progress-modal {
+            max-width: 600px;
+            width: 100%;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+            position: relative;
+            margin: auto;
+        }
+
+        .upload-progress-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .upload-progress-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        .upload-progress-info h3 {
+            margin: 0;
+            color: #0f172a;
+            font-size: 18px;
+        }
+
+        .upload-progress-info p {
+            margin: 5px 0 0 0;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .upload-progress-bar-container {
+            background: #f1f5f9;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .upload-progress-bar {
+            background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .upload-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .upload-stat {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .upload-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .upload-stat-label {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .upload-file-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        
+        .upload-file-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .upload-file-list::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        
+        .upload-file-list::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        
+        .upload-file-list::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .upload-file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .upload-file-item:last-child {
+            border-bottom: none;
+        }
+
+        .upload-file-name {
+            font-size: 13px;
+            color: #0f172a;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .upload-file-status {
+            font-size: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .upload-file-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .upload-file-status.uploading {
+            background: #cffafe;
+            color: #164e63;
+        }
+
+        .upload-file-status.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .upload-file-status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        /* Uploaded Photos Gallery */
+        .uploaded-photos-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            max-height: none;
+            overflow: visible;
+        }
+        
+        .uploaded-photo-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .uploaded-photo-item:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+        }
+        
+        .uploaded-photo-thumbnail {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .uploaded-photo-info {
+            padding: 10px;
+            background: white;
+        }
+        
+        .uploaded-photo-name {
+            font-size: 12px;
+            color: #0f172a;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-bottom: 5px;
+        }
+        
+        .uploaded-photo-size {
+            font-size: 11px;
+            color: #64748b;
+        }
+        
+        .uploaded-photo-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #10b981;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .uploaded-photos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        .uploaded-photos-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        
+        .uploaded-photos-count {
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .admin-container {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-sidebar {
+                display: none;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            th, td {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <i class="fas fa-water"></i>
+                <h2>SurfShot Admin</h2>
+            </div>
+            
+            <ul class="admin-nav">
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link active" onclick="switchAdminTab('dashboard', event)">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('folders', event)">
+                        <i class="fas fa-folder"></i>
+                        <span>Carpetas</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('photos', event)">
+                        <i class="fas fa-images"></i>
+                        <span>Fotos</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('payments', event)">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Pagos</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('reports', event)">
+                        <i class="fas fa-file-chart-line"></i>
+                        <span>Reportes</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('settings', event)">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <div class="admin-header">
+                <h1>Panel de Administrador</h1>
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <span>Administrador</span>
+                    <button class="admin-logout-btn" onclick="logoutAdmin()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Salir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div class="admin-content-wrapper">
+                <!-- Alerts -->
+                <div class="admin-alerts">
+                    <div class="alert alert-success" id="successAlert"></div>
+                    <div class="alert alert-error" id="errorAlert"></div>
+                    <div class="alert alert-info" id="infoAlert"></div>
+                </div>
+
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="admin-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label"><i class="fas fa-folder"></i> Total de Carpetas</div>
+                            <div class="stat-value" id="totalFolders">0</div>
+                            <div class="stat-change">↑ 2 esta semana</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label"><i class="fas fa-images"></i> Total de Fotos</div>
+                            <div class="stat-value" id="totalPhotos">0</div>
+                            <div class="stat-change">↑ 45 esta semana</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-label"><i class="fas fa-credit-card"></i> Ingresos Totales</div>
+                            <div class="stat-value" id="totalRevenue">$0.00</div>
+                            <div class="stat-change">↑ 12% vs mes anterior</div>
+                        </div>
+                        <div class="stat-card red">
+                            <div class="stat-label"><i class="fas fa-shopping-cart"></i> Transacciones</div>
+                            <div class="stat-value" id="totalTransactions">0</div>
+                            <div class="stat-change">↑ 8 esta semana</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Actividad Reciente</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivityTable">
+                                <tr><td colspan="4" style="text-align: center; color: #94a3b8;">Cargando actividad...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Folders Tab -->
+                <div id="folders-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Gestión de Carpetas</h2>
+                            <button class="btn btn-primary" onclick="openCreateFolderModal()">
+                                <i class="fas fa-plus"></i> Nueva Carpeta
+                            </button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fotos</th>
+                                    <th>Creada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="foldersTable">
+                                <tr><td colspan="4" style="text-align: center; color: #94a3b8;">Cargando carpetas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Photos Tab -->
+                <div id="photos-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Gestión de Fotos</h2>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-primary" onclick="loadAllPhotos()">
+                                    <i class="fas fa-sync-alt"></i> Actualizar
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Upload Section Inside Table -->
+                        <div style="padding: 20px; border-bottom: 2px solid #e2e8f0; background: #f8fafc;">
+                            <div class="form-group" style="margin-bottom: 15px;">
+                                <label><i class="fas fa-folder"></i> Seleccionar Carpeta de Destino</label>
+                                <select id="uploadFolderSelect" class="form-group select">
+                                    <option value="">-- Selecciona una carpeta --</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Upload Area -->
+                            <div class="upload-area" id="uploadArea" onclick="if(!uploadArea.classList.contains('has-selected')) document.getElementById('bulkPhotosInput').click()">
+                                <div class="upload-area-content" id="uploadAreaContent">
+                                    <div class="upload-area-icon">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                    </div>
+                                    <div class="upload-area-text">Arrastra y suelta tus fotos aquí</div>
+                                    <div class="upload-area-subtext">o haz clic para seleccionar archivos</div>
+                                    
+                                    <div class="upload-options">
+                                        <button type="button" class="upload-option-btn" onclick="event.stopPropagation(); document.getElementById('bulkPhotosInput').click()">
+                                            <i class="fas fa-images"></i> Seleccionar Fotos
+                                        </button>
+                                        <button type="button" class="upload-option-btn" onclick="event.stopPropagation(); document.getElementById('bulkFolderInput').click()">
+                                            <i class="fas fa-folder-open"></i> Seleccionar Carpeta Completa
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <!-- Selected Photos Preview Grid -->
+                                <div id="selectedPhotosPreview" style="display: none; width: 100%;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                        <div>
+                                            <div style="font-size: 16px; font-weight: 600; color: #0f172a;">
+                                                <i class="fas fa-images" style="color: #3b82f6; margin-right: 8px;"></i>
+                                                Fotos Seleccionadas
+                                            </div>
+                                            <div style="font-size: 13px; color: #64748b; margin-top: 5px;" id="selectedPhotosCount">
+                                                0 fotos seleccionadas
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-secondary" onclick="clearBulkPhotos()" style="padding: 6px 12px; font-size: 12px;">
+                                            <i class="fas fa-times"></i> Limpiar
+                                        </button>
+                                    </div>
+                                    <div id="selectedPhotosLoading" style="display: none; text-align: center; padding: 20px; color: #64748b;">
+                                        <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i>
+                                        Cargando vista previa...
+                                    </div>
+                                    <div class="selected-photos-grid" id="selectedPhotosGrid"></div>
+                                    
+                                    <!-- Upload Button -->
+                                    <div style="margin-top: 20px; text-align: center;">
+                                        <button class="btn btn-primary" onclick="uploadBulkPhotos()" id="uploadBulkBtn" disabled style="padding: 12px 30px; font-size: 15px;">
+                                            <i class="fas fa-upload"></i> Iniciar Subida
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden Inputs -->
+                            <input type="file" id="bulkPhotosInput" accept="image/*" multiple style="display: none;" onchange="handleBulkPhotoSelect(event)">
+                            <input type="file" id="bulkFolderInput" webkitdirectory directory multiple style="display: none;" onchange="handleBulkFolderSelect(event)">
+                        </div>
+                        
+                        <!-- Photos Table -->
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Carpeta</th>
+                                    <th>Tamaño</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="photosTable">
+                                <tr><td colspan="5" style="text-align: center; color: #94a3b8;">Cargando fotos...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payments Tab -->
+                <div id="payments-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Transacciones de Pago</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Transacción</th>
+                                    <th>Cliente</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTable">
+                                <tr><td colspan="6" style="text-align: center; color: #94a3b8;">Cargando transacciones...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports-tab" class="admin-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Fotos por Escuela</div>
+                            <div id="photosBySchool" style="margin-top: 15px; color: #475569; font-size: 14px;">Cargando...</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">Ingresos por Mes</div>
+                            <div id="revenueByMonth" style="margin-top: 15px; color: #475569; font-size: 14px;">Cargando...</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container" style="margin-top: 20px;">
+                        <div class="table-header">
+                            <h2>Reporte Detallado</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Métrica</th>
+                                    <th>Valor</th>
+                                    <th>Cambio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable">
+                                <tr><td colspan="3" style="text-align: center; color: #94a3b8;">Cargando reportes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="admin-content">
+                    <div class="settings-form">
+                        <h2 style="margin-bottom: 20px; color: #0f172a;">Configuración del Sistema</h2>
+                        <div class="form-group">
+                            <label>URL del Backend</label>
+                            <input type="text" id="backendUrlSetting" placeholder="https://..." />
+                        </div>
+                        <div class="form-group">
+                            <label>Precio por Foto</label>
+                            <input type="number" id="photoPriceSetting" placeholder="9.99" step="0.01" />
+                        </div>
+                        <div class="form-group">
+                            <label>Tasa de Impuesto (%)</label>
+                            <input type="number" id="taxRateSetting" placeholder="10" step="0.1" />
+                        </div>
+                        <button class="btn btn-primary" onclick="saveSettings()">
+                            <i class="fas fa-save"></i> Guardar Configuración
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Folder Modal -->
+    <div class="modal-overlay" id="createFolderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Carpeta</h2>
+                <button class="modal-close" onclick="closeCreateFolderModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Nombre de la Carpeta</label>
+                <input type="text" id="folderNameInput" placeholder="Ej: Escuela de Surf 2024" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateFolderModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="createNewFolder()">Crear Carpeta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Progress Modal -->
+    <div class="modal-overlay" id="uploadProgressModal">
+        <div class="modal-content upload-progress-modal">
+            <div class="upload-progress-header">
+                <div class="upload-progress-icon">
+                    <i class="fas fa-cloud-upload-alt" id="uploadModalIcon"></i>
+                </div>
+                <div class="upload-progress-info">
+                    <h3 id="uploadModalTitle">Subiendo Fotos...</h3>
+                    <p id="uploadModalSubtitle">Preparando archivos para subir</p>
+                </div>
+                <button class="modal-close" onclick="closeUploadProgressModal()" id="uploadModalClose" style="display: none;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="upload-progress-bar-container">
+                <div class="upload-progress-bar" id="uploadModalProgressBar" style="width: 0%;"></div>
+            </div>
+            
+            <div class="upload-stats">
+                <div class="upload-stat">
+                    <div class="upload-stat-value" id="uploadModalTotal">0</div>
+                    <div class="upload-stat-label">Total</div>
+                </div>
+                <div class="upload-stat">
+                    <div class="upload-stat-value" id="uploadModalUploaded" style="color: #10b981;">0</div>
+                    <div class="upload-stat-label">Subidas</div>
+                </div>
+                <div class="upload-stat">
+                    <div class="upload-stat-value" id="uploadModalErrors" style="color: #ef4444;">0</div>
+                    <div class="upload-stat-label">Errores</div>
+                </div>
+            </div>
+            
+            <div id="uploadModalFileList" class="upload-file-list" style="display: none; margin-top: 20px;"></div>
+            
+            <div class="modal-footer" id="uploadModalFooter" style="display: none; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="closeUploadProgressModal()">
+                    <i class="fas fa-check"></i> Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <i class="fas fa-water"></i>
+                <h2>SurfShot Admin</h2>
+            </div>
+            
+            <ul class="admin-nav">
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link active" onclick="switchAdminTab('dashboard')">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('folders')">
+                        <i class="fas fa-folder"></i>
+                        <span>Carpetas</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('photos')">
+                        <i class="fas fa-images"></i>
+                        <span>Fotos</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('payments')">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Pagos</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('reports')">
+                        <i class="fas fa-file-chart-line"></i>
+                        <span>Reportes</span>
+                    </button>
+                </li>
+                <li class="admin-nav-item">
+                    <button class="admin-nav-link" onclick="switchAdminTab('settings')">
+                        <i class="fas fa-cog"></i>
+                        <span>Configuración</span>
+                    </button>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <div class="admin-header">
+                <h1>Panel de Administrador</h1>
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <span>Administrador</span>
+                    <button class="admin-logout-btn" onclick="logoutAdmin()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Salir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content Wrapper -->
+            <div class="admin-content-wrapper">
+                <!-- Alerts -->
+                <div class="alert alert-success" id="successAlert"></div>
+                <div class="alert alert-error" id="errorAlert"></div>
+                <div class="alert alert-info" id="infoAlert"></div>
+
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="admin-content active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <i class="fas fa-folder"></i>
+                                Total de Carpetas
+                            </div>
+                            <div class="stat-value" id="totalFolders">0</div>
+                            <div class="stat-change">↑ 2 esta semana</div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">
+                                <i class="fas fa-images"></i>
+                                Total de Fotos
+                            </div>
+                            <div class="stat-value" id="totalPhotos">0</div>
+                            <div class="stat-change">↑ 45 esta semana</div>
+                        </div>
+                        <div class="stat-card orange">
+                            <div class="stat-label">
+                                <i class="fas fa-credit-card"></i>
+                                Ingresos Totales
+                            </div>
+                            <div class="stat-value" id="totalRevenue">$0.00</div>
+                            <div class="stat-change">↑ 12% vs mes anterior</div>
+                        </div>
+                        <div class="stat-card red">
+                            <div class="stat-label">
+                                <i class="fas fa-shopping-cart"></i>
+                                Transacciones
+                            </div>
+                            <div class="stat-value" id="totalTransactions">0</div>
+                            <div class="stat-change">↑ 8 esta semana</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Actividad Reciente</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentActivityTable">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #94a3b8;">
+                                        Cargando actividad...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Folders Tab -->
+                <div id="folders-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Gestión de Carpetas</h2>
+                            <button class="btn btn-primary" onclick="openCreateFolderModal()">
+                                <i class="fas fa-plus"></i>
+                                Nueva Carpeta
+                            </button>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Fotos</th>
+                                    <th>Creada</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="foldersTable">
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: #94a3b8;">
+                                        Cargando carpetas...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Photos Tab -->
+                <div id="photos-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Gestión de Fotos</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Carpeta</th>
+                                    <th>Tamaño</th>
+                                    <th>Fecha</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="photosTable">
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #94a3b8;">
+                                        Cargando fotos...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Payments Tab -->
+                <div id="payments-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Transacciones de Pago</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID Transacción</th>
+                                    <th>Cliente</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTable">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; color: #94a3b8;">
+                                        Cargando transacciones...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reports Tab -->
+                <div id="reports-tab" class="admin-content">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Fotos por Escuela</div>
+                            <div id="photosBySchool" style="margin-top: 15px; color: #475569; font-size: 14px;">
+                                Cargando...
+                            </div>
+                        </div>
+                        <div class="stat-card green">
+                            <div class="stat-label">Ingresos por Mes</div>
+                            <div id="revenueByMonth" style="margin-top: 15px; color: #475569; font-size: 14px;">
+                                Cargando...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container" style="margin-top: 20px;">
+                        <div class="table-header">
+                            <h2>Reporte Detallado</h2>
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Métrica</th>
+                                    <th>Valor</th>
+                                    <th>Cambio</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable">
+                                <tr>
+                                    <td colspan="3" style="text-align: center; color: #94a3b8;">
+                                        Cargando reportes...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="admin-content">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h2>Configuración del Sistema</h2>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div class="form-group">
+                                <label>URL del Backend</label>
+                                <input type="text" id="backendUrlSetting" placeholder="https://..." />
+                            </div>
+                            <div class="form-group">
+                                <label>Precio por Foto</label>
+                                <input type="number" id="photoPriceSetting" placeholder="9.99" step="0.01" />
+                            </div>
+                            <div class="form-group">
+                                <label>Tasa de Impuesto (%)</label>
+                                <input type="number" id="taxRateSetting" placeholder="10" step="0.1" />
+                            </div>
+                            <button class="btn btn-primary" onclick="saveSettings()">
+                                <i class="fas fa-save"></i>
+                                Guardar Configuración
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Folder Modal -->
+    <div class="modal-overlay" id="createFolderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Carpeta</h2>
+                <button class="modal-close" onclick="closeCreateFolderModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="form-group">
+                <label>Nombre de la Carpeta</label>
+                <input type="text" id="folderNameInput" placeholder="Ej: Escuela de Surf 2024" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCreateFolderModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="createNewFolder()">Crear Carpeta</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
