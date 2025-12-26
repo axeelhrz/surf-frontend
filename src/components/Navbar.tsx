@@ -17,8 +17,9 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick }) => {
         
         <ul className="navbar-menu">
           <li><a href="#home" className="nav-link">Inicio</a></li>
-          <li><a href="#recognition" className="nav-link">Reconocimiento</a></li>
-          <li><a href="#gallery" className="nav-link">Galería</a></li>
+          <li><a href="#how-it-works" className="nav-link">Cómo funciona</a></li>
+          <li><a href="#pricing" className="nav-link">Precios</a></li>
+          <li><a href="#schools" className="nav-link">Escuelas</a></li>
         </ul>
         
         <button className="cart-button" onClick={onCartClick}>

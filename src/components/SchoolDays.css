@@ -1,0 +1,250 @@
+.school-days {
+  min-height: 100vh;
+  background: white;
+  padding-top: 80px;
+}
+
+.school-days-header {
+  background: linear-gradient(135deg, #B24A3B 0%, #8a3a2d 100%);
+  color: white;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.btn-back {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.btn-back:hover {
+  background: white;
+  color: #B24A3B;
+}
+
+.school-days-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.school-days-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem 2rem;
+}
+
+/* Búsqueda por fecha */
+.date-search-section {
+  background: #f9f9f9;
+  padding: 2rem;
+  border-radius: 8px;
+  margin-bottom: 3rem;
+}
+
+.date-search-section h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem;
+  color: #1a1a1a;
+}
+
+.date-search-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  padding: 0.8rem 1rem;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+  flex: 1;
+  min-width: 200px;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: #B24A3B;
+}
+
+.btn {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background-color: #B24A3B;
+  color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #a03d30;
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Listado de días */
+.days-section {
+  margin-bottom: 2rem;
+}
+
+.days-section h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+  color: #1a1a1a;
+}
+
+.days-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin: 0 0 2rem;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.day-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.day-card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+  border-color: #B24A3B;
+}
+
+.day-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, #B24A3B 0%, #8a3a2d 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.day-image-placeholder {
+  text-align: center;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.photo-count {
+  font-size: 3rem;
+  font-weight: 800;
+  display: block;
+}
+
+.photo-label {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.day-info {
+  padding: 1.5rem;
+}
+
+.day-date {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .school-days-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+
+  .school-days-header h1 {
+    font-size: 1.8rem;
+  }
+
+  .school-days-content {
+    padding: 0 1rem 1rem;
+  }
+
+  .date-search-container {
+    flex-direction: column;
+  }
+
+  .date-input {
+    min-width: auto;
+  }
+
+  .days-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .school-days-header {
+    padding: 1rem;
+  }
+
+  .school-days-header h1 {
+    font-size: 1.3rem;
+  }
+
+  .school-days-content {
+    padding: 0 1rem 1rem;
+  }
+
+  .date-search-section {
+    padding: 1.5rem;
+  }
+
+  .days-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .day-image-wrapper {
+    height: 150px;
+  }
+
+  .photo-count {
+    font-size: 2rem;
+  }
+}
