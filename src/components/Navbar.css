@@ -48,7 +48,7 @@
 }
 
 .nav-link {
-  color: var(--dark);
+  color: #000;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -59,11 +59,28 @@
   align-items: center;
   gap: 0.5rem;
   letter-spacing: 0.3px;
+  position: relative;
 }
 
 .nav-link:hover {
-  color: var(--primary);
+  color: var(--primary, #B24A3B);
   background: rgba(178, 74, 59, 0.05);
+}
+
+.nav-link.active {
+  color: var(--primary, #B24A3B);
+  font-weight: 600;
+}
+
+.nav-link.active::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 1rem;
+  right: 1rem;
+  height: 3px;
+  background: var(--primary, #B24A3B);
+  border-radius: 2px;
 }
 
 .cart-button {
