@@ -1,0 +1,359 @@
+.about-me {
+  background: #ffffff;
+  padding: 8rem 2rem 6rem;
+  position: relative;
+}
+
+.about-me-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5rem;
+  align-items: center;
+}
+
+/* ============================================
+   IMAGEN DEL FOTÓGRAFO
+   ============================================ */
+.about-me-image {
+  position: relative;
+}
+
+.image-wrapper {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease;
+}
+
+.image-wrapper:hover {
+  transform: translateY(-8px);
+}
+
+.photographer-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  aspect-ratio: 4/5;
+}
+
+.image-decoration {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 70px;
+  height: 70px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  animation: float 3s ease-in-out infinite;
+}
+
+.decoration-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--primary, #B24A3B);
+  stroke-width: 2;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* ============================================
+   CONTENIDO DE TEXTO
+   ============================================ */
+.about-me-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.content-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--primary, #B24A3B);
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.highlight {
+  color: var(--primary, #B24A3B);
+  position: relative;
+}
+
+/* ============================================
+   TEXTO DESCRIPTIVO
+   ============================================ */
+.about-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.about-text p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #333;
+  margin: 0;
+}
+
+.intro-text {
+  font-size: 1.2rem;
+  color: #1a1a1a;
+}
+
+.intro-text strong {
+  color: var(--primary, #B24A3B);
+  font-weight: 700;
+}
+
+.brand-name {
+  color: var(--primary, #B24A3B);
+  font-weight: 700;
+}
+
+.mission-text {
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: #1a1a1a;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-left: 4px solid var(--primary, #B24A3B);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+}
+
+.emphasis {
+  color: var(--primary, #B24A3B);
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ============================================
+   ESTADÍSTICAS
+   ============================================ */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem 1rem;
+  background: #f8f9fa;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.stat-box:hover {
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  color: var(--primary, #B24A3B);
+  stroke-width: 2;
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--primary, #B24A3B);
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 968px) {
+  .about-me-container {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .about-me-image {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .about-title {
+    font-size: 2rem;
+  }
+
+  .about-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-me {
+    padding: 4rem 1.5rem;
+  }
+
+  .about-me-container {
+    gap: 2.5rem;
+  }
+
+  .about-title {
+    font-size: 1.8rem;
+  }
+
+  .about-text p {
+    font-size: 1rem;
+  }
+
+  .intro-text {
+    font-size: 1.1rem;
+  }
+
+  .mission-text {
+    font-size: 1.05rem;
+    padding: 1.2rem;
+  }
+
+  .image-decoration {
+    width: 60px;
+    height: 60px;
+    bottom: 15px;
+    right: 15px;
+  }
+
+  .decoration-icon {
+    width: 35px;
+    height: 35px;
+  }
+
+  .about-stats {
+    gap: 1rem;
+  }
+
+  .stat-box {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .stat-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .stat-value {
+    font-size: 1.3rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-me {
+    padding: 3rem 1rem;
+  }
+
+  .about-me-container {
+    gap: 2rem;
+  }
+
+  .section-label {
+    font-size: 0.8rem;
+  }
+
+  .about-title {
+    font-size: 1.5rem;
+  }
+
+  .about-text {
+    gap: 1rem;
+  }
+
+  .about-text p {
+    font-size: 0.95rem;
+  }
+
+  .intro-text {
+    font-size: 1rem;
+  }
+
+  .mission-text {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .image-decoration {
+    width: 50px;
+    height: 50px;
+    bottom: 12px;
+    right: 12px;
+  }
+
+  .decoration-icon {
+    width: 28px;
+    height: 28px;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+  }
+
+  .stat-box {
+    padding: 1rem;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 1rem;
+  }
+
+  .stat-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .stat-value {
+    font-size: 1.2rem;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+  }
+}

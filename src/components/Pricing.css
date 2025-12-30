@@ -1,6 +1,6 @@
 .pricing {
   background: white;
-  padding: 5rem 2rem;
+  padding: 8rem 2rem 5rem;
 }
 
 .pricing-wrapper {
@@ -145,7 +145,7 @@
 
 @media (max-width: 768px) {
   .pricing {
-    padding: 3rem 1.5rem;
+    padding: 6rem 1.5rem 3rem;
   }
 
   .pricing-title {
@@ -189,7 +189,7 @@
 
 @media (max-width: 480px) {
   .pricing {
-    padding: 2rem 1rem;
+    padding: 5rem 1rem 2rem;
   }
 
   .pricing-title {

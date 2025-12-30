@@ -16,13 +16,13 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Tu Carrito</h2>
+          <h2>Tus Recuerdos</h2>
           <button className="modal-close" onClick={onClose}>×</button>
         </div>
         
         <div className="modal-body">
           {items.length === 0 ? (
-            <p style={{textAlign: 'center', color: '#999'}}>Tu carrito está vacío</p>
+            <p style={{textAlign: 'center', color: '#999'}}>Tus recuerdos están vacíos</p>
           ) : (
             <div className="cart-items">
               {items.map(item => (

@@ -7,82 +7,86 @@ const HowItWorks: React.FC = () => {
       number: 1,
       title: 'Elige tu escuela de surf',
       description: 'Selecciona la escuela donde hiciste tu clase',
+      image: '/7N5A0530.JPG',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" />
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
         </svg>
       ),
+      color: '#FF6B6B'
     },
     {
       number: 2,
       title: 'Selecciona la fecha de tu sesión',
       description: 'Elige el día en el que surfeaste',
+      image: '/7N5A0773.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="16" y1="2" x2="16" y2="6"></line>
-          <line x1="8" y1="2" x2="8" y2="6"></line>
-          <line x1="3" y1="10" x2="21" y2="10"></line>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
         </svg>
       ),
+      color: '#4ECDC4'
     },
     {
       number: 3,
       title: 'Sube un selfie',
       description: 'La IA buscará tus fotos automáticamente',
+      image: '/7N5A1361.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-          <circle cx="12" cy="13" r="4"></circle>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
         </svg>
       ),
+      color: '#FFE66D'
     },
     {
       number: 4,
       title: 'Visualiza tus fotos',
       description: 'Ve todas las fotos en las que apareces',
+      image: '/7N5A2536.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
         </svg>
       ),
+      color: '#A8E6CF'
     },
     {
       number: 5,
-      title: 'Añade al carrito',
-      description: 'Selecciona las fotos que deseas comprar',
+      title: 'Añade tus recuerdos',
+      description: 'Selecciona las fotos que deseas guardar',
+      image: '/7N5A4158.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <circle cx="9" cy="21" r="1"></circle>
-          <circle cx="20" cy="21" r="1"></circle>
-          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
         </svg>
       ),
+      color: '#FF8B94'
     },
     {
       number: 6,
       title: 'Paga de forma segura',
       description: 'Realiza el pago de manera rápida y segura',
+      image: '/7N5A6375.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-          <line x1="1" y1="10" x2="23" y2="10"></line>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
         </svg>
       ),
+      color: '#B4A7D6'
     },
     {
       number: 7,
       title: 'Descarga inmediata',
       description: 'Obtén tus fotos al instante sin marca de agua',
+      image: '/7N5A8618.jpg',
       icon: (
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-          <polyline points="8 17 12 21 16 17"></polyline>
-          <line x1="12" y1="12" x2="12" y2="21"></line>
-          <path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
       ),
+      color: '#95E1D3'
     },
   ];
 
@@ -96,33 +100,123 @@ const HowItWorks: React.FC = () => {
           </p>
         </div>
 
-        <div className="steps-container">
-          {steps.map((step, index) => (
-            <div key={step.number} className="step">
-              <div className="step-number">{step.number}</div>
-              
-              <div className="step-content">
-                <div className="step-icon">{step.icon}</div>
-                <h3 className="step-title">{step.title}</h3>
-                <p className="step-description">{step.description}</p>
-              </div>
-
-              {index < steps.length - 1 && (
-                <div className="step-connector">
-                  <div className="connector-line"></div>
-                  <div className="connector-dot"></div>
+        <div className="steps-grid">
+          {/* Grupo 1: Pasos 1 y 2 */}
+          <div className="step-row">
+            <div className="step-card" style={{ borderTopColor: steps[0].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[0].image} alt={steps[0].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[0].color }}>
+                  {steps[0].icon}
                 </div>
-              )}
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[0].color }}>
+                {steps[0].number}
+              </div>
+              <h3 className="step-title">{steps[0].title}</h3>
+              <p className="step-description">{steps[0].description}</p>
             </div>
-          ))}
+
+            <div className="step-card" style={{ borderTopColor: steps[1].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[1].image} alt={steps[1].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[1].color }}>
+                  {steps[1].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[1].color }}>
+                {steps[1].number}
+              </div>
+              <h3 className="step-title">{steps[1].title}</h3>
+              <p className="step-description">{steps[1].description}</p>
+            </div>
+          </div>
+
+          {/* Grupo 2: Pasos 3 y 4 */}
+          <div className="step-row">
+            <div className="step-card" style={{ borderTopColor: steps[2].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[2].image} alt={steps[2].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[2].color }}>
+                  {steps[2].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[2].color }}>
+                {steps[2].number}
+              </div>
+              <h3 className="step-title">{steps[2].title}</h3>
+              <p className="step-description">{steps[2].description}</p>
+            </div>
+
+            <div className="step-card" style={{ borderTopColor: steps[3].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[3].image} alt={steps[3].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[3].color }}>
+                  {steps[3].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[3].color }}>
+                {steps[3].number}
+              </div>
+              <h3 className="step-title">{steps[3].title}</h3>
+              <p className="step-description">{steps[3].description}</p>
+            </div>
+          </div>
+
+          {/* Grupo 3: Pasos 5 y 6 */}
+          <div className="step-row">
+            <div className="step-card" style={{ borderTopColor: steps[4].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[4].image} alt={steps[4].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[4].color }}>
+                  {steps[4].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[4].color }}>
+                {steps[4].number}
+              </div>
+              <h3 className="step-title">{steps[4].title}</h3>
+              <p className="step-description">{steps[4].description}</p>
+            </div>
+
+            <div className="step-card" style={{ borderTopColor: steps[5].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[5].image} alt={steps[5].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[5].color }}>
+                  {steps[5].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[5].color }}>
+                {steps[5].number}
+              </div>
+              <h3 className="step-title">{steps[5].title}</h3>
+              <p className="step-description">{steps[5].description}</p>
+            </div>
+          </div>
+
+          {/* Paso 7 - Centrado */}
+          <div className="step-row step-row-single">
+            <div className="step-card step-card-highlight" style={{ borderTopColor: steps[6].color }}>
+              <div className="step-image-wrapper">
+                <img src={steps[6].image} alt={steps[6].title} className="step-image" />
+                <div className="step-icon-overlay" style={{ backgroundColor: steps[6].color }}>
+                  {steps[6].icon}
+                </div>
+              </div>
+              <div className="step-badge" style={{ backgroundColor: steps[6].color }}>
+                {steps[6].number}
+              </div>
+              <h3 className="step-title">{steps[6].title}</h3>
+              <p className="step-description">{steps[6].description}</p>
+            </div>
+          </div>
         </div>
 
         {/* Nota especial sobre reconocimiento facial */}
         <div className="facial-recognition-note">
           <div className="note-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8"></circle>
-              <path d="m21 21-4.35-4.35"></path>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="note-icon-svg">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
             </svg>
           </div>
           <div className="note-content">
@@ -133,7 +227,7 @@ const HowItWorks: React.FC = () => {
 
         {/* CTA Button */}
         <div className="how-it-works-cta">
-          <a href="#schools" className="btn btn-primary btn-large">
+          <a href="/schools" className="btn btn-primary btn-large">
             Encuentra tus fotos
           </a>
         </div>

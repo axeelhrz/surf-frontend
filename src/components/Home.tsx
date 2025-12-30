@@ -9,33 +9,33 @@ const Home: React.FC<HomeProps> = ({ onSelectSchool }) => {
   const schools = [
     {
       id: 1,
-      name: 'JMC SURFTRAINING',
-      image: '/JMC-SURFTRAINING.jpg',
-    },
-    {
-      id: 2,
-      name: 'LANZAROTE SURF SCHOOL',
-      image: '/LANZAROTE.jpg',
-    },
-    {
-      id: 3,
-      name: 'MAURI SURF',
-      image: '/MAURI-SURF.JPG',
-    },
-    {
-      id: 4,
-      name: 'OTRAS',
-      image: '/OTRAS.jpg',
-    },
-    {
-      id: 5,
       name: 'REDSTAR',
       image: '/REDSTAR.JPG',
     },
     {
-      id: 6,
+      id: 2,
       name: 'SANTA SURF PROCENTER',
       image: '/SANTASURF-PROCENTER.JPG',
+    },
+    {
+      id: 3,
+      name: 'LANZAROTE SURF SCHOOL',
+      image: '/LANZAROTE.jpg',
+    },
+    {
+      id: 4,
+      name: 'ZOOPARK',
+      image: '/ZOOPARK.jpg',
+    },
+    {
+      id: 5,
+      name: 'MAURI SURF',
+      image: '/MAURI-SURF.JPG',
+    },
+    {
+      id: 6,
+      name: 'JMC SURFTRAINING',
+      image: '/JMC-SURFTRAINING.jpg',
     },
     {
       id: 7,
@@ -44,8 +44,8 @@ const Home: React.FC<HomeProps> = ({ onSelectSchool }) => {
     },
     {
       id: 8,
-      name: 'ZOOPARK',
-      image: '/ZOOPARK.jpg',
+      name: 'OTRAS',
+      image: '/OTRAS.jpg',
     },
   ];
 

@@ -1,6 +1,6 @@
 .hero {
-  background: var(--white);
-  color: var(--dark);
+  background: linear-gradient(135deg, #B24A3B 0%, #C85A4A 100%);
+  color: white;
   padding: 8rem 3rem;
   min-height: 100vh;
   display: flex;
@@ -17,7 +17,7 @@
   right: -10%;
   width: 600px;
   height: 600px;
-  background: radial-gradient(circle, rgba(178, 74, 59, 0.08) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
   border-radius: 50%;
 }
 
@@ -28,7 +28,7 @@
   left: -5%;
   width: 500px;
   height: 500px;
-  background: radial-gradient(circle, rgba(0, 0, 0, 0.03) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.1) 0%, transparent 70%);
   border-radius: 50%;
 }
 
@@ -41,30 +41,35 @@
 
 .hero-badge {
   display: inline-block;
-  background: transparent;
-  color: var(--primary);
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
   padding: 0.8rem 1.8rem;
   border-radius: 4px;
+  font-family: var(--font-primary);
   font-size: 0.85rem;
   font-weight: 600;
   text-transform: uppercase;
   margin-bottom: 2rem;
-  border: 1px solid var(--primary);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   letter-spacing: 1px;
+  backdrop-filter: blur(10px);
 }
 
 .hero-title {
+  font-family: var(--font-display);
   font-size: 4rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
   line-height: 1.2;
-  color: var(--dark);
+  color: white;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .hero-description {
+  font-family: var(--font-primary);
   font-size: 1.2rem;
-  color: var(--gray-600);
+  color: rgba(255, 255, 255, 0.95);
   margin-bottom: 2.5rem;
   font-weight: 400;
   line-height: 1.8;
@@ -85,7 +90,7 @@
   justify-content: center;
   flex-wrap: wrap;
   padding-top: 2rem;
-  border-top: 1px solid var(--gray-200);
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .stat {
@@ -95,14 +100,16 @@
 .stat-number {
   font-size: 2.8rem;
   font-weight: 800;
-  color: var(--primary);
-  font-family: 'Montserrat', sans-serif;
+  color: white;
+  font-family: var(--font-display);
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stat-label {
+  font-family: var(--font-primary);
   font-size: 0.85rem;
-  color: var(--gray-500);
+  color: rgba(255, 255, 255, 0.85);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   font-weight: 600;
