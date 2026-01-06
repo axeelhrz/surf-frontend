@@ -13,7 +13,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
         </svg>
       ),
-      color: '#FF6B6B'
+      color: '#B24A3B'
     },
     {
       number: 2,
@@ -25,7 +25,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
         </svg>
       ),
-      color: '#4ECDC4'
+      color: '#C85A4A'
     },
     {
       number: 3,
@@ -38,7 +38,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
         </svg>
       ),
-      color: '#FFE66D'
+      color: '#D66A58'
     },
     {
       number: 4,
@@ -50,7 +50,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
         </svg>
       ),
-      color: '#A8E6CF'
+      color: '#A03D30'
     },
     {
       number: 5,
@@ -62,7 +62,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
         </svg>
       ),
-      color: '#FF8B94'
+      color: '#E47A66'
     },
     {
       number: 6,
@@ -74,7 +74,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
         </svg>
       ),
-      color: '#B4A7D6'
+      color: '#8a3a2d'
     },
     {
       number: 7,
@@ -86,7 +86,7 @@ const HowItWorks: React.FC = () => {
           <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
       ),
-      color: '#95E1D3'
+      color: '#F28A74'
     },
   ];
 
@@ -104,11 +104,8 @@ const HowItWorks: React.FC = () => {
           {/* Grupo 1: Pasos 1 y 2 */}
           <div className="step-row">
             <div className="step-card" style={{ borderTopColor: steps[0].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[0].image} alt={steps[0].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[0].color }}>
-                  {steps[0].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[0].color }}>
+                {steps[0].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[0].color }}>
                 {steps[0].number}
@@ -118,11 +115,8 @@ const HowItWorks: React.FC = () => {
             </div>
 
             <div className="step-card" style={{ borderTopColor: steps[1].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[1].image} alt={steps[1].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[1].color }}>
-                  {steps[1].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[1].color }}>
+                {steps[1].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[1].color }}>
                 {steps[1].number}
@@ -135,11 +129,8 @@ const HowItWorks: React.FC = () => {
           {/* Grupo 2: Pasos 3 y 4 */}
           <div className="step-row">
             <div className="step-card" style={{ borderTopColor: steps[2].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[2].image} alt={steps[2].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[2].color }}>
-                  {steps[2].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[2].color }}>
+                {steps[2].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[2].color }}>
                 {steps[2].number}
@@ -149,11 +140,8 @@ const HowItWorks: React.FC = () => {
             </div>
 
             <div className="step-card" style={{ borderTopColor: steps[3].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[3].image} alt={steps[3].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[3].color }}>
-                  {steps[3].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[3].color }}>
+                {steps[3].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[3].color }}>
                 {steps[3].number}
@@ -166,11 +154,8 @@ const HowItWorks: React.FC = () => {
           {/* Grupo 3: Pasos 5 y 6 */}
           <div className="step-row">
             <div className="step-card" style={{ borderTopColor: steps[4].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[4].image} alt={steps[4].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[4].color }}>
-                  {steps[4].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[4].color }}>
+                {steps[4].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[4].color }}>
                 {steps[4].number}
@@ -180,11 +165,8 @@ const HowItWorks: React.FC = () => {
             </div>
 
             <div className="step-card" style={{ borderTopColor: steps[5].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[5].image} alt={steps[5].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[5].color }}>
-                  {steps[5].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[5].color }}>
+                {steps[5].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[5].color }}>
                 {steps[5].number}
@@ -197,11 +179,8 @@ const HowItWorks: React.FC = () => {
           {/* Paso 7 - Centrado */}
           <div className="step-row step-row-single">
             <div className="step-card step-card-highlight" style={{ borderTopColor: steps[6].color }}>
-              <div className="step-image-wrapper">
-                <img src={steps[6].image} alt={steps[6].title} className="step-image" />
-                <div className="step-icon-overlay" style={{ backgroundColor: steps[6].color }}>
-                  {steps[6].icon}
-                </div>
+              <div className="step-icon-wrapper" style={{ backgroundColor: steps[6].color }}>
+                {steps[6].icon}
               </div>
               <div className="step-badge" style={{ backgroundColor: steps[6].color }}>
                 {steps[6].number}

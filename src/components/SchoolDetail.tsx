@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './SchoolDetail.css';
 
 interface SchoolDetailProps {
@@ -29,6 +29,31 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [heroImage, setHeroImage] = useState<string>('');
+
+  // Cargar una foto aleatoria de la escuela para el hero
+  useEffect(() => {
+    const fetchHeroImage = async () => {
+      try {
+        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+        const response = await fetch(`${apiUrl}/photos/list?folder_name=${schoolName}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.photos && data.photos.length > 0) {
+            // Seleccionar una foto aleatoria
+            const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
+            const imageUrl = `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${randomPhoto.filename}&watermark=false`;
+            setHeroImage(imageUrl);
+          }
+        }
+      } catch (err) {
+        console.error('Error cargando imagen del hero:', err);
+      }
+    };
+
+    fetchHeroImage();
+  }, [schoolName]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -107,11 +132,15 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
 
   return (
     <div className="school-detail">
-      <div className="school-detail-header">
-        <button className="btn-back" onClick={onBack}>
-          ← Volver
-        </button>
-        <h1>{schoolName}</h1>
+      {/* Hero Section con imagen de fondo */}
+      <div className="school-hero" style={{ backgroundImage: heroImage ? `url(${heroImage})` : 'none' }}>
+        <div className="school-hero-overlay"></div>
+        <div className="school-hero-content">
+          <button className="btn-back-hero" onClick={onBack}>
+            ← Volver
+          </button>
+          <h1 className="school-hero-title">{schoolName}</h1>
+        </div>
       </div>
 
       <div className="school-detail-content">

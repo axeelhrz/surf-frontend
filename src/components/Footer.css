@@ -1,8 +1,9 @@
 .footer {
-  background: var(--dark);
+  background: linear-gradient(135deg, #B24A3B 0%, #8a3a2d 100%);
   color: white;
   padding: 4rem 3rem 2rem;
-  border-top: 1px solid var(--gray-200);
+  border-top: none;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .footer-content {
@@ -46,7 +47,7 @@
 }
 
 .footer-section a:hover {
-  color: var(--primary);
+  color: white;
   transform: translateX(3px);
 }
 
@@ -64,8 +65,8 @@
 }
 
 .social-links a:hover {
-  background: var(--primary);
-  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: white;
   color: white;
 }
 

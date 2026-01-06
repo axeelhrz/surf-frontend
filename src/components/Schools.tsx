@@ -51,9 +51,10 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
     },
     {
       id: 8,
-      name: 'OTRAS',
+      name: 'OTRAS ESCUELAS',
       image: '/OTRAS.jpg',
       location: 'Varias',
+      isOtras: true,
     },
   ];
 
@@ -75,7 +76,7 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
             {schools.map((school) => (
               <div 
                 key={school.id} 
-                className="school-card"
+                className={`school-card ${school.isOtras ? 'school-card-otras' : ''}`}
                 onClick={() => onSelectSchool(school.name)}
               >
                 <div className="school-image-wrapper">
@@ -86,7 +87,14 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
                   />
                   <div className="school-overlay"></div>
                 </div>
-                <h3 className="school-name">{school.name}</h3>
+                {school.isOtras ? (
+                  <h3 className="school-name school-name-otras">
+                    <span className="otras-line">OTRAS</span>
+                    <span className="otras-line">ESCUELAS</span>
+                  </h3>
+                ) : (
+                  <h3 className="school-name">{school.name}</h3>
+                )}
               </div>
             ))}
           </div>

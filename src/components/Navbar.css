@@ -34,8 +34,9 @@
 }
 
 .brand-logo {
-  height: 100px;
+  height: 140px;
   width: auto;
+  max-width: 280px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
@@ -325,7 +326,8 @@
   }
 
   .brand-logo {
-    height: 75px;
+    height: 110px;
+    max-width: 220px;
   }
 
   .language-button {
@@ -353,7 +355,8 @@
   }
 
   .brand-logo {
-    height: 55px;
+    height: 85px;
+    max-width: 170px;
   }
 
   .language-button {
