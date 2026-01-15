@@ -23,28 +23,7 @@ const PhotosPage: React.FC = () => {
   const [loadingDays, setLoadingDays] = useState(false);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
 
-  useEffect(() => {
-    loadFolders();
-  }, []);
-
-  useEffect(() => {
-    if (selectedFolder) {
-      loadDays();
-    } else {
-      setDays([]);
-      setSelectedDay('');
-    }
-  }, [selectedFolder]);
-
-  useEffect(() => {
-    if (selectedFolder && selectedDay) {
-      loadPhotos();
-    } else {
-      setPhotos([]);
-    }
-  }, [selectedFolder, selectedDay]);
-
-  const loadFolders = async () => {
+  const loadFolders = React.useCallback(async () => {
     try {
       setLoading(true);
       const data = await adminApiService.getFolders();
@@ -62,9 +41,9 @@ const PhotosPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchParams, selectedFolder]);
 
-  const loadDays = async () => {
+  const loadDays = React.useCallback(async () => {
     if (!selectedFolder) return;
     
     try {
@@ -85,9 +64,9 @@ const PhotosPage: React.FC = () => {
     } finally {
       setLoadingDays(false);
     }
-  };
+  }, [selectedFolder, selectedDay, searchParams]);
 
-  const loadPhotos = async () => {
+  const loadPhotos = React.useCallback(async () => {
     if (!selectedFolder || !selectedDay) return;
     
     try {
@@ -102,7 +81,28 @@ const PhotosPage: React.FC = () => {
     } finally {
       setLoadingPhotos(false);
     }
-  };
+  }, [selectedFolder, selectedDay]);
+
+  useEffect(() => {
+    loadFolders();
+  }, [loadFolders]);
+
+  useEffect(() => {
+    if (selectedFolder) {
+      loadDays();
+    } else {
+      setDays([]);
+      setSelectedDay('');
+    }
+  }, [selectedFolder, loadDays]);
+
+  useEffect(() => {
+    if (selectedFolder && selectedDay) {
+      loadPhotos();
+    } else {
+      setPhotos([]);
+    }
+  }, [selectedFolder, selectedDay, loadPhotos]);
 
   const handleFolderChange = (folder: string) => {
     setSelectedFolder(folder);

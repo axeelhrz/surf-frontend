@@ -59,7 +59,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
             date: day.date,
             displayDate: formatDate(day.date),
             photoCount: day.photo_count,
-            thumbnailUrl: getFirstPhotoThumbnail()
+            thumbnailUrl: heroImage
           }));
           
           setAvailableDays(formattedDays);
@@ -76,7 +76,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     };
 
     loadDays();
-  }, [schoolName]);
+  }, [schoolName, heroImage]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -85,12 +85,6 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
       month: 'long', 
       year: 'numeric'
     });
-  };
-
-  const getFirstPhotoThumbnail = (): string => {
-    // Retornar una imagen placeholder o la primera foto del día
-    // Por ahora usamos un placeholder
-    return heroImage;
   };
 
   const handleDateSearch = () => {
