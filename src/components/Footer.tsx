@@ -1,38 +1,43 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Footer.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Footer: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h4>Surf Photo Lanzarote</h4>
-          <p>Marketplace premium de fotografía de surf en Lanzarote</p>
+          <h4>{t.footer.brand}</h4>
+          <p>{t.footer.description}</p>
         </div>
         <div className="footer-section">
-          <h4>Navegación</h4>
+          <h4>{t.footer.navigation}</h4>
           <ul>
-            <li><a href="#home">Inicio</a></li>
-            <li><a href="#recognition">Reconocimiento</a></li>
-            <li><a href="#gallery">Galería</a></li>
+            <li><Link to="/">{t.footer.home}</Link></li>
+            <li><Link to="/schools">{t.footer.schools}</Link></li>
+            <li><Link to="/how-it-works">{t.footer.howItWorks}</Link></li>
+            <li><Link to="/pricing">{t.footer.pricing}</Link></li>
           </ul>
         </div>
         <div className="footer-section">
-          <h4>Contacto</h4>
-          <p>hola@surfshot.com</p>
-          <p>+1 (555) 123-4567</p>
+          <h4>{t.footer.legal}</h4>
+          <ul>
+            <li><Link to="/legal-notice">{t.footer.legalNotice}</Link></li>
+            <li><Link to="/privacy-policy">{t.footer.privacy}</Link></li>
+            <li><Link to="/terms-conditions">{t.footer.terms}</Link></li>
+          </ul>
         </div>
         <div className="footer-section">
-          <h4>Síguenos</h4>
-          <div className="social-links">
-            <a href="https://instagram.com" title="Instagram">Instagram</a>
-            <a href="https://facebook.com" title="Facebook">Facebook</a>
-            <a href="https://twitter.com" title="Twitter">Twitter</a>
-          </div>
+          <h4>{t.footer.contact}</h4>
+          <p>{t.footer.email}</p>
+          <p>{t.footer.location}</p>
         </div>
       </div>
       <div className="footer-bottom">
-        <p>&copy; 2024 Surf Photo Lanzarote. Todos los derechos reservados.</p>
+        <p>&copy; 2024 {t.footer.brand}. {t.footer.rights}.</p>
       </div>
     </footer>
   );

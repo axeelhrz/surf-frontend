@@ -1,12 +1,15 @@
 import React from 'react';
 import './HowItWorks.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const HowItWorks: React.FC = () => {
+  const { t } = useLanguage();
+
   const steps = [
     {
       number: 1,
-      title: 'Elige tu escuela de surf',
-      description: 'Selecciona la escuela donde hiciste tu clase',
+      title: t.howItWorks.step1.title,
+      description: t.howItWorks.step1.description,
       image: '/7N5A0530.JPG',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -17,8 +20,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 2,
-      title: 'Selecciona la fecha de tu sesión',
-      description: 'Elige el día en el que surfeaste',
+      title: t.howItWorks.step2.title,
+      description: t.howItWorks.step2.description,
       image: '/7N5A0773.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -29,8 +32,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 3,
-      title: 'Sube un selfie',
-      description: 'La IA buscará tus fotos automáticamente',
+      title: t.howItWorks.step3.title,
+      description: t.howItWorks.step3.description,
       image: '/7N5A1361.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -42,8 +45,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 4,
-      title: 'Visualiza tus fotos',
-      description: 'Ve todas las fotos en las que apareces',
+      title: t.howItWorks.step4.title,
+      description: t.howItWorks.step4.description,
       image: '/7N5A2536.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -54,8 +57,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 5,
-      title: 'Añade tus recuerdos',
-      description: 'Selecciona las fotos que deseas guardar',
+      title: t.howItWorks.step5.title,
+      description: t.howItWorks.step5.description,
       image: '/7N5A4158.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -66,8 +69,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 6,
-      title: 'Paga de forma segura',
-      description: 'Realiza el pago de manera rápida y segura',
+      title: t.howItWorks.step6.title,
+      description: t.howItWorks.step6.description,
       image: '/7N5A6375.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -78,8 +81,8 @@ const HowItWorks: React.FC = () => {
     },
     {
       number: 7,
-      title: 'Descarga inmediata',
-      description: 'Obtén tus fotos al instante sin marca de agua',
+      title: t.howItWorks.step7.title,
+      description: t.howItWorks.step7.description,
       image: '/7N5A8618.jpg',
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="step-icon">
@@ -94,9 +97,9 @@ const HowItWorks: React.FC = () => {
     <section className="how-it-works" id="how-it-works">
       <div className="how-it-works-wrapper">
         <div className="how-it-works-header">
-          <h2 className="how-it-works-title">Cómo funciona</h2>
+          <h2 className="how-it-works-title">{t.howItWorks.title}</h2>
           <p className="how-it-works-subtitle">
-            Consigue tus fotos de surf en cuestión de minutos.
+            {t.howItWorks.subtitle}
           </p>
         </div>
 
@@ -199,15 +202,15 @@ const HowItWorks: React.FC = () => {
             </svg>
           </div>
           <div className="note-content">
-            <h4>Búsqueda inteligente</h4>
-            <p>El reconocimiento facial busca solo en las fotos del día seleccionado, no en toda la web.</p>
+            <h4>{t.howItWorks.smartSearch.title}</h4>
+            <p>{t.howItWorks.smartSearch.description}</p>
           </div>
         </div>
 
         {/* CTA Button */}
         <div className="how-it-works-cta">
           <a href="/schools" className="btn btn-primary btn-large">
-            Encuentra tus fotos
+            {t.howItWorks.cta}
           </a>
         </div>
       </div>

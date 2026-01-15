@@ -1,7 +1,7 @@
 .day-photos {
   min-height: 100vh;
   background: white;
-  padding-top: 80px;
+  padding-top: 160px;
 }
 
 .day-photos-header {
@@ -9,9 +9,12 @@
   color: white;
   padding: 2rem;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 2rem;
+  justify-content: center;
+  gap: 1.5rem;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
 .btn-back {
@@ -25,6 +28,7 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
+  align-self: flex-start;
 }
 
 .btn-back:hover {
@@ -32,16 +36,27 @@
   color: #B24A3B;
 }
 
+.header-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .header-info h1 {
   font-size: 2.5rem;
   font-weight: 800;
-  margin: 0 0 0.5rem;
+  margin: 0;
+  color: white;
+  font-family: var(--font-display);
 }
 
 .date-display {
   font-size: 1.1rem;
   margin: 0;
+  color: white;
   opacity: 0.95;
+  font-family: var(--font-primary);
 }
 
 .day-photos-content {
@@ -100,9 +115,12 @@
 }
 
 .upload-icon {
-  font-size: 3rem;
+  font-size: 4rem;
   margin-bottom: 1rem;
   display: block;
+  color: #B24A3B;
+  font-weight: 300;
+  line-height: 1;
 }
 
 .upload-placeholder p {
@@ -118,23 +136,101 @@
   display: block;
 }
 
-.uploaded-image-container {
-  text-align: center;
-  margin-bottom: 1.5rem;
+/* Uploaded Image Preview */
+.uploaded-image-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.image-preview-wrapper {
+  position: relative;
+  display: inline-block;
 }
 
 .uploaded-image {
-  max-width: 300px;
-  max-height: 300px;
-  border-radius: 8px;
-  margin-bottom: 1rem;
+  max-width: 350px;
+  max-height: 350px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: block;
 }
 
-.button-group {
+.btn-change-photo {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  color: #B24A3B;
+  border: 2px solid #B24A3B;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
-  gap: 1rem;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-change-photo:hover {
+  background: #B24A3B;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(178, 74, 59, 0.3);
+}
+
+.change-icon {
+  font-size: 1.1rem;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.action-buttons {
+  width: 100%;
+  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
+}
+
+.btn-search {
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
+  padding: 1rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-search:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+}
+
+.btn-search:disabled {
+  background: linear-gradient(135deg, #ccc 0%, #999 100%);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-icon {
+  font-size: 1.3rem;
+  display: inline-block;
+  font-weight: 400;
 }
 
 .btn {
@@ -194,10 +290,28 @@
 .error-message {
   background-color: #ffebee;
   color: #c62828;
-  padding: 1rem;
-  border-radius: 6px;
-  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-top: 1.5rem;
   border-left: 4px solid #c62828;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 500;
+}
+
+.error-icon {
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  background: #c62828;
+  color: white;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
 }
 
 /* Loading Modal */
@@ -404,9 +518,11 @@
 
 @media (max-width: 768px) {
   .day-photos-header {
-    flex-direction: column;
-    text-align: center;
     padding: 1.5rem;
+  }
+
+  .btn-back {
+    align-self: center;
   }
 
   .header-info h1 {
@@ -419,6 +535,21 @@
 
   .ai-search-container {
     padding: 1rem;
+  }
+
+  .uploaded-image {
+    max-width: 280px;
+    max-height: 280px;
+  }
+
+  .btn-change-photo {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-search {
+    padding: 0.9rem 2rem;
+    font-size: 1rem;
   }
 
   .matches-grid {
@@ -439,12 +570,34 @@
     font-size: 1.3rem;
   }
 
+  .date-display {
+    font-size: 1rem;
+  }
+
   .day-photos-content {
     padding: 0 1rem 1rem;
   }
 
   .ai-search-section {
     padding: 1.5rem;
+  }
+
+  .uploaded-image {
+    max-width: 100%;
+    max-height: 250px;
+  }
+
+  .btn-change-photo {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+    top: 8px;
+    right: 8px;
+  }
+
+  .btn-search {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.95rem;
+    width: 100%;
   }
 
   .matches-grid {

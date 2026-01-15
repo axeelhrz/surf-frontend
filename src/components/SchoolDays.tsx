@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './SchoolDays.css';
+import { apiService } from '../services/api';
 
 interface SchoolDaysProps {
   schoolName: string;
@@ -7,27 +8,33 @@ interface SchoolDaysProps {
   onSelectDay: (date: string) => void;
 }
 
+interface DayData {
+  date: string;
+  photo_count: number;
+}
+
 const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay }) => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [heroImage, setHeroImage] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   
-  // Mock data - en producción esto vendría del backend
-  // Cargar una foto aleatoria de la escuela para el hero desde /public
+  // Cargar imagen de hero
   useEffect(() => {
-    // Mapeo de nombres de escuelas a sus imágenes en /public
     const schoolImages: { [key: string]: string } = {
       'SANTA SURF PROCENTER': '/SANTASURF-PROCENTER.JPG',
       'MAURI SURF': '/MAURI-SURF.JPG',
       'RED STAR': '/REDSTAR.JPG',
+      'REDSTAR': '/REDSTAR.JPG',
       'JMC SURF TRAINING': '/JMC-SURFTRAINING.jpg',
       'LANZAROTE': '/LANZAROTE.jpg',
       'VOLCANO': '/VOLCANO.jpg',
       'ZOOPARK': '/ZOOPARK.jpg',
       'OTRAS': '/OTRAS.jpg',
+      'OTRAS ESCUELAS': '/OTRAS.jpg',
     };
 
-    // Buscar la imagen correspondiente a la escuela
-    const imageUrl = schoolImages[schoolName] || schoolImages['OTRAS'];
+    const imageUrl = schoolImages[schoolName.toUpperCase()] || schoolImages['OTRAS'];
     setHeroImage(imageUrl);
   }, [schoolName]);
 
@@ -38,64 +45,53 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     thumbnailUrl: string;
   }>>([]);
 
-  // Cargar días disponibles con fotos desde /public
+  // Cargar días disponibles desde el backend
   useEffect(() => {
-    // Fotos disponibles en /public
-    const publicPhotos = [
-      '7N5A0084.jpg', '7N5A0210.jpg', '7N5A0291.jpg', '7N5A0474.jpg',
-      '7N5A0508.jpg', '7N5A0698.jpg', '7N5A0773.jpg', '7N5A0879.jpg',
-      '7N5A0896.jpg', '7N5A1324.jpg', '7N5A1361.jpg', '7N5A1974 2.jpg',
-      '7N5A2536.jpg', '7N5A2664 3.jpg', '7N5A2753.jpg', '7N5A3893.jpg',
-      '7N5A4158.jpg', '7N5A4172.jpg', '7N5A4862.jpg', '7N5A6137.jpg',
-      '7N5A6375.jpg', '7N5A6400.jpg', '7N5A6981.jpg', '7N5A7096.jpg',
-      '7N5A7254.jpg', '7N5A7532.jpg', '7N5A7986.jpg', '7N5A8030.jpg',
-      '7N5A8280.jpg', '7N5A8516 2.jpg', '7N5A8540.jpg', '7N5A8618.jpg',
-      '7N5A8633.jpg', '7N5A9209.jpg', '7N5A9778.jpg', '7N5A9881.jpg',
-      '_DSC9090-2.jpg', '_DSC9513.jpg', '_DSC9536.jpg'
-    ];
+    const loadDays = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await apiService.getFolderDays(schoolName);
+        
+        if (response.days && response.days.length > 0) {
+          const formattedDays = response.days.map((day: DayData) => ({
+            date: day.date,
+            displayDate: formatDate(day.date),
+            photoCount: day.photo_count,
+            thumbnailUrl: getFirstPhotoThumbnail()
+          }));
+          
+          setAvailableDays(formattedDays);
+        } else {
+          setAvailableDays([]);
+        }
+      } catch (err) {
+        console.error('Error loading days:', err);
+        setError('Error al cargar los días disponibles');
+        setAvailableDays([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    // Crear días mock con fotos reales
-    const mockDays = [
-      { 
-        date: '2024-01-15', 
-        displayDate: '15 de Enero, 2024', 
-        photoCount: 45,
-        thumbnailUrl: `/${publicPhotos[0]}`
-      },
-      { 
-        date: '2024-01-14', 
-        displayDate: '14 de Enero, 2024', 
-        photoCount: 38,
-        thumbnailUrl: `/${publicPhotos[5]}`
-      },
-      { 
-        date: '2024-01-13', 
-        displayDate: '13 de Enero, 2024', 
-        photoCount: 52,
-        thumbnailUrl: `/${publicPhotos[10]}`
-      },
-      { 
-        date: '2024-01-12', 
-        displayDate: '12 de Enero, 2024', 
-        photoCount: 41,
-        thumbnailUrl: `/${publicPhotos[15]}`
-      },
-      { 
-        date: '2024-01-11', 
-        displayDate: '11 de Enero, 2024', 
-        photoCount: 36,
-        thumbnailUrl: `/${publicPhotos[20]}`
-      },
-      { 
-        date: '2024-01-10', 
-        displayDate: '10 de Enero, 2024', 
-        photoCount: 48,
-        thumbnailUrl: `/${publicPhotos[25]}`
-      },
-    ];
-
-    setAvailableDays(mockDays);
+    loadDays();
   }, [schoolName]);
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', { 
+      day: 'numeric',
+      month: 'long', 
+      year: 'numeric'
+    });
+  };
+
+  const getFirstPhotoThumbnail = (): string => {
+    // Retornar una imagen placeholder o la primera foto del día
+    // Por ahora usamos un placeholder
+    return heroImage;
+  };
 
   const handleDateSearch = () => {
     if (selectedDate) {
@@ -135,7 +131,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
             <button 
               className="btn btn-primary"
               onClick={handleDateSearch}
-              disabled={!selectedDate}
+              disabled={!selectedDate || loading}
             >
               Buscar
             </button>
@@ -145,33 +141,65 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
         {/* Listado de días */}
         <div className="days-section">
           <h2>Días disponibles</h2>
-          <p className="days-subtitle">Selecciona un día para ver todas las fotos</p>
+          <p className="days-subtitle">Selecciona un día para encontrar tus fotos</p>
           
-          <div className="days-grid">
-            {availableDays.map((day) => (
-              <div 
-                key={day.date}
-                className="day-card"
-                onClick={() => onSelectDay(day.date)}
-              >
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '3rem' }}>
+              <div className="loading-spinner"></div>
+              <p style={{ marginTop: '1rem', color: '#718096' }}>Cargando días disponibles...</p>
+            </div>
+          ) : error ? (
+            <div className="alert alert-error" style={{ 
+              background: '#fee', 
+              color: '#c33', 
+              padding: '1rem', 
+              borderRadius: '8px',
+              textAlign: 'center'
+            }}>
+              {error}
+            </div>
+          ) : availableDays.length === 0 ? (
+            <div className="alert alert-info" style={{ 
+              background: '#e3f2fd', 
+              color: '#1976d2', 
+              padding: '2rem', 
+              borderRadius: '8px',
+              textAlign: 'center'
+            }}>
+              <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
+                No hay días disponibles para esta escuela todavía.
+              </p>
+              <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                Las fotos se organizan por día. Vuelve pronto para ver nuevas sesiones.
+              </p>
+            </div>
+          ) : (
+            <div className="days-grid">
+              {availableDays.map((day) => (
                 <div 
-                  className="day-image-wrapper"
-                  style={{ 
-                    backgroundImage: day.thumbnailUrl ? `url(${day.thumbnailUrl})` : 'none'
-                  }}
+                  key={day.date}
+                  className="day-card"
+                  onClick={() => onSelectDay(day.date)}
                 >
-                  <div className="day-image-overlay"></div>
-                  <div className="day-image-info">
-                    <span className="photo-count">{day.photoCount}</span>
-                    <span className="photo-label">fotos</span>
+                  <div 
+                    className="day-image-wrapper"
+                    style={{ 
+                      backgroundImage: day.thumbnailUrl ? `url(${day.thumbnailUrl})` : 'none'
+                    }}
+                  >
+                    <div className="day-image-overlay"></div>
+                    <div className="day-image-info">
+                      <span className="photo-count">{day.photoCount}</span>
+                      <span className="photo-label">fotos</span>
+                    </div>
+                  </div>
+                  <div className="day-info">
+                    <h3 className="day-date">{day.displayDate}</h3>
                   </div>
                 </div>
-                <div className="day-info">
-                  <h3 className="day-date">{day.displayDate}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

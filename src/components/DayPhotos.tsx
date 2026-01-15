@@ -61,7 +61,8 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
       formData.append('selfie', uploadedFile);
 
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/compare-faces-folder?search_folder=${schoolName}`, {
+      // Buscar en carpeta y día específicos
+      const response = await fetch(`${apiUrl}/compare-faces-folder?search_folder=${schoolName}&search_day=${date}`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -99,7 +100,7 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
       id: `${schoolName}_${date}_${filename}`,
       name: `${schoolName} - ${date} - ${filename}`,
       price: 29.99,
-      image: `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${filename}&watermark=true`,
+      image: `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${filename}&watermark=true`,
     };
     onAddToCart(cartItem);
   };
@@ -136,21 +137,37 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
 
           <div className="ai-search-container">
             {uploadedImage ? (
-              <div className="uploaded-image-container">
-                <img src={uploadedImage} alt="Foto subida" className="uploaded-image" />
-                <button 
-                  className="btn btn-secondary"
-                  onClick={() => {
-                    setUploadedImage(null);
-                    if (fileInputRef.current) fileInputRef.current.value = '';
-                  }}
-                >
-                  Cambiar Foto
-                </button>
+              <div className="uploaded-image-preview">
+                <div className="image-preview-wrapper">
+                  <img src={uploadedImage} alt="Tu selfie" className="uploaded-image" />
+                  <button 
+                    className="btn-change-photo"
+                    onClick={() => {
+                      setUploadedImage(null);
+                      setUploadedFile(null);
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                    title="Cambiar foto"
+                  >
+                    <span className="change-icon">↻</span>
+                    Cambiar foto
+                  </button>
+                </div>
+                
+                <div className="action-buttons">
+                  <button 
+                    className="btn btn-search"
+                    onClick={handleAnalyzePhoto}
+                    disabled={isSearching}
+                  >
+                    <span className="btn-icon">⌕</span>
+                    {isSearching ? 'Analizando...' : 'Buscar mis fotos'}
+                  </button>
+                </div>
               </div>
             ) : (
               <div className="upload-placeholder" onClick={handleUploadClick}>
-                <div className="upload-icon">📸</div>
+                <div className="upload-icon">+</div>
                 <p>Haz clic para seleccionar un selfie</p>
                 <span>o arrastra una imagen aquí</span>
               </div>
@@ -164,30 +181,9 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
               style={{ display: 'none' }}
             />
 
-            {uploadedImage && (
-              <div className="button-group">
-                <button 
-                  className="btn btn-success"
-                  onClick={handleAnalyzePhoto}
-                  disabled={isSearching}
-                >
-                  {isSearching ? 'Analizando...' : 'Buscar mis fotos'}
-                </button>
-                <button 
-                  className="btn btn-dark"
-                  onClick={() => {
-                    setUploadedImage(null);
-                    setUploadedFile(null);
-                    if (fileInputRef.current) fileInputRef.current.value = '';
-                  }}
-                >
-                  Limpiar
-                </button>
-              </div>
-            )}
-
             {error && (
               <div className="error-message">
+                <span className="error-icon">!</span>
                 {error}
               </div>
             )}
@@ -199,7 +195,7 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
             <div className="loading-modal">
               <div className="spinner"></div>
               <h3>Analizando tu rostro...</h3>
-              <p>Buscando coincidencias en {schoolName}</p>
+              <p>Buscando coincidencias en {schoolName} - {formatDate(date)}</p>
               <div className="progress-bar">
                 <div className="progress-fill"></div>
               </div>
@@ -236,7 +232,7 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
                     return (
                       <div key={match.file} className="match-card">
                         <img 
-                          src={`${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${match.file}&watermark=true`}
+                          src={`${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${match.file}&watermark=true`}
                           alt={match.file}
                           className="match-image"
                         />

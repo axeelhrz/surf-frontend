@@ -1,21 +1,22 @@
 import React from 'react';
 import Home from '../components/Home';
-import HowItWorks from '../components/HowItWorks';
-import AboutMe from '../components/AboutMe';
-import Pricing from '../components/Pricing';
+import Schools from '../components/Schools';
 import FAQ from '../components/FAQ';
-import Partners from '../components/Partners';
 import Footer from '../components/Footer';
+import { useNavigate } from 'react-router-dom';
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleSelectSchool = (schoolName: string) => {
+    navigate(`/school-days?school=${encodeURIComponent(schoolName)}`);
+  };
+
   return (
     <>
       <Home />
-      <HowItWorks />
-      <AboutMe />
-      <Pricing />
+      <Schools onSelectSchool={handleSelectSchool} />
       <FAQ />
-      <Partners />
       <Footer />
     </>
   );

@@ -80,7 +80,9 @@ function switchAdminTab(tabName, evt) {
     }
     
     // Cargar datos específicos del tab
-    if (tabName === 'folders') {
+    if (tabName === 'dashboard') {
+        loadDashboardData();
+    } else if (tabName === 'folders') {
         loadFolders();
     } else if (tabName === 'photos') {
         loadFoldersForUpload();
@@ -93,6 +95,8 @@ function switchAdminTab(tabName, evt) {
         loadPayments();
     } else if (tabName === 'reports') {
         loadReports();
+    } else if (tabName === 'settings') {
+        loadSettings();
     }
 }
 
@@ -116,34 +120,24 @@ function showAlert(message, type = 'info') {
 
 async function loadDashboardData() {
     try {
-        // Cargar carpetas
-        const foldersResponse = await fetch(`${API_URL}/folders/list`);
-        const foldersData = await foldersResponse.json();
-        const totalFolders = foldersData.folders ? foldersData.folders.length : 0;
+        // Cargar estadísticas desde el nuevo endpoint
+        const statsResponse = await fetch(`${API_URL}/admin/dashboard/stats`);
+        const statsData = await statsResponse.json();
         
-        // Cargar todas las fotos
-        let totalPhotos = 0;
-        if (foldersData.folders) {
-            for (const folder of foldersData.folders) {
-                const photosResponse = await fetch(`${API_URL}/photos/list?folder_name=${folder.name}`);
-                const photosData = await photosResponse.json();
-                totalPhotos += photosData.photos ? photosData.photos.length : 0;
-            }
+        if (statsData.status === 'success') {
+            const stats = statsData.stats;
+            
+            // Actualizar stats en el dashboard
+            document.getElementById('totalFolders').textContent = stats.total_folders || 0;
+            document.getElementById('totalPhotos').textContent = stats.total_photos || 0;
+            document.getElementById('totalRevenue').textContent = `$${(stats.total_revenue || 0).toFixed(2)}`;
+            document.getElementById('totalTransactions').textContent = stats.total_transactions || 0;
+            
+            console.log('✅ Estadísticas cargadas:', stats);
         }
         
-        // Actualizar stats
-        document.getElementById('totalFolders').textContent = totalFolders;
-        document.getElementById('totalPhotos').textContent = totalPhotos;
-        
-        // Datos simulados para pagos (en producción vendrían del backend)
-        const totalRevenue = totalPhotos * 9.99 * 0.5; // Simulación
-        const totalTransactions = Math.floor(totalPhotos / 3);
-        
-        document.getElementById('totalRevenue').textContent = `$${totalRevenue.toFixed(2)}`;
-        document.getElementById('totalTransactions').textContent = totalTransactions;
-        
         // Cargar actividad reciente
-        loadRecentActivity();
+        await loadRecentActivity();
         
     } catch (error) {
         console.error('Error cargando datos del dashboard:', error);
@@ -153,23 +147,56 @@ async function loadDashboardData() {
 
 async function loadRecentActivity() {
     try {
-        const activities = [
-            { type: 'Carpeta', description: 'Nueva carpeta creada', date: new Date().toLocaleDateString(), status: 'Completado' },
-            { type: 'Foto', description: 'Fotos subidas', date: new Date().toLocaleDateString(), status: 'Completado' },
-            { type: 'Pago', description: 'Transacción procesada', date: new Date().toLocaleDateString(), status: 'Completado' }
-        ];
+        const response = await fetch(`${API_URL}/admin/dashboard/activity?limit=10`);
+        const data = await response.json();
         
-        const tbody = document.getElementById('recentActivityTable');
-        tbody.innerHTML = activities.map(activity => `
-            <tr>
-                <td><strong>${activity.type}</strong></td>
-                <td>${activity.description}</td>
-                <td>${activity.date}</td>
-                <td><span class="badge badge-success">${activity.status}</span></td>
-            </tr>
-        `).join('');
+        if (data.status === 'success' && data.activities) {
+            const tbody = document.getElementById('recentActivityTable');
+            
+            if (data.activities.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="4" style="text-align: center; color: #94a3b8;">
+                            No hay actividad reciente
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = data.activities.map(activity => {
+                const date = activity.date ? new Date(activity.date).toLocaleString('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+                
+                const statusClass = activity.status === 'Completado' ? 'badge-success' : 'badge-warning';
+                
+                return `
+                    <tr>
+                        <td><strong>${activity.type}</strong></td>
+                        <td>${activity.description}</td>
+                        <td>${date}</td>
+                        <td><span class="badge ${statusClass}">${activity.status}</span></td>
+                    </tr>
+                `;
+            }).join('');
+            
+            console.log('✅ Actividad reciente cargada:', data.activities.length, 'items');
+        }
     } catch (error) {
         console.error('Error cargando actividad reciente:', error);
+        const tbody = document.getElementById('recentActivityTable');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="4" style="text-align: center; color: #ef4444;">
+                    Error al cargar actividad reciente
+                </td>
+            </tr>
+        `;
     }
 }
 
@@ -1031,63 +1058,92 @@ async function deletePhoto(folderName, filename) {
 
 async function loadPayments() {
     try {
-        // Datos simulados de pagos (en producción vendrían del backend)
-        const payments = [
-            {
-                id: 'TXN001',
-                customer: 'Cliente 1',
-                amount: 29.97,
-                date: new Date().toLocaleDateString(),
-                status: 'Completado'
-            },
-            {
-                id: 'TXN002',
-                customer: 'Cliente 2',
-                amount: 19.98,
-                date: new Date().toLocaleDateString(),
-                status: 'Completado'
-            },
-            {
-                id: 'TXN003',
-                customer: 'Cliente 3',
-                amount: 9.99,
-                date: new Date().toLocaleDateString(),
-                status: 'Pendiente'
+        // Cargar pagos reales desde Stripe
+        const response = await fetch(`${API_URL}/stripe/payments`);
+        const data = await response.json();
+        
+        if (data.status === 'success' && data.payments) {
+            adminData.payments = data.payments;
+            
+            const tbody = document.getElementById('paymentsTable');
+            
+            if (data.payments.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #94a3b8;">
+                            No hay transacciones de pago registradas
+                        </td>
+                    </tr>
+                `;
+                return;
             }
-        ];
-        
-        adminData.payments = payments;
-        
-        const tbody = document.getElementById('paymentsTable');
-        
-        tbody.innerHTML = payments.map(payment => `
-            <tr>
-                <td><strong>${payment.id}</strong></td>
-                <td>${payment.customer}</td>
-                <td>$${payment.amount.toFixed(2)}</td>
-                <td>${payment.date}</td>
-                <td>
-                    <span class="badge ${payment.status === 'Completado' ? 'badge-success' : 'badge-warning'}">
-                        ${payment.status}
-                    </span>
-                </td>
-                <td>
-                    <button class="action-btn action-btn-view" onclick="viewPaymentDetails('${payment.id}')">
-                        <i class="fas fa-eye"></i> Ver
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+            
+            tbody.innerHTML = data.payments.map(payment => {
+                const date = payment.created_at ? new Date(payment.created_at).toLocaleString('es-ES', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }) : 'N/A';
+                
+                const statusClass = payment.status === 'completed' ? 'badge-success' : 'badge-warning';
+                const statusText = payment.status === 'completed' ? 'Completado' : 'Pendiente';
+                
+                return `
+                    <tr>
+                        <td><strong>${payment.id}</strong></td>
+                        <td>${payment.customer_name || 'N/A'}</td>
+                        <td>$${(payment.amount || 0).toFixed(2)}</td>
+                        <td>${date}</td>
+                        <td>
+                            <span class="badge ${statusClass}">
+                                ${statusText}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="action-btn action-btn-view" onclick="viewPaymentDetails('${payment.id}')">
+                                <i class="fas fa-eye"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            console.log('✅ Pagos cargados:', data.payments.length, 'transacciones');
+        }
     } catch (error) {
         console.error('Error cargando pagos:', error);
         showAlert('Error al cargar pagos', 'error');
+        
+        const tbody = document.getElementById('paymentsTable');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" style="text-align: center; color: #ef4444;">
+                    Error al cargar transacciones
+                </td>
+            </tr>
+        `;
     }
 }
 
 function viewPaymentDetails(paymentId) {
     const payment = adminData.payments.find(p => p.id === paymentId);
     if (payment) {
-        alert(`Detalles de Pago:\n\nID: ${payment.id}\nCliente: ${payment.customer}\nMonto: $${payment.amount.toFixed(2)}\nFecha: ${payment.date}\nEstado: ${payment.status}`);
+        const items = payment.items || [];
+        const itemsList = items.map((item, index) => 
+            `${index + 1}. ${item.filename || 'Foto'} - $${(item.price || 0).toFixed(2)}`
+        ).join('\n');
+        
+        alert(`Detalles de Pago:\n\n` +
+              `ID: ${payment.id}\n` +
+              `Cliente: ${payment.customer_name || 'N/A'}\n` +
+              `Email: ${payment.customer_email || 'N/A'}\n` +
+              `Monto: $${(payment.amount || 0).toFixed(2)}\n` +
+              `Fecha: ${payment.created_at ? new Date(payment.created_at).toLocaleString('es-ES') : 'N/A'}\n` +
+              `Estado: ${payment.status === 'completed' ? 'Completado' : 'Pendiente'}\n` +
+              `Items (${payment.items_count || 0}):\n${itemsList || 'N/A'}`
+        );
     }
 }
 
@@ -1095,70 +1151,133 @@ function viewPaymentDetails(paymentId) {
 
 async function loadReports() {
     try {
-        // Cargar datos para reportes
-        const foldersResponse = await fetch(`${API_URL}/folders/list`);
-        const foldersData = await foldersResponse.json();
+        // Cargar reporte de fotos por carpeta
+        const photosReportResponse = await fetch(`${API_URL}/admin/reports/photos-by-folder`);
+        const photosReportData = await photosReportResponse.json();
         
-        // Fotos por escuela
-        let photosBySchool = {};
-        let totalPhotos = 0;
-        
-        if (foldersData.folders) {
-            for (const folder of foldersData.folders) {
-                const photosResponse = await fetch(`${API_URL}/photos/list?folder_name=${folder.name}`);
-                const photosData = await photosResponse.json();
-                const count = photosData.photos ? photosData.photos.length : 0;
-                photosBySchool[folder.name] = count;
-                totalPhotos += count;
-            }
-        }
+        // Cargar resumen de pagos
+        const paymentsResponse = await fetch(`${API_URL}/admin/payments/summary`);
+        const paymentsData = await paymentsResponse.json();
         
         // Mostrar fotos por escuela
         const schoolDiv = document.getElementById('photosBySchool');
-        if (Object.keys(photosBySchool).length > 0) {
-            schoolDiv.innerHTML = Object.entries(photosBySchool)
-                .map(([school, count]) => `<div>${school}: <strong>${count}</strong> fotos</div>`)
+        if (photosReportData.status === 'success' && photosReportData.report.length > 0) {
+            schoolDiv.innerHTML = photosReportData.report
+                .slice(0, 10) // Mostrar top 10
+                .map(item => `
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span>${item.folder_name}</span>
+                        <strong>${item.photo_count} fotos (${item.total_size_mb} MB)</strong>
+                    </div>
+                `)
                 .join('');
         } else {
             schoolDiv.innerHTML = '<div>No hay datos disponibles</div>';
         }
         
-        // Ingresos por mes (simulado)
+        // Mostrar ingresos por mes
         const revenueDiv = document.getElementById('revenueByMonth');
-        const monthlyRevenue = totalPhotos * 9.99 * 0.5;
-        revenueDiv.innerHTML = `<div>Este mes: <strong>$${monthlyRevenue.toFixed(2)}</strong></div>`;
+        if (paymentsData.status === 'success' && paymentsData.summary) {
+            const summary = paymentsData.summary;
+            const byMonth = summary.by_month || {};
+            
+            revenueDiv.innerHTML = Object.entries(byMonth)
+                .slice(0, 6) // Últimos 6 meses
+                .map(([month, data]) => `
+                    <div style="display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #e2e8f0;">
+                        <span>${month}</span>
+                        <strong>$${data.amount.toFixed(2)} (${data.count} transacciones)</strong>
+                    </div>
+                `)
+                .join('');
+        } else {
+            revenueDiv.innerHTML = '<div>No hay datos disponibles</div>';
+        }
         
         // Tabla de reportes
         const tbody = document.getElementById('reportsTable');
-        tbody.innerHTML = `
-            <tr>
-                <td>Total de Fotos</td>
-                <td><strong>${totalPhotos}</strong></td>
-                <td><span class="badge badge-success">↑ 45</span></td>
-            </tr>
-            <tr>
-                <td>Total de Carpetas</td>
-                <td><strong>${foldersData.folders ? foldersData.folders.length : 0}</strong></td>
-                <td><span class="badge badge-success">↑ 2</span></td>
-            </tr>
-            <tr>
-                <td>Ingresos Totales</td>
-                <td><strong>$${monthlyRevenue.toFixed(2)}</strong></td>
-                <td><span class="badge badge-success">↑ 12%</span></td>
-            </tr>
-            <tr>
-                <td>Transacciones</td>
-                <td><strong>${Math.floor(totalPhotos / 3)}</strong></td>
-                <td><span class="badge badge-success">↑ 8</span></td>
-            </tr>
-        `;
+        
+        if (photosReportData.status === 'success' && paymentsData.status === 'success') {
+            const photosReport = photosReportData;
+            const paymentsSummary = paymentsData.summary;
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td>Total de Fotos</td>
+                    <td><strong>${photosReport.total_photos || 0}</strong></td>
+                    <td><span class="badge badge-info">${photosReport.total_size_mb || 0} MB</span></td>
+                </tr>
+                <tr>
+                    <td>Total de Carpetas</td>
+                    <td><strong>${photosReport.total_folders || 0}</strong></td>
+                    <td><span class="badge badge-info">Activas</span></td>
+                </tr>
+                <tr>
+                    <td>Ingresos Totales</td>
+                    <td><strong>$${(paymentsSummary.total_amount || 0).toFixed(2)}</strong></td>
+                    <td><span class="badge badge-success">${paymentsSummary.total_transactions || 0} transacciones</span></td>
+                </tr>
+                <tr>
+                    <td>Promedio por Transacción</td>
+                    <td><strong>$${(paymentsSummary.average_transaction || 0).toFixed(2)}</strong></td>
+                    <td><span class="badge badge-info">Promedio</span></td>
+                </tr>
+            `;
+        } else {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: center; color: #94a3b8;">
+                        No hay datos disponibles
+                    </td>
+                </tr>
+            `;
+        }
+        
+        console.log('✅ Reportes cargados');
     } catch (error) {
         console.error('Error cargando reportes:', error);
         showAlert('Error al cargar reportes', 'error');
+        
+        const tbody = document.getElementById('reportsTable');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="3" style="text-align: center; color: #ef4444;">
+                    Error al cargar reportes
+                </td>
+            </tr>
+        `;
     }
 }
 
 // ==================== CONFIGURACIÓN ====================
+
+async function loadSettings() {
+    try {
+        const response = await fetch(`${API_URL}/admin/settings`);
+        const data = await response.json();
+        
+        if (data.status === 'success' && data.settings) {
+            const settings = data.settings;
+            
+            // Cargar configuración en los campos
+            document.getElementById('backendUrlSetting').value = settings.backend_url || API_URL;
+            document.getElementById('photoPriceSetting').value = settings.photo_price || 29.99;
+            document.getElementById('taxRateSetting').value = settings.tax_rate || 10;
+            
+            console.log('✅ Configuración cargada:', settings);
+        }
+    } catch (error) {
+        console.error('Error cargando configuración:', error);
+        // Cargar valores por defecto desde localStorage
+        const savedBackendUrl = localStorage.getItem('backendURL');
+        const savedPhotoPrice = localStorage.getItem('photoPrice');
+        const savedTaxRate = localStorage.getItem('taxRate');
+        
+        if (savedBackendUrl) document.getElementById('backendUrlSetting').value = savedBackendUrl;
+        if (savedPhotoPrice) document.getElementById('photoPriceSetting').value = savedPhotoPrice;
+        if (savedTaxRate) document.getElementById('taxRateSetting').value = savedTaxRate;
+    }
+}
 
 function saveSettings() {
     const backendUrl = document.getElementById('backendUrlSetting').value.trim();
@@ -1170,12 +1289,29 @@ function saveSettings() {
         return;
     }
     
+    // Validar valores
+    if (parseFloat(photoPrice) <= 0) {
+        showAlert('El precio debe ser mayor a 0', 'error');
+        return;
+    }
+    
+    if (parseFloat(taxRate) < 0 || parseFloat(taxRate) > 100) {
+        showAlert('La tasa de impuesto debe estar entre 0 y 100', 'error');
+        return;
+    }
+    
     // Guardar en localStorage
     localStorage.setItem('backendURL', backendUrl);
     localStorage.setItem('photoPrice', photoPrice);
     localStorage.setItem('taxRate', taxRate);
     
-    showAlert('✓ Configuración guardada exitosamente', 'success');
+    // Actualizar API_URL si cambió
+    if (backendUrl !== API_URL) {
+        API_URL = backendUrl;
+        showAlert('✓ Configuración guardada. Recarga la página para aplicar cambios en la URL del backend.', 'success');
+    } else {
+        showAlert('✓ Configuración guardada exitosamente', 'success');
+    }
 }
 
 // ==================== UTILIDADES ====================
@@ -1187,15 +1323,3 @@ function formatFileSize(bytes) {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
 }
-
-// Cargar configuración al iniciar
-window.addEventListener('load', () => {
-    const savedBackendUrl = localStorage.getItem('backendURL');
-    const savedPhotoPrice = localStorage.getItem('photoPrice');
-    const savedTaxRate = localStorage.getItem('taxRate');
-    
-    if (savedBackendUrl) document.getElementById('backendUrlSetting').value = savedBackendUrl;
-    if (savedPhotoPrice) document.getElementById('photoPriceSetting').value = savedPhotoPrice;
-    if (savedTaxRate) document.getElementById('taxRateSetting').value = savedTaxRate;
-});
-

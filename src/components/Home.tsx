@@ -1,7 +1,10 @@
 import React from 'react';
 import './Home.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const Home: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="home">
       {/* Hero Principal */}
@@ -16,15 +19,14 @@ const Home: React.FC = () => {
         </div>
         
         <div className="hero-content">
-          <h1 className="hero-title">Encuentra tus fotos de surf en Lanzarote</h1>
+          <h1 className="hero-title">{t.home.title}</h1>
           <p className="hero-subtitle">
-            Usa reconocimiento facial para encontrar tus fotos de surf en segundos. 
-            Selecciona tu escuela, sube un selfie y descarga tus recuerdos al instante.
+            {t.home.subtitle}
           </p>
           <button className="btn btn-primary btn-large" onClick={() => {
             window.location.href = '/schools';
           }}>
-            Buscar mis fotos
+            {t.home.cta}
           </button>
         </div>
       </section>

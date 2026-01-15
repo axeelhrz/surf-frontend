@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Navbar from './components/Navbar';
 import HomePage from './pages/HomePage';
 import SchoolsPage from './pages/SchoolsPage';
@@ -10,6 +11,9 @@ import PricingPage from './pages/PricingPage';
 import FAQPage from './pages/FAQPage';
 import SchoolDaysPage from './pages/SchoolDaysPage';
 import DayPhotosPage from './pages/DayPhotosPage';
+import LegalNoticePage from './pages/LegalNoticePage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsConditionsPage from './pages/TermsConditionsPage';
 import CartModal from './components/CartModal';
 
 interface CartItem {
@@ -36,12 +40,13 @@ const App: React.FC = () => {
   };
 
   return (
-    <Router>
-      <div className="App">
-        <Navbar 
-          cartCount={cartItems.length} 
-          onCartClick={() => setShowCart(true)} 
-        />
+    <LanguageProvider>
+      <Router>
+        <div className="App">
+          <Navbar 
+            cartCount={cartItems.length} 
+            onCartClick={() => setShowCart(true)} 
+          />
         
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -55,6 +60,9 @@ const App: React.FC = () => {
             path="/school/:schoolName/day/:date" 
             element={<DayPhotosPage onAddToCart={addToCart} />} 
           />
+          <Route path="/legal-notice" element={<LegalNoticePage />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms-conditions" element={<TermsConditionsPage />} />
         </Routes>
 
         <CartModal 
@@ -64,8 +72,9 @@ const App: React.FC = () => {
           onRemoveItem={removeFromCart}
           totalPrice={getTotalPrice()}
         />
-      </div>
-    </Router>
+        </div>
+      </Router>
+    </LanguageProvider>
   );
 };
 

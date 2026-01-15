@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './Pricing.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface PricingPlan {
   id: number;
@@ -11,62 +12,38 @@ interface PricingPlan {
 }
 
 const Pricing: React.FC = () => {
+  const { t } = useLanguage();
   const [expandedPlan, setExpandedPlan] = useState<number | null>(null);
 
   const pricingPlans: PricingPlan[] = [
     {
       id: 1,
-      title: 'Foto suelta',
-      price: 15,
-      description: 'Una imagen individual en alta calidad',
-      details: [
-        'Descarga inmediata',
-        'Alta resolución (300 DPI)',
-        'Sin marca de agua',
-        'Formato JPG',
-        'Válido para impresión',
-      ],
+      title: t.pricing.plan1.title,
+      price: t.pricing.plan1.price,
+      description: t.pricing.plan1.description,
+      details: t.pricing.plan1.details,
     },
     {
       id: 2,
-      title: 'Pack completo',
-      price: 35,
-      description: 'Todas las fotos de tu sesión, mismo día y persona',
+      title: t.pricing.plan2.title,
+      price: t.pricing.plan2.price,
+      description: t.pricing.plan2.description,
       featured: true,
-      details: [
-        'Todas las fotos del día',
-        'Descarga inmediata',
-        'Alta resolución (300 DPI)',
-        'Sin marca de agua',
-        'Formato JPG',
-        'Ahorra hasta 50%',
-      ],
+      details: t.pricing.plan2.details,
     },
     {
       id: 3,
-      title: 'Día adicional',
-      price: 20,
-      description: 'Añade otro día a tu pack',
-      details: [
-        'Todas las fotos del día extra',
-        'Mismo precio por día adicional',
-        'Descarga inmediata',
-        'Alta resolución',
-        'Sin marca de agua',
-      ],
+      title: t.pricing.plan3.title,
+      price: t.pricing.plan3.price,
+      description: t.pricing.plan3.description,
+      details: t.pricing.plan3.details,
     },
     {
       id: 4,
-      title: 'Persona adicional',
-      price: 20,
-      description: 'Incluye otra persona en el mismo día',
-      details: [
-        'Fotos de otra persona',
-        'Mismo día de sesión',
-        'Descarga inmediata',
-        'Alta resolución',
-        'Sin marca de agua',
-      ],
+      title: t.pricing.plan4.title,
+      price: t.pricing.plan4.price,
+      description: t.pricing.plan4.description,
+      details: t.pricing.plan4.details,
     },
   ];
 
@@ -80,9 +57,9 @@ const Pricing: React.FC = () => {
     <section className="pricing" id="pricing">
       <div className="pricing-wrapper">
         <div className="pricing-header">
-          <h2 className="pricing-title">Precios</h2>
+          <h2 className="pricing-title">{t.pricing.title}</h2>
           <p className="pricing-subtitle">
-            Elige la opción que mejor se adapte a ti
+            {t.pricing.subtitle}
           </p>
         </div>
 
@@ -124,7 +101,7 @@ const Pricing: React.FC = () => {
                 
                 <div className="details-divider"></div>
                 
-                <h4 className="details-list-title">Incluye</h4>
+                <h4 className="details-list-title">{t.pricing.includes}</h4>
                 <ul className="details-list">
                   {selectedPlanData.details.map((detail, index) => (
                     <li key={index} className="details-list-item">
@@ -139,7 +116,7 @@ const Pricing: React.FC = () => {
         </div>
 
         <div className="pricing-note">
-          <p>Todos los precios incluyen descarga inmediata sin marca de agua</p>
+          <p>{t.pricing.note}</p>
         </div>
       </div>
     </section>

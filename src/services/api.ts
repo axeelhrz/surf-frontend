@@ -135,6 +135,32 @@ export const apiService = {
   getPhotoViewUrl(folderName: string, filename: string): string {
     return `${API_BASE_URL}/photos/view?folder_name=${folderName}&filename=${filename}`;
   },
+
+  // Obtener carpetas (folders)
+  async getFolders(): Promise<any[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders`);
+      if (!response.ok) throw new Error('Error obteniendo carpetas');
+      const data = await response.json();
+      return data.folders || [];
+    } catch (error) {
+      console.error('Error obteniendo carpetas:', error);
+      throw error;
+    }
+  },
+
+  // Obtener días de una carpeta
+  async getFolderDays(folderName: string): Promise<{ status: string; folder: string; days: Array<{ date: string; photo_count: number }> }> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/${encodeURIComponent(folderName)}/days`);
+      if (!response.ok) throw new Error('Error obteniendo días');
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error obteniendo días:', error);
+      throw error;
+    }
+  },
 };
 
 export default apiService;
