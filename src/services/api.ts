@@ -1,6 +1,10 @@
 // Configuración de la API
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
+// Debug: Mostrar la URL configurada
+console.log('🔧 API_BASE_URL configurada:', API_BASE_URL);
+console.log('🔧 process.env.REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+
 // Tipos de datos
 export interface Photo {
   id: string;

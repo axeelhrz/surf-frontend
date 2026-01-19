@@ -76,24 +76,57 @@ export const adminApiService = {
   // Dashboard
   async getDashboardStats(): Promise<DashboardStats> {
     try {
+      console.log('🔍 Intentando conectar a:', `${API_BASE_URL}/admin/dashboard/stats`);
       const response = await fetch(`${API_BASE_URL}/admin/dashboard/stats`);
-      if (!response.ok) throw new Error('Error obteniendo estadísticas');
+      
+      console.log('📡 Response status:', response.status);
+      console.log('📡 Response headers:', response.headers);
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('❌ Response no OK:', text);
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Respuesta no es JSON:', text.substring(0, 200));
+        throw new Error(`El servidor respondió con HTML en lugar de JSON. Verifica que REACT_APP_API_URL esté configurada correctamente. URL actual: ${API_BASE_URL}`);
+      }
+      
       const data = await response.json();
       return data.stats;
     } catch (error) {
       console.error('Error en getDashboardStats:', error);
+      console.error('🔧 API_BASE_URL configurada:', API_BASE_URL);
       throw error;
     }
   },
 
   async getRecentActivity(limit: number = 10): Promise<Activity[]> {
     try {
+      console.log('🔍 Intentando conectar a:', `${API_BASE_URL}/admin/dashboard/activity?limit=${limit}`);
       const response = await fetch(`${API_BASE_URL}/admin/dashboard/activity?limit=${limit}`);
-      if (!response.ok) throw new Error('Error obteniendo actividad');
+      
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('❌ Response no OK:', text);
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('❌ Respuesta no es JSON:', text.substring(0, 200));
+        throw new Error(`El servidor respondió con HTML en lugar de JSON. Verifica la URL del backend: ${API_BASE_URL}`);
+      }
+      
       const data = await response.json();
       return data.activities;
     } catch (error) {
       console.error('Error en getRecentActivity:', error);
+      console.error('🔧 API_BASE_URL configurada:', API_BASE_URL);
       throw error;
     }
   },
