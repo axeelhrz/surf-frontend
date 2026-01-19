@@ -32,10 +32,24 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      console.log('📁 Archivo seleccionado:', {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        lastModified: file.lastModified
+      });
+      
+      // Guardar el archivo original
       setUploadedFile(file);
+      
+      // Leer el archivo para preview (esto NO consume el archivo original)
       const reader = new FileReader();
       reader.onload = (e) => {
         setUploadedImage(e.target?.result as string);
+      };
+      reader.onerror = (e) => {
+        console.error('❌ Error leyendo archivo:', e);
+        setError('Error al leer el archivo. Por favor, intenta con otra imagen.');
       };
       reader.readAsDataURL(file);
       setError(null);
@@ -52,22 +66,49 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
       return;
     }
 
+    // Validar que el archivo tenga contenido
+    if (uploadedFile.size === 0) {
+      setError('El archivo seleccionado está vacío. Por favor, selecciona otra imagen.');
+      return;
+    }
+
     setIsSearching(true);
     setError(null);
     setShowResults(false);
 
     try {
+      // Crear FormData y agregar el archivo
       const formData = new FormData();
-      formData.append('selfie', uploadedFile);
+      formData.append('selfie', uploadedFile, uploadedFile.name);
 
       const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+      
+      console.log('📤 Preparando envío:', {
+        name: uploadedFile.name,
+        size: uploadedFile.size,
+        type: uploadedFile.type,
+        formDataEntries: Array.from(formData.entries()).map(([key, value]) => ({
+          key,
+          valueType: value instanceof File ? 'File' : typeof value,
+          fileName: value instanceof File ? value.name : 'N/A',
+          fileSize: value instanceof File ? value.size : 'N/A'
+        }))
+      });
+
       // Buscar en carpeta y día específicos
-      const response = await fetch(`${apiUrl}/compare-faces-folder?search_folder=${schoolName}&search_day=${date}`, {
+      const url = `${apiUrl}/compare-faces-folder?search_folder=${encodeURIComponent(schoolName)}&search_day=${encodeURIComponent(date)}`;
+      console.log('🌐 URL:', url);
+
+      const response = await fetch(url, {
         method: 'POST',
         body: formData,
-        headers: {
-          'Accept': 'application/json',
-        },
+        // NO incluir headers - dejar que el navegador maneje todo automáticamente
+      });
+
+      console.log('📥 Respuesta recibida:', {
+        status: response.status,
+        statusText: response.statusText,
+        ok: response.ok
       });
 
       if (!response.ok) {
