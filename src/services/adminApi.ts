@@ -1,6 +1,9 @@
 // Configuración de la API Admin
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
+// Debug: Mostrar la URL configurada
+console.log('🔧 [AdminAPI] API_BASE_URL configurada:', API_BASE_URL);
+
 // Tipos de datos para Admin
 export interface DashboardStats {
   total_folders: number;
