@@ -259,24 +259,83 @@ export const adminApiService = {
   },
 
   // Photos
-  async uploadPhotos(folderName: string, files: File[]): Promise<any> {
+  async uploadPhotos(
+    folderName: string, 
+    files: File[], 
+    onProgress?: (progress: { uploaded: number; total: number; percentage: number }) => void
+  ): Promise<any> {
     try {
-      const formData = new FormData();
-      files.forEach((file) => {
-        formData.append('photos', file);
-      });
+      const BATCH_SIZE = 50; // Subir 50 fotos a la vez
+      const totalFiles = files.length;
+      let uploadedCount = 0;
+      const allResults: any[] = [];
+      const allErrors: string[] = [];
 
-      const response = await fetch(`${API_BASE_URL}/photos/upload?folder_name=${folderName}`, {
-        method: 'POST',
-        body: formData,
-      });
+      console.log(`📤 Iniciando subida de ${totalFiles} fotos en lotes de ${BATCH_SIZE}`);
 
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || 'Error subiendo fotos');
+      // Dividir archivos en lotes
+      for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
+        const batch = files.slice(i, i + BATCH_SIZE);
+        const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
+        const totalBatches = Math.ceil(totalFiles / BATCH_SIZE);
+
+        console.log(`📦 Procesando lote ${batchNumber}/${totalBatches} (${batch.length} fotos)`);
+
+        const formData = new FormData();
+        batch.forEach((file) => {
+          formData.append('photos', file);
+        });
+
+        try {
+          const response = await fetch(`${API_BASE_URL}/photos/upload?folder_name=${encodeURIComponent(folderName)}`, {
+            method: 'POST',
+            body: formData,
+          });
+
+          if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Error subiendo fotos');
+          }
+
+          const result = await response.json();
+          allResults.push(...(result.photos || []));
+          if (result.errors && result.errors.length > 0) {
+            allErrors.push(...result.errors);
+          }
+
+          uploadedCount += batch.length;
+
+          // Reportar progreso
+          if (onProgress) {
+            onProgress({
+              uploaded: uploadedCount,
+              total: totalFiles,
+              percentage: Math.round((uploadedCount / totalFiles) * 100)
+            });
+          }
+
+          console.log(`✅ Lote ${batchNumber}/${totalBatches} completado (${uploadedCount}/${totalFiles} fotos)`);
+
+          // Pequeña pausa entre lotes para no saturar el servidor
+          if (i + BATCH_SIZE < totalFiles) {
+            await new Promise(resolve => setTimeout(resolve, 500));
+          }
+
+        } catch (error) {
+          console.error(`❌ Error en lote ${batchNumber}:`, error);
+          // Continuar con el siguiente lote incluso si este falla
+          allErrors.push(`Lote ${batchNumber}: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+        }
       }
 
-      return await response.json();
+      return {
+        status: 'success',
+        uploaded: allResults.length,
+        photos: allResults,
+        errors: allErrors,
+        message: `${allResults.length} de ${totalFiles} fotos subidas correctamente`
+      };
+
     } catch (error) {
       console.error('Error en uploadPhotos:', error);
       throw error;

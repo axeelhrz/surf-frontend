@@ -132,13 +132,30 @@ const PhotosPage: React.FC = () => {
 
     try {
       setUploading(true);
-      setUploadProgress(`Subiendo ${files.length} fotos...`);
+      setUploadProgress(`Preparando subida de ${files.length} fotos...`);
       
-      // Subir a la carpeta del día específico
+      // Subir a la carpeta del día específico con callback de progreso
       const folderPath = `${selectedFolder}/${selectedDay}`;
-      await adminApiService.uploadPhotos(folderPath, files);
+      const result = await adminApiService.uploadPhotos(
+        folderPath, 
+        files,
+        (progress) => {
+          setUploadProgress(
+            `Subiendo: ${progress.uploaded}/${progress.total} fotos (${progress.percentage}%)`
+          );
+        }
+      );
       
-      setUploadProgress('¡Fotos subidas exitosamente!');
+      // Mostrar resultado final
+      if (result.errors && result.errors.length > 0) {
+        setUploadProgress(
+          `✅ ${result.uploaded} fotos subidas. ⚠️ ${result.errors.length} errores.`
+        );
+        console.warn('Errores durante la subida:', result.errors);
+      } else {
+        setUploadProgress(`✅ ¡${result.uploaded} fotos subidas exitosamente!`);
+      }
+      
       setFiles([]);
       
       // Recargar fotos
@@ -146,10 +163,12 @@ const PhotosPage: React.FC = () => {
       
       setTimeout(() => {
         setUploadProgress('');
-      }, 3000);
+      }, 5000);
     } catch (err) {
-      alert(err instanceof Error ? err.message : 'Error subiendo fotos');
+      const errorMessage = err instanceof Error ? err.message : 'Error subiendo fotos';
+      alert(errorMessage);
       setUploadProgress('');
+      console.error('Error en handleUpload:', err);
     } finally {
       setUploading(false);
     }
