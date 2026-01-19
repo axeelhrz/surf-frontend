@@ -137,9 +137,23 @@ export const adminApiService = {
   // Folders
   async getFolders(): Promise<Folder[]> {
     try {
-      const response = await fetch(`${API_BASE_URL}/folders`);
+      const response = await fetch(`${API_BASE_URL}/folders`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       if (!response.ok) throw new Error('Error obteniendo carpetas');
       const data = await response.json();
+      console.log('🔍 [AdminAPI] Respuesta completa del backend:', data);
+      console.log('🔍 [AdminAPI] data.folders:', data.folders);
+      
+      // Log detallado de cada carpeta
+      data.folders.forEach((folder: any) => {
+        console.log(`📁 Carpeta "${folder.name}":`, JSON.stringify(folder, null, 2));
+      });
+      
       return data.folders;
     } catch (error) {
       console.error('Error en getFolders:', error);
@@ -193,6 +207,26 @@ export const adminApiService = {
       }
     } catch (error) {
       console.error('Error en setFolderCover:', error);
+      throw error;
+    }
+  },
+
+  async setDayCover(folderName: string, dayDate: string, coverImage: File): Promise<void> {
+    try {
+      const formData = new FormData();
+      formData.append('cover_image', coverImage);
+
+      const response = await fetch(`${API_BASE_URL}/folders/set-day-cover?folder_name=${encodeURIComponent(folderName)}&day_date=${dayDate}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Error estableciendo portada del día');
+      }
+    } catch (error) {
+      console.error('Error en setDayCover:', error);
       throw error;
     }
   },

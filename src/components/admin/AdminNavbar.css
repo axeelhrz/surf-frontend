@@ -1,58 +1,60 @@
-/* ADMIN NAVBAR - TRANSPARENTE */
+/* ============================================
+   ADMIN NAVBAR - Similar al navbar principal
+   ============================================ */
 .admin-navbar {
-  background: transparent;
-  border-bottom: none;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(178, 74, 59, 0.1);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: none;
-  backdrop-filter: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  backdrop-filter: blur(8px);
 }
 
 .admin-navbar-wrapper {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0.5rem 3rem;
+  padding: 1rem 3rem;
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  gap: 2rem;
+  align-items: center;
+  gap: 2.5rem;
+  height: 85px;
 }
 
 .admin-navbar-brand {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
   cursor: pointer;
   transition: all 0.3s ease;
   text-decoration: none;
 }
 
 .admin-navbar-brand:hover {
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .admin-brand-logo {
-  height: 140px;
+  height: 70px;
   width: auto;
-  max-width: 280px;
+  max-width: 260px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
 
 .admin-navbar-brand:hover .admin-brand-logo {
-  transform: scale(1.08);
+  transform: scale(1.05);
 }
 
 .admin-navbar-menu {
   display: flex;
   list-style: none;
-  gap: 2.5rem;
-  align-items: flex-end;
-  padding-bottom: 0.5rem;
+  gap: 2rem;
+  align-items: center;
   margin: 0;
+  padding: 0;
 }
 
 .admin-navbar-menu li {
@@ -65,9 +67,9 @@
   color: #000;
   text-decoration: none;
   font-weight: 500;
-  font-size: 1rem;
-  padding: 0.5rem 1rem;
-  border-radius: 2px;
+  font-size: 0.9rem;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
   transition: all 0.3s ease;
   display: inline-flex;
   align-items: center;
@@ -78,43 +80,35 @@
 
 .admin-nav-link:hover {
   color: var(--primary, #B24A3B);
-  background: rgba(178, 74, 59, 0.05);
+  background: rgba(178, 74, 59, 0.08);
 }
 
 .admin-nav-link.active {
   color: var(--primary, #B24A3B);
   font-weight: 600;
+  background: rgba(178, 74, 59, 0.1);
 }
 
-.admin-nav-link.active::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 1rem;
-  right: 1rem;
-  height: 3px;
-  background: var(--primary, #B24A3B);
-  border-radius: 2px;
-}
-
+/* ============================================
+   NAVBAR ACTIONS
+   ============================================ */
 .admin-navbar-actions {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 1.5rem;
-  padding-bottom: 1.5rem;
 }
 
 .admin-back-button {
   position: relative;
-  padding: 0.8rem 1.8rem;
+  padding: 0.7rem 1.5rem;
   background: var(--primary);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-family: var(--font-primary);
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
@@ -125,88 +119,312 @@
   text-decoration: none;
 }
 
+.back-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .admin-back-button:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(178, 74, 59, 0.25);
 }
 
-@media (max-width: 968px) {
+/* ============================================
+   MOBILE MENU BUTTON (Hamburger)
+   ============================================ */
+.admin-mobile-menu-button {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  color: #333;
+  transition: color 0.3s ease;
+  z-index: 1002;
+}
+
+.admin-mobile-menu-button:hover {
+  color: var(--primary, #B24A3B);
+}
+
+.admin-mobile-menu-button svg {
+  display: block;
+}
+
+/* Mobile Menu Overlay */
+.admin-mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RESPONSIVE DESIGN
+   ============================================ */
+@media (max-width: 1200px) {
   .admin-navbar-wrapper {
     padding: 1rem 2rem;
+    height: 80px;
+  }
+
+  .admin-brand-logo {
+    height: 60px;
+    max-width: 230px;
   }
 
   .admin-navbar-menu {
     gap: 1.5rem;
   }
 
-  .admin-navbar-actions {
-    gap: 1rem;
-  }
-
-  .admin-back-button {
-    padding: 0.7rem 1.5rem;
-    font-size: 0.8rem;
+  .admin-nav-link {
+    font-size: 0.85rem;
+    padding: 0.5rem 0.9rem;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
   .admin-navbar-wrapper {
-    flex-wrap: wrap;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
-  }
-
-  .admin-navbar-menu {
-    order: 3;
-    width: 100%;
-    flex-direction: row;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
-
-  .admin-navbar-actions {
-    order: 2;
-    gap: 0.8rem;
-  }
-
-  .admin-nav-link {
-    font-size: 0.85rem;
-    padding: 0.4rem 0.8rem;
+    padding: 0.8rem 1.5rem;
+    height: 70px;
   }
 
   .admin-brand-logo {
-    height: 110px;
-    max-width: 220px;
+    height: 50px;
+    max-width: 200px;
+  }
+
+  .admin-navbar-menu {
+    gap: 1rem;
+  }
+
+  .admin-nav-link {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.8rem;
+  }
+
+  .admin-navbar-actions {
+    gap: 1rem;
   }
 
   .admin-back-button {
     padding: 0.6rem 1.2rem;
     font-size: 0.75rem;
   }
+
+  .back-icon {
+    width: 18px;
+    height: 18px;
+  }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .admin-navbar-wrapper {
-    padding: 1rem;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 1rem;
+    padding: 0.8rem 1.5rem;
+    height: 60px;
+    position: relative;
+  }
+
+  .admin-navbar-brand {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .admin-brand-logo {
+    height: 45px;
+    max-width: 180px;
+  }
+
+  /* Hide desktop actions */
+  .desktop-actions {
+    display: none !important;
   }
 
   .admin-navbar-menu {
     display: none;
   }
 
-  .admin-navbar-actions {
-    gap: 0.6rem;
+  /* Show hamburger button */
+  .admin-mobile-menu-button {
+    display: block;
+    order: 1;
+    position: absolute;
+    right: 1.5rem;
+  }
+
+  /* Mobile menu container */
+  .admin-navbar-menu {
+    display: none;
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    z-index: 1001;
+    transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .admin-navbar-menu.mobile-open {
+    display: flex;
+    right: 0;
+    animation: slideInRight 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes slideInRight {
+    from {
+      right: -100%;
+      opacity: 0.8;
+    }
+    to {
+      right: 0;
+      opacity: 1;
+    }
+  }
+
+  /* Menu items container */
+  .admin-navbar-menu li {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 0 20px;
+  }
+
+  .admin-navbar-menu li:first-child {
+    margin-top: 80px;
+  }
+
+  .admin-nav-link {
+    width: 100%;
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    border-radius: 8px;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Mobile actions inside menu */
+  .admin-navbar-menu .admin-navbar-actions {
+    display: flex;
+    position: static;
+    width: 100%;
+    background: transparent;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+    gap: 1rem;
+    border-top: 1px solid #e0e0e0;
+    margin-top: auto;
+  }
+
+  .admin-navbar-menu .admin-back-button {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .admin-navbar-menu .back-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .admin-mobile-menu-overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-navbar-wrapper {
+    padding: 0.6rem 1rem;
   }
 
   .admin-brand-logo {
-    height: 85px;
-    max-width: 170px;
+    height: 40px;
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-navbar-wrapper {
+    padding: 0.6rem 1rem;
+    gap: 0.8rem;
+    justify-content: center;
+    position: relative;
   }
 
-  .admin-back-button {
-    padding: 0.6rem 1rem;
-    font-size: 0.7rem;
+  .admin-brand-logo {
+    height: 35px;
+    max-width: 130px;
+  }
+
+  /* Show hamburger button */
+  .admin-mobile-menu-button {
+    display: block;
+    order: 1;
+    position: absolute;
+    right: 1rem;
+  }
+
+  .admin-navbar-brand {
+    order: 2;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* Hide desktop menu */
+  .admin-navbar-menu {
+    width: 280px;
+  }
+
+  .admin-mobile-menu-overlay {
+    display: block;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-navbar-wrapper {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .admin-brand-logo {
+    height: 30px;
+    max-width: 110px;
+  }
+
+  .admin-mobile-menu-button {
+    right: 0.8rem;
+  }
+
+  .admin-navbar-menu {
+    width: 260px;
   }
 }

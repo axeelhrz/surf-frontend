@@ -12,6 +12,10 @@ const FolderDetailPage: React.FC = () => {
   const [showCreateDayModal, setShowCreateDayModal] = useState(false);
   const [newDayDate, setNewDayDate] = useState('');
   const [creating, setCreating] = useState(false);
+  const [showCoverModal, setShowCoverModal] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const loadDays = async () => {
     if (!folderName) return;
@@ -49,6 +53,37 @@ const FolderDetailPage: React.FC = () => {
       alert(err instanceof Error ? err.message : 'Error creando día');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const handleOpenCoverModal = (dayDate: string) => {
+    setSelectedDay(dayDate);
+    setCoverFile(null);
+    setShowCoverModal(true);
+  };
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setCoverFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadCover = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!coverFile || !selectedDay || !folderName) return;
+
+    try {
+      setUploading(true);
+      await adminApiService.setDayCover(decodeURIComponent(folderName), selectedDay, coverFile);
+      setShowCoverModal(false);
+      setCoverFile(null);
+      setSelectedDay(null);
+      await loadDays();
+      alert('Portada del día actualizada correctamente');
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error subiendo portada');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -139,8 +174,16 @@ const FolderDetailPage: React.FC = () => {
                     <button 
                       className="btn-primary"
                       onClick={() => navigate(`/admin/photos?folder=${encodeURIComponent(folderName || '')}&day=${day.date}`)}
+                      style={{ flex: 1 }}
                     >
                       Ver Fotos
+                    </button>
+                    <button 
+                      className="btn-secondary"
+                      onClick={() => handleOpenCoverModal(day.date)}
+                      style={{ flex: 1 }}
+                    >
+                      Portada
                     </button>
                   </div>
                 </div>
@@ -148,6 +191,62 @@ const FolderDetailPage: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Cover Modal */}
+        {showCoverModal && (
+          <div className="modal-overlay" onClick={() => setShowCoverModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2 className="modal-title">Asignar Portada al Día</h2>
+                <button className="modal-close" onClick={() => setShowCoverModal(false)}>
+                  ×
+                </button>
+              </div>
+              <form onSubmit={handleUploadCover}>
+                <div className="form-group">
+                  <label className="form-label">Día: {selectedDay}</label>
+                  <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '1rem' }}>
+                    Esta imagen se mostrará como portada del día en la galería
+                  </p>
+                  <input
+                    type="file"
+                    className="form-input"
+                    accept="image/*"
+                    onChange={handleCoverFileChange}
+                    required
+                  />
+                  {coverFile && (
+                    <div style={{ marginTop: '1rem' }}>
+                      <img 
+                        src={URL.createObjectURL(coverFile)} 
+                        alt="Preview" 
+                        style={{ 
+                          maxWidth: '100%', 
+                          maxHeight: '200px', 
+                          borderRadius: '8px',
+                          objectFit: 'cover'
+                        }} 
+                      />
+                    </div>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                  <button
+                    type="button"
+                    onClick={() => setShowCoverModal(false)}
+                    className="btn-secondary"
+                    disabled={uploading}
+                  >
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn-primary" disabled={uploading}>
+                    {uploading ? 'Subiendo...' : 'Subir Portada'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Create Day Modal */}
         {showCreateDayModal && (
