@@ -267,13 +267,14 @@ export const adminApiService = {
     try {
       // Lotes más pequeños evitan requests gigantes que “se quedan pensando”
       // (sobre todo en Vercel ↔ Railway y redes móviles).
-      const BATCH_SIZE = 20;
       const totalFiles = files.length;
+      // Una sola petición con todas las fotos (hasta 150) = como antes, super rápido
+      const BATCH_SIZE = totalFiles <= 150 ? totalFiles : 100;
       let uploadedCount = 0;
       const allResults: any[] = [];
       const allErrors: string[] = [];
 
-      console.log(`📤 Iniciando subida de ${totalFiles} fotos en lotes de ${BATCH_SIZE}`);
+      console.log(`📤 Subiendo ${totalFiles} fotos${totalFiles <= BATCH_SIZE ? ' (una petición)' : ' en lotes de ' + BATCH_SIZE}`);
 
       // Compatibilidad: si viene "carpeta/día", separar para usar query params del backend
       let folder = folderName;
@@ -335,11 +336,6 @@ export const adminApiService = {
           }
 
           console.log(`✅ Lote ${batchNumber}/${totalBatches} completado (${uploadedCount}/${totalFiles} fotos)`);
-
-          // Pausa mínima entre lotes para no saturar el servidor
-          if (i + BATCH_SIZE < totalFiles) {
-            await new Promise(resolve => setTimeout(resolve, 150));
-          }
 
         } catch (error) {
           console.error(`❌ Error en lote ${batchNumber}:`, error);
