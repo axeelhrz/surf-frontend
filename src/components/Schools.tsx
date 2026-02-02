@@ -41,15 +41,14 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
   const loadSchools = useCallback(async () => {
     try {
       setLoading(true);
-      const folders = await apiService.getFolders();
-      const cacheBust = Date.now();
+      const folders = await apiService.getFoldersPublic();
 
-      // Mapear carpetas del backend a escuelas; usar portada del API si existe
+      // Mapear carpetas del backend a escuelas; usar portada del API si existe (sin cache-bust para permitir caché)
       const schoolsFromFolders: School[] = folders.map((folder: any, index: number) => ({
         id: index + 1,
         name: folder.name,
         image: folder.cover_image
-          ? `${apiBaseUrl}/folders/cover/${encodeURIComponent(folder.name)}?t=${cacheBust}`
+          ? `${apiBaseUrl}/folders/cover/${encodeURIComponent(folder.name)}`
           : getSchoolImage(folder.name),
         location: 'Lanzarote',
         isOtras: false
@@ -165,6 +164,8 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
                     src={school.image} 
                     alt={school.name}
                     className="school-image"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="school-overlay"></div>
                 </div>

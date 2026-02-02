@@ -153,6 +153,19 @@ export const apiService = {
     }
   },
 
+  // Lista ligera para la web pública (solo nombre y portada; más rápido)
+  async getFoldersPublic(): Promise<{ name: string; cover_image: string | null }[]> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/public`);
+      if (!response.ok) throw new Error('Error obteniendo carpetas');
+      const data = await response.json();
+      return data.folders || [];
+    } catch (error) {
+      console.error('Error obteniendo carpetas públicas:', error);
+      throw error;
+    }
+  },
+
   // Obtener días de una carpeta
   async getFolderDays(folderName: string): Promise<{ status: string; folder: string; days: Array<{ date: string; photo_count: number }> }> {
     try {
