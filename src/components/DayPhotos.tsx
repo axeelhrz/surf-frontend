@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import MatchPhotosViewer from './MatchPhotosViewer';
 import './DayPhotos.css';
 
 interface DayPhotosProps {
@@ -146,6 +147,18 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
     onAddToCart(cartItem);
   };
 
+  const handleAddAllToCart = () => {
+    if (analysisResult?.matches?.length) {
+      analysisResult.matches.forEach((match) => handleAddToCart(match.file));
+    }
+  };
+
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  const getMatchImageUrl = (filename: string) =>
+    `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${filename}&watermark=true`;
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', { 
@@ -266,35 +279,79 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
 
             {analysisResult.matches.length > 0 && (
               <div className="matches-container">
-                <h4>Fotos Encontradas</h4>
+                <div className="matches-container-header">
+                  <h4>Fotos Encontradas</h4>
+                  <button
+                    type="button"
+                    className="btn btn-add-all-records"
+                    onClick={handleAddAllToCart}
+                  >
+                    Añadir todas tus recuerdos
+                  </button>
+                </div>
                 <div className="matches-grid">
-                  {analysisResult.matches.map((match) => {
-                    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-                    return (
-                      <div key={match.file} className="match-card">
-                        <img 
-                          src={`${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${match.file}&watermark=true`}
+                  {analysisResult.matches.map((match, index) => (
+                    <div key={match.file} className="match-card">
+                      <div
+                        className="match-image-wrapper"
+                        onClick={() => {
+                          setViewerIndex(index);
+                          setViewerOpen(true);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setViewerIndex(index);
+                            setViewerOpen(true);
+                          }
+                        }}
+                        aria-label="Ver foto en grande"
+                      >
+                        <img
+                          src={getMatchImageUrl(match.file)}
                           alt={match.file}
                           className="match-image"
                         />
-                        <div className="match-info">
-                          <p className="match-file">{match.file}</p>
-                          <p className="match-similarity">
-                            Similitud: {match.similarity.toFixed(1)}%
-                          </p>
-                          <button 
-                            className="btn btn-primary"
-                            onClick={() => handleAddToCart(match.file)}
-                            style={{padding: '0.5rem 1rem', fontSize: '0.85rem'}}
-                          >
-                            Comprar
-                          </button>
-                        </div>
+                        <span className="match-image-hint">Ver en grande</span>
                       </div>
-                    );
-                  })}
+                      <div className="match-info">
+                        <p className="match-file">{match.file}</p>
+                        <p className="match-similarity">
+                          Similitud: {match.similarity.toFixed(1)}%
+                        </p>
+                        <button 
+                          className="btn btn-primary"
+                          onClick={() => handleAddToCart(match.file)}
+                          style={{padding: '0.5rem 1rem', fontSize: '0.85rem'}}
+                        >
+                          Comprar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="matches-container-footer">
+                  <button
+                    type="button"
+                    className="btn btn-add-all-records"
+                    onClick={handleAddAllToCart}
+                  >
+                    Añadir todas tus recuerdos
+                  </button>
                 </div>
               </div>
+            )}
+
+            {analysisResult.matches.length > 0 && (
+              <MatchPhotosViewer
+                photos={analysisResult.matches}
+                getImageUrl={getMatchImageUrl}
+                isOpen={viewerOpen}
+                initialIndex={viewerIndex}
+                onClose={() => setViewerOpen(false)}
+              />
             )}
 
             {analysisResult.non_matches.length > 0 && (

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import MatchPhotosViewer from './MatchPhotosViewer';
 import './SchoolDetail.css';
 
 interface SchoolDetailProps {
@@ -30,30 +31,50 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<string>('');
+  const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
-  // Cargar una foto aleatoria de la escuela para el hero
+  const staticHeroFallback: Record<string, string> = {
+    'SANTA SURF PROCENTER': '/SANTASURF-PROCENTER.JPG',
+    'MAURI SURF': '/MAURI-SURF.JPG',
+    'RED STAR': '/REDSTAR.JPG',
+    REDSTAR: '/REDSTAR.JPG',
+    'JMC SURF TRAINING': '/JMC-SURFTRAINING.jpg',
+    LANZAROTE: '/LANZAROTE.jpg',
+    VOLCANO: '/VOLCANO.jpg',
+    ZOOPARK: '/ZOOPARK.jpg',
+    OTRAS: '/OTRAS.jpg',
+    'OTRAS ESCUELAS': '/OTRAS.jpg',
+  };
+
+  // Hero: usar portada de la carpeta del API; si no existe, foto aleatoria o estática
   useEffect(() => {
     const fetchHeroImage = async () => {
       try {
-        const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-        const response = await fetch(`${apiUrl}/photos/list?folder_name=${schoolName}`);
-        
-        if (response.ok) {
-          const data = await response.json();
+        const coverUrl = `${apiUrl}/folders/cover/${encodeURIComponent(schoolName)}`;
+        const coverCheck = await fetch(coverUrl, { method: 'HEAD' });
+        if (coverCheck.ok) {
+          setHeroImage(`${coverUrl}?t=${Date.now()}`);
+          return;
+        }
+        const listRes = await fetch(`${apiUrl}/photos/list?folder_name=${encodeURIComponent(schoolName)}`);
+        if (listRes.ok) {
+          const data = await listRes.json();
           if (data.photos && data.photos.length > 0) {
-            // Seleccionar una foto aleatoria
             const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
-            const imageUrl = `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${randomPhoto.filename}&watermark=false`;
-            setHeroImage(imageUrl);
+            setHeroImage(`${apiUrl}/photos/preview?folder_name=${encodeURIComponent(schoolName)}&filename=${encodeURIComponent(randomPhoto.filename)}&watermark=false`);
+            return;
           }
         }
+        const fallback = staticHeroFallback[schoolName.toUpperCase()] || staticHeroFallback['OTRAS'] || '/OTRAS.jpg';
+        setHeroImage(fallback);
       } catch (err) {
         console.error('Error cargando imagen del hero:', err);
+        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || '/OTRAS.jpg');
       }
     };
 
     fetchHeroImage();
-  }, [schoolName]);
+  }, [schoolName, apiUrl]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -129,6 +150,17 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
     };
     onAddToCart(cartItem);
   };
+
+  const handleAddAllToCart = () => {
+    if (analysisResult?.matches?.length) {
+      analysisResult.matches.forEach((match) => handleAddToCart(match.file));
+    }
+  };
+
+  const [viewerOpen, setViewerOpen] = useState(false);
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const getMatchImageUrl = (filename: string) =>
+    `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${filename}&watermark=true`;
 
   return (
     <div className="school-detail">
@@ -293,18 +325,44 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
 
             {analysisResult.matches.length > 0 && (
               <div className="matches-container">
-                <h4>Fotos Encontradas</h4>
+                <div className="matches-container-header">
+                  <h4>Fotos Encontradas</h4>
+                  <button
+                    type="button"
+                    className="btn btn-add-all-records"
+                    onClick={handleAddAllToCart}
+                  >
+                    Añadir todas tus recuerdos
+                  </button>
+                </div>
                 <div className="matches-grid">
-                  {analysisResult.matches.map((match) => {
-                    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-                    return (
-                      <div key={match.file} className="match-card">
-                        <img 
-                          src={`${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${match.file}&watermark=true`}
+                  {analysisResult.matches.map((match, index) => (
+                    <div key={match.file} className="match-card">
+                      <div
+                        className="match-image-wrapper"
+                        onClick={() => {
+                          setViewerIndex(index);
+                          setViewerOpen(true);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setViewerIndex(index);
+                            setViewerOpen(true);
+                          }
+                        }}
+                        aria-label="Ver foto en grande"
+                      >
+                        <img
+                          src={getMatchImageUrl(match.file)}
                           alt={match.file}
                           className="match-image"
                         />
-                        <div className="match-info">
+                        <span className="match-image-hint">Ver en grande</span>
+                      </div>
+                      <div className="match-info">
                           <p className="match-file">{match.file}</p>
                           <p className="match-similarity">
                             Similitud: {match.similarity.toFixed(1)}%
@@ -317,11 +375,29 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
                             Comprar
                           </button>
                         </div>
-                      </div>
-                    );
-                  })}
+                    </div>
+                  ))}
+                </div>
+                <div className="matches-container-footer">
+                  <button
+                    type="button"
+                    className="btn btn-add-all-records"
+                    onClick={handleAddAllToCart}
+                  >
+                    Añadir todas tus recuerdos
+                  </button>
                 </div>
               </div>
+            )}
+
+            {analysisResult.matches.length > 0 && (
+              <MatchPhotosViewer
+                photos={analysisResult.matches}
+                getImageUrl={getMatchImageUrl}
+                isOpen={viewerOpen}
+                initialIndex={viewerIndex}
+                onClose={() => setViewerOpen(false)}
+              />
             )}
 
             {analysisResult.non_matches.length > 0 && (

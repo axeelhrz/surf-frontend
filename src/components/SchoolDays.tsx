@@ -13,29 +13,43 @@ interface DayData {
   photo_count: number;
 }
 
+const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
+const staticHeroFallback: Record<string, string> = {
+  'SANTA SURF PROCENTER': '/SANTASURF-PROCENTER.JPG',
+  'MAURI SURF': '/MAURI-SURF.JPG',
+  'RED STAR': '/REDSTAR.JPG',
+  REDSTAR: '/REDSTAR.JPG',
+  'JMC SURF TRAINING': '/JMC-SURFTRAINING.jpg',
+  LANZAROTE: '/LANZAROTE.jpg',
+  VOLCANO: '/VOLCANO.jpg',
+  ZOOPARK: '/ZOOPARK.jpg',
+  OTRAS: '/OTRAS.jpg',
+  'OTRAS ESCUELAS': '/OTRAS.jpg',
+};
+
 const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay }) => {
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [heroImage, setHeroImage] = useState<string>('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
-  // Cargar imagen de hero
-  useEffect(() => {
-    const schoolImages: { [key: string]: string } = {
-      'SANTA SURF PROCENTER': '/SANTASURF-PROCENTER.JPG',
-      'MAURI SURF': '/MAURI-SURF.JPG',
-      'RED STAR': '/REDSTAR.JPG',
-      'REDSTAR': '/REDSTAR.JPG',
-      'JMC SURF TRAINING': '/JMC-SURFTRAINING.jpg',
-      'LANZAROTE': '/LANZAROTE.jpg',
-      'VOLCANO': '/VOLCANO.jpg',
-      'ZOOPARK': '/ZOOPARK.jpg',
-      'OTRAS': '/OTRAS.jpg',
-      'OTRAS ESCUELAS': '/OTRAS.jpg',
-    };
 
-    const imageUrl = schoolImages[schoolName.toUpperCase()] || schoolImages['OTRAS'];
-    setHeroImage(imageUrl);
+  // Hero: usar portada de la carpeta del API; si no existe, imagen estática
+  useEffect(() => {
+    const fetchHeroImage = async () => {
+      try {
+        const coverUrl = `${apiBaseUrl}/folders/cover/${encodeURIComponent(schoolName)}`;
+        const res = await fetch(coverUrl, { method: 'HEAD' });
+        if (res.ok) {
+          setHeroImage(`${coverUrl}?t=${Date.now()}`);
+          return;
+        }
+        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || staticHeroFallback['OTRAS'] || '/OTRAS.jpg');
+      } catch {
+        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || '/OTRAS.jpg');
+      }
+    };
+    fetchHeroImage();
   }, [schoolName]);
 
   const [availableDays, setAvailableDays] = useState<Array<{
@@ -45,23 +59,23 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     thumbnailUrl: string;
   }>>([]);
 
-  // Cargar días disponibles desde el backend
+  // Cargar días disponibles desde el backend; thumbnailUrl = portada del día (API)
   useEffect(() => {
     const loadDays = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await apiService.getFolderDays(schoolName);
-        
+
         if (response.days && response.days.length > 0) {
           const formattedDays = response.days.map((day: DayData) => ({
             date: day.date,
             displayDate: formatDate(day.date),
             photoCount: day.photo_count,
-            thumbnailUrl: heroImage
+            thumbnailUrl: `${apiBaseUrl}/folders/${encodeURIComponent(schoolName)}/day-cover/${encodeURIComponent(day.date)}`,
           }));
-          
+
           setAvailableDays(formattedDays);
         } else {
           setAvailableDays([]);
@@ -76,7 +90,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     };
 
     loadDays();
-  }, [schoolName, heroImage]);
+  }, [schoolName]);
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
@@ -175,12 +189,16 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
                   className="day-card"
                   onClick={() => onSelectDay(day.date)}
                 >
-                  <div 
-                    className="day-image-wrapper"
-                    style={{ 
-                      backgroundImage: day.thumbnailUrl ? `url(${day.thumbnailUrl})` : 'none'
-                    }}
-                  >
+                  <div className="day-image-wrapper">
+                    <img
+                      src={day.thumbnailUrl}
+                      alt=""
+                      className="day-card-cover-img"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = heroImage || '/OTRAS.jpg';
+                      }}
+                    />
                     <div className="day-image-overlay"></div>
                     <div className="day-image-info">
                       <span className="photo-count">{day.photoCount}</span>

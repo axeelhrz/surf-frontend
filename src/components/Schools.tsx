@@ -36,16 +36,21 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
     return imageMap[folderName] || '/OTRAS.jpg';
   }, []);
 
+  const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+
   const loadSchools = useCallback(async () => {
     try {
       setLoading(true);
       const folders = await apiService.getFolders();
-      
-      // Mapear carpetas del backend a escuelas
+      const cacheBust = Date.now();
+
+      // Mapear carpetas del backend a escuelas; usar portada del API si existe
       const schoolsFromFolders: School[] = folders.map((folder: any, index: number) => ({
         id: index + 1,
         name: folder.name,
-        image: getSchoolImage(folder.name),
+        image: folder.cover_image
+          ? `${apiBaseUrl}/folders/cover/${encodeURIComponent(folder.name)}?t=${cacheBust}`
+          : getSchoolImage(folder.name),
         location: 'Lanzarote',
         isOtras: false
       }));
@@ -117,7 +122,7 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
     } finally {
       setLoading(false);
     }
-  }, [getSchoolImage, t.schools.otherSchools]);
+  }, [getSchoolImage, t.schools.otherSchools, apiBaseUrl]);
 
   useEffect(() => {
     loadSchools();

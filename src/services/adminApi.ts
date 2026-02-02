@@ -265,13 +265,27 @@ export const adminApiService = {
     onProgress?: (progress: { uploaded: number; total: number; percentage: number }) => void
   ): Promise<any> {
     try {
-      const BATCH_SIZE = 50; // Subir 50 fotos a la vez
+      // Lotes más pequeños evitan requests gigantes que “se quedan pensando”
+      // (sobre todo en Vercel ↔ Railway y redes móviles).
+      const BATCH_SIZE = 20;
       const totalFiles = files.length;
       let uploadedCount = 0;
       const allResults: any[] = [];
       const allErrors: string[] = [];
+      const allUploadedFilenames: string[] = [];
 
       console.log(`📤 Iniciando subida de ${totalFiles} fotos en lotes de ${BATCH_SIZE}`);
+
+      // Compatibilidad: si viene "carpeta/día", separar para usar query params del backend
+      let folder = folderName;
+      let day: string | null = null;
+      if (folderName.includes('/')) {
+        const parts = folderName.split('/').filter(Boolean);
+        if (parts.length >= 2) {
+          folder = parts[0];
+          day = parts[1];
+        }
+      }
 
       // Dividir archivos en lotes
       for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
@@ -284,10 +298,18 @@ export const adminApiService = {
         const formData = new FormData();
         batch.forEach((file) => {
           formData.append('photos', file);
+          allUploadedFilenames.push(file.name);
         });
 
         try {
-          const response = await fetch(`${API_BASE_URL}/photos/upload?folder_name=${encodeURIComponent(folderName)}`, {
+          // Importante: NO indexar en cada lote -> hace la subida lentísima.
+          // Subimos rápido y luego lanzamos el indexado una sola vez al final.
+          const qs = new URLSearchParams();
+          qs.set('folder_name', folder);
+          if (day) qs.set('day', day);
+          qs.set('index', 'false');
+
+          const response = await fetch(`${API_BASE_URL}/photos/upload?${qs.toString()}`, {
             method: 'POST',
             body: formData,
           });
@@ -326,6 +348,20 @@ export const adminApiService = {
           // Continuar con el siguiente lote incluso si este falla
           allErrors.push(`Lote ${batchNumber}: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         }
+      }
+
+      // Lanzar indexado UNA sola vez al terminar la subida
+      try {
+        const qsIndex = new URLSearchParams();
+        qsIndex.set('folder_name', folder);
+        if (day) qsIndex.set('day', day);
+
+        await fetch(`${API_BASE_URL}/indexing/start?${qsIndex.toString()}`, {
+          method: 'POST',
+        });
+        console.log('🧠 Indexado encolado correctamente');
+      } catch (e) {
+        console.warn('⚠️ No se pudo encolar el indexado (no bloqueante):', e);
       }
 
       return {
