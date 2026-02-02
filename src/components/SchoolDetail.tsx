@@ -9,14 +9,16 @@ interface SchoolDetailProps {
 }
 
 interface AnalysisResult {
-  status: string;
+  status?: string;
+  selfie?: string;
+  folder?: string;
   matches: Array<{ file: string; similarity: number }>;
-  non_matches: Array<{ file: string; similarity: number }>;
-  statistics: {
-    total_photos: number;
-    matches_count: number;
-    match_percentage: number;
-    threshold_used: number;
+  non_matches?: Array<{ file: string; similarity: number }>;
+  statistics?: {
+    total_photos?: number;
+    matches_count?: number;
+    match_percentage?: number;
+    threshold_used?: number;
   };
 }
 
@@ -103,37 +105,72 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
     setError(null);
     setShowResults(false);
 
-    try {
-      const formData = new FormData();
-      formData.append('selfie', uploadedFile);
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const formData = new FormData();
+    formData.append('selfie', uploadedFile);
+    const url = `${apiUrl}/compare-faces-folder?search_folder=${encodeURIComponent(schoolName)}&stream=1`;
 
-      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
-      const response = await fetch(`${apiUrl}/compare-faces-folder?search_folder=${schoolName}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
+    try {
+      const response = await fetch(url, { method: 'POST', body: formData });
 
       if (!response.ok) {
-        let errorMessage = 'Error en la búsqueda';
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.detail || errorMessage;
-        } catch (e) {
-          errorMessage = `Error ${response.status}: ${response.statusText}`;
-        }
-        throw new Error(errorMessage);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.detail || `Error ${response.status}`);
       }
 
-      const data: AnalysisResult = await response.json();
-      setAnalysisResult(data);
-      setShowResults(true);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let accumulated: Array<{ file: string; similarity: number }> = [];
+
+      if (!reader) {
+        throw new Error('No se pudo leer la respuesta');
+      }
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() ?? '';
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          try {
+            const event = JSON.parse(line);
+            if (event.type === 'match') {
+              accumulated = [...accumulated, { file: event.file, similarity: event.similarity }];
+              setAnalysisResult((prev) => ({
+                ...prev,
+                status: 'success',
+                selfie: prev?.selfie ?? uploadedFile.name,
+                folder: prev?.folder ?? schoolName,
+                matches: accumulated,
+                non_matches: prev?.non_matches ?? [],
+                statistics: prev?.statistics ?? { total_photos: 0, matches_count: accumulated.length, match_percentage: 0, threshold_used: 0 },
+              }));
+              setShowResults(true);
+            } else if (event.type === 'done') {
+              setAnalysisResult({
+                status: event.status,
+                selfie: event.selfie,
+                folder: event.folder,
+                matches: event.matches ?? accumulated,
+                non_matches: event.non_matches ?? [],
+                statistics: event.statistics ?? {},
+              });
+              setShowResults(true);
+            } else if (event.type === 'error' || event.status === 'error') {
+              throw new Error(event.detail || 'Error en el servidor');
+            }
+          } catch (e) {
+            if (e instanceof SyntaxError) continue;
+            throw e;
+          }
+        }
+      }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Error al analizar la foto. Verifica que el servidor esté corriendo.';
       setError(errorMessage);
-      console.error('Error detallado:', err);
       setShowResults(false);
     } finally {
       setIsSearching(false);
