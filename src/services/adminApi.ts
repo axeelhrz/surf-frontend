@@ -272,7 +272,6 @@ export const adminApiService = {
       let uploadedCount = 0;
       const allResults: any[] = [];
       const allErrors: string[] = [];
-      const allUploadedFilenames: string[] = [];
 
       console.log(`📤 Iniciando subida de ${totalFiles} fotos en lotes de ${BATCH_SIZE}`);
 
@@ -298,7 +297,6 @@ export const adminApiService = {
         const formData = new FormData();
         batch.forEach((file) => {
           formData.append('photos', file);
-          allUploadedFilenames.push(file.name);
         });
 
         try {
@@ -338,9 +336,9 @@ export const adminApiService = {
 
           console.log(`✅ Lote ${batchNumber}/${totalBatches} completado (${uploadedCount}/${totalFiles} fotos)`);
 
-          // Pequeña pausa entre lotes para no saturar el servidor
+          // Pausa mínima entre lotes para no saturar el servidor
           if (i + BATCH_SIZE < totalFiles) {
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 150));
           }
 
         } catch (error) {
@@ -350,18 +348,22 @@ export const adminApiService = {
         }
       }
 
-      // Lanzar indexado UNA sola vez al terminar la subida
-      try {
-        const qsIndex = new URLSearchParams();
-        qsIndex.set('folder_name', folder);
-        if (day) qsIndex.set('day', day);
-
-        await fetch(`${API_BASE_URL}/indexing/start?${qsIndex.toString()}`, {
-          method: 'POST',
-        });
-        console.log('🧠 Indexado encolado correctamente');
-      } catch (e) {
-        console.warn('⚠️ No se pudo encolar el indexado (no bloqueante):', e);
+      // Indexado en segundo plano: solo las fotos nuevas (incremental), no toda la carpeta
+      const uploadedNames = allResults.map((p: { filename?: string }) => p.filename).filter(Boolean);
+      if (uploadedNames.length > 0) {
+        try {
+          const qsIndex = new URLSearchParams();
+          qsIndex.set('folder_name', folder);
+          if (day) qsIndex.set('day', day);
+          await fetch(`${API_BASE_URL}/indexing/start?${qsIndex.toString()}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ new_filenames: uploadedNames }),
+          });
+          console.log('🧠 Indexado incremental encolado (grupos por persona en segundo plano)');
+        } catch (e) {
+          console.warn('⚠️ No se pudo encolar el indexado (no bloqueante):', e);
+        }
       }
 
       return {
