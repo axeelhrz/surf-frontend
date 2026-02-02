@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { adminApiService, Folder, DayFolder } from '../../services/adminApi';
 import './AdminPage.css';
@@ -22,6 +22,7 @@ const PhotosPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [loadingDays, setLoadingDays] = useState(false);
   const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const photosBeforeUploadRef = useRef<Photo[]>([]);
 
   const loadFolders = React.useCallback(async () => {
     try {
@@ -124,54 +125,59 @@ const PhotosPage: React.FC = () => {
     }
   };
 
-  const handleUpload = async () => {
+  const handleUpload = () => {
     if (!selectedFolder || !selectedDay || files.length === 0) {
       alert('Selecciona una carpeta, un día y archivos para subir');
       return;
     }
 
-    try {
-      setUploading(true);
-      setUploadProgress(`Preparando subida de ${files.length} fotos...`);
-      
-      // Subir a la carpeta del día específico con callback de progreso
-      const folderPath = `${selectedFolder}/${selectedDay}`;
-      const result = await adminApiService.uploadPhotos(
-        folderPath, 
-        files,
-        (progress) => {
-          setUploadProgress(
-            `Subiendo: ${progress.uploaded}/${progress.total} fotos (${progress.percentage}%)`
-          );
-        }
-      );
-      
-      // Mostrar resultado final
-      if (result.errors && result.errors.length > 0) {
+    const folderPath = `${selectedFolder}/${selectedDay}`;
+    const filesToUpload = [...files];
+
+    setUploading(true);
+    setUploadProgress(`Subiendo ${filesToUpload.length} fotos...`);
+    setFiles([]);
+    photosBeforeUploadRef.current = photos;
+
+    adminApiService
+      .uploadPhotos(folderPath, filesToUpload, (progress) => {
         setUploadProgress(
-          `✅ ${result.uploaded} fotos subidas. ⚠️ ${result.errors.length} errores.`
+          `Subiendo: ${progress.uploaded}/${progress.total} fotos (${progress.percentage}%)`
         );
-        console.warn('Errores durante la subida:', result.errors);
-      } else {
-        setUploadProgress(`✅ ¡${result.uploaded} fotos subidas exitosamente!`);
-      }
-      
-      setFiles([]);
-      
-      // Recargar fotos
-      await loadPhotos();
-      
-      setTimeout(() => {
-        setUploadProgress('');
-      }, 5000);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error subiendo fotos';
-      alert(errorMessage);
-      setUploadProgress('');
-      console.error('Error en handleUpload:', err);
-    } finally {
-      setUploading(false);
-    }
+        if (progress.photos && progress.photos.length > 0) {
+          const existing = photosBeforeUploadRef.current;
+          const merged = [...existing];
+          const existingFilenames = new Set(existing.map((p) => p.filename));
+          progress.photos.forEach((p: Photo) => {
+            if (!existingFilenames.has(p.filename)) {
+              existingFilenames.add(p.filename);
+              merged.push(p);
+            }
+          });
+          setPhotos(merged);
+        }
+      })
+      .then((result) => {
+        if (result.errors && result.errors.length > 0) {
+          setUploadProgress(
+            `✅ ${result.uploaded} fotos subidas. ⚠️ ${result.errors.length} errores.`
+          );
+          console.warn('Errores durante la subida:', result.errors);
+        } else {
+          setUploadProgress(`✅ ${result.uploaded} fotos subidas.`);
+        }
+        loadPhotos();
+        setTimeout(() => setUploadProgress(''), 5000);
+      })
+      .catch((err) => {
+        const msg = err instanceof Error ? err.message : 'Error subiendo fotos';
+        setUploadProgress(`❌ ${msg}`);
+        setTimeout(() => setUploadProgress(''), 8000);
+        console.error('Error en handleUpload:', err);
+      })
+      .finally(() => {
+        setUploading(false);
+      });
   };
 
   const formatFileSize = (bytes: number): string => {

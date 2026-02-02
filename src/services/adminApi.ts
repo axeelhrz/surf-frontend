@@ -262,19 +262,16 @@ export const adminApiService = {
   async uploadPhotos(
     folderName: string, 
     files: File[], 
-    onProgress?: (progress: { uploaded: number; total: number; percentage: number }) => void
+    onProgress?: (progress: { uploaded: number; total: number; percentage: number; photos: any[] }) => void
   ): Promise<any> {
     try {
       // Lotes más pequeños evitan requests gigantes que “se quedan pensando”
       // (sobre todo en Vercel ↔ Railway y redes móviles).
       const totalFiles = files.length;
-      // Una sola petición con todas las fotos (hasta 150) = como antes, super rápido
-      const BATCH_SIZE = totalFiles <= 150 ? totalFiles : 100;
-      let uploadedCount = 0;
+      const BATCH_SIZE = 20;
+      const CONCURRENT = 4;
       const allResults: any[] = [];
       const allErrors: string[] = [];
-
-      console.log(`📤 Subiendo ${totalFiles} fotos${totalFiles <= BATCH_SIZE ? ' (una petición)' : ' en lotes de ' + BATCH_SIZE}`);
 
       // Compatibilidad: si viene "carpeta/día", separar para usar query params del backend
       let folder = folderName;
@@ -287,60 +284,56 @@ export const adminApiService = {
         }
       }
 
-      // Dividir archivos en lotes
+      console.log(`📤 Subiendo ${totalFiles} fotos en paralelo (${Math.ceil(totalFiles / BATCH_SIZE)} lotes, ${CONCURRENT} a la vez)`);
+      const qsBase = new URLSearchParams();
+      qsBase.set('folder_name', folder);
+      if (day) qsBase.set('day', day);
+      qsBase.set('index', 'false');
+
+      const batchList: File[][] = [];
       for (let i = 0; i < totalFiles; i += BATCH_SIZE) {
-        const batch = files.slice(i, i + BATCH_SIZE);
-        const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
-        const totalBatches = Math.ceil(totalFiles / BATCH_SIZE);
+        batchList.push(files.slice(i, i + BATCH_SIZE));
+      }
 
-        console.log(`📦 Procesando lote ${batchNumber}/${totalBatches} (${batch.length} fotos)`);
-
+      const uploadBatch = async (batch: File[]): Promise<{ photos: any[]; errors: string[]; count: number }> => {
         const formData = new FormData();
-        batch.forEach((file) => {
-          formData.append('photos', file);
+        batch.forEach((f) => formData.append('photos', f));
+        const res = await fetch(`${API_BASE_URL}/photos/upload?${qsBase.toString()}`, {
+          method: 'POST',
+          body: formData,
         });
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || 'Error subiendo fotos');
+        }
+        const data = await res.json();
+        return {
+          photos: data.photos || [],
+          errors: data.errors || [],
+          count: batch.length,
+        };
+      };
 
-        try {
-          // Importante: NO indexar en cada lote -> hace la subida lentísima.
-          // Subimos rápido y luego lanzamos el indexado una sola vez al final.
-          const qs = new URLSearchParams();
-          qs.set('folder_name', folder);
-          if (day) qs.set('day', day);
-          qs.set('index', 'false');
-
-          const response = await fetch(`${API_BASE_URL}/photos/upload?${qs.toString()}`, {
-            method: 'POST',
-            body: formData,
+      let done = 0;
+      for (let g = 0; g < batchList.length; g += CONCURRENT) {
+        const group = batchList.slice(g, g + CONCURRENT);
+        const results = await Promise.allSettled(group.map((b) => uploadBatch(b)));
+        for (const r of results) {
+          if (r.status === 'fulfilled') {
+            allResults.push(...r.value.photos);
+            allErrors.push(...r.value.errors);
+            done += r.value.count;
+          } else {
+            allErrors.push(r.reason?.message || String(r.reason));
+          }
+        }
+        if (onProgress) {
+          onProgress({
+            uploaded: Math.min(done, totalFiles),
+            total: totalFiles,
+            percentage: Math.round((Math.min(done, totalFiles) / totalFiles) * 100),
+            photos: [...allResults],
           });
-
-          if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.detail || 'Error subiendo fotos');
-          }
-
-          const result = await response.json();
-          allResults.push(...(result.photos || []));
-          if (result.errors && result.errors.length > 0) {
-            allErrors.push(...result.errors);
-          }
-
-          uploadedCount += batch.length;
-
-          // Reportar progreso
-          if (onProgress) {
-            onProgress({
-              uploaded: uploadedCount,
-              total: totalFiles,
-              percentage: Math.round((uploadedCount / totalFiles) * 100)
-            });
-          }
-
-          console.log(`✅ Lote ${batchNumber}/${totalBatches} completado (${uploadedCount}/${totalFiles} fotos)`);
-
-        } catch (error) {
-          console.error(`❌ Error en lote ${batchNumber}:`, error);
-          // Continuar con el siguiente lote incluso si este falla
-          allErrors.push(`Lote ${batchNumber}: ${error instanceof Error ? error.message : 'Error desconocido'}`);
         }
       }
 
