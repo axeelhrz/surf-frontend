@@ -138,15 +138,24 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
           try {
             const event = JSON.parse(line);
             if (event.type === 'match') {
-              accumulated = [...accumulated, { file: event.file, similarity: event.similarity }];
+              const currentMatches: Array<{ file: string; similarity: number }> = [
+                ...accumulated,
+                { file: event.file, similarity: event.similarity },
+              ];
+              accumulated = currentMatches;
               setAnalysisResult((prev) => ({
                 ...prev,
                 status: 'success',
                 selfie: prev?.selfie ?? uploadedFile.name,
                 folder: prev?.folder ?? schoolName,
-                matches: accumulated,
+                matches: currentMatches,
                 non_matches: prev?.non_matches ?? [],
-                statistics: prev?.statistics ?? { total_photos: 0, matches_count: accumulated.length, match_percentage: 0, threshold_used: 0 },
+                statistics: prev?.statistics ?? {
+                  total_photos: 0,
+                  matches_count: currentMatches.length,
+                  match_percentage: 0,
+                  threshold_used: 0,
+                },
               }));
               setShowResults(true);
             } else if (event.type === 'done') {
