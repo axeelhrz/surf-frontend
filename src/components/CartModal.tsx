@@ -6,6 +6,8 @@ interface CartItem {
   name: string;
   price: number;
   image?: string;
+  /** Número de fotos cuando es Pack Completo */
+  photoCount?: number;
 }
 
 interface CartModalProps {
@@ -107,8 +109,14 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
                   <div className="cart-item-details">
                     <h4 className="cart-item-name">{item.name}</h4>
                     <div className="cart-item-meta">
-                      <span className="cart-item-format">Formato Digital</span>
-                      <span className="cart-item-quality">Alta Resolución</span>
+                      {item.photoCount != null && item.photoCount > 0 ? (
+                        <span className="cart-item-format">Pack completo · {item.photoCount} {item.photoCount === 1 ? 'foto' : 'fotos'}</span>
+                      ) : (
+                        <>
+                          <span className="cart-item-format">Formato Digital</span>
+                          <span className="cart-item-quality">Alta Resolución</span>
+                        </>
+                      )}
                     </div>
                     <div className="cart-item-price-section">
                       <span className="cart-item-price">${formatPrice(item.price)}</span>

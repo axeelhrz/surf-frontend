@@ -9,10 +9,10 @@ export const translations = {
       faqs: 'FAQs',
       memories: 'Memories',
     },
-    // Home Page
+    // Home Page - HERO MAIN
     home: {
-      title: 'Find Your Perfect Surf Moments',
-      subtitle: 'Professional surf photography in Lanzarote. Find your photos easily with our facial recognition technology.',
+      title: 'Find your surf photos in seconds',
+      subtitle: 'Surf photography in Lanzarote. Upload a photo and find your memories instantly, without searching through hundreds of images.',
       cta: 'Find My Photos',
       stats: {
         photos: 'Photos',
@@ -20,24 +20,24 @@ export const translations = {
         surfers: 'Happy Surfers',
       },
     },
-    // Schools Page
+    // Schools Page - SURF SCHOOLS
     schools: {
       title: 'Surf Schools',
       subtitle: 'Select your surf school to find your photos',
       viewPhotos: 'View Photos',
-      introTitle: 'Your school, your day, your photos.',
-      descriptionMain: 'Select the school where you took your surf class.',
-      descriptionSecondary: 'Each school has its own space on the website, where you will find your photos organized by date.',
+      introTitle: 'Your school, your day, your memories',
+      descriptionMain: 'Select the surf school where you took your lesson and find your session organized by date.',
+      descriptionSecondary: 'Daily surf photography sessions in Famara and La Santa.',
       loading: 'Loading schools...',
       otherSchools: 'OTHER SCHOOLS',
       valueHighQuality: 'High quality photos',
       valueInstantDownload: 'Instant download',
       valueSecurePayment: 'Secure payment',
     },
-    // How It Works Page
+    // How It Works Page - PHOTO ACCESS (SELFIE)
     howItWorks: {
-      title: 'How It Works',
-      subtitle: 'Get your surf photos in minutes.',
+      title: 'Find your photos securely',
+      subtitle: 'Upload a selfie so our system can automatically identify only your photos.',
       step1: {
         title: 'Choose Your Surf School',
         description: 'Select the school where you took your class',
@@ -48,7 +48,7 @@ export const translations = {
       },
       step3: {
         title: 'Upload a Selfie',
-        description: 'AI will automatically find your photos',
+        description: 'Our system will automatically identify only your photos',
       },
       step4: {
         title: 'View Your Photos',
@@ -68,19 +68,19 @@ export const translations = {
       },
       smartSearch: {
         title: 'Smart Search',
-        description: 'Facial recognition searches only in photos from the selected day, not across the entire web.',
+        description: 'This process guarantees your privacy and prevents other people from accessing or purchasing photos that do not belong to them.',
       },
       cta: 'Find Your Photos',
     },
-    // About Me Page
+    // About Me Page - ABOUT ME
     aboutMe: {
       label: 'About Me',
       title: 'Capturing your best',
       titleHighlight: 'moments in the water',
-      intro: 'I am <strong>Germán Abreu</strong>, a photographer specialized in surf and water sports in Lanzarote.',
-      paragraph1: 'I work with several surf schools to capture the best moments of their students in the sea.',
-      paragraph2: '<strong className="brand-name">Surf Photo Lanzarote</strong> was born from a simple idea: that everyone can find their photos quickly without having to search through hundreds of images.',
-      mission: 'My goal is for you to take home an authentic memory of your experience in Lanzarote, because <span className="emphasis">waves pass... but memories remain.</span>',
+      intro: 'I\'m <strong>Germán Abreu</strong>, a photographer specialized in surf and water sports in Lanzarote. I live in La Santa and work mainly in Famara and other surf spots around the island.',
+      paragraph1: 'After years photographing surfers and surf school students, I always detected the same problem: finding your photos among hundreds of images was slow and impractical.',
+      paragraph2: 'That\'s how <strong className="brand-name">Surf Photo Lanzarote</strong> was born, a simple, fast, and secure way for each person to find only their photos, without endless searching and always respecting privacy.',
+      mission: 'My goal is for you to take home an authentic memory of your experience in the water. Because waves pass… but memories remain.',
       stats: {
         experience: '+8 years',
         experienceLabel: 'Experience',
@@ -93,37 +93,35 @@ export const translations = {
       title: 'Pricing',
       subtitle: 'Choose the option that best suits you',
       plan1: {
-        title: 'Single Photo',
+        title: 'Your best memory',
         price: 15,
         description: 'One individual high-quality image',
         details: [
           'Instant download',
-          'High resolution (300 DPI)',
-          'No watermark',
+          'High resolution',
           'JPG format',
-          'Print ready',
+          'Suitable for printing',
+          'No watermark',
         ],
       },
       plan2: {
-        title: 'Complete Pack',
+        title: 'All the memories from your session',
         price: 35,
-        description: 'All photos from your session, same day and person',
+        description: 'All photos of the same person on the same day.',
         details: [
           'All photos from the day',
           'Instant download',
-          'High resolution (300 DPI)',
-          'No watermark',
+          'High resolution',
           'JPG format',
-          'Save up to 50%',
+          'No watermark',
         ],
       },
       plan3: {
         title: 'Additional Day',
         price: 20,
-        description: 'Add another day to your pack',
+        description: 'Add another day to your pack.',
         details: [
-          'All photos from extra day',
-          'Same price per additional day',
+          'All photos from the extra day',
           'Instant download',
           'High resolution',
           'No watermark',
@@ -132,10 +130,9 @@ export const translations = {
       plan4: {
         title: 'Additional Person',
         price: 20,
-        description: 'Include another person on the same day',
+        description: 'Add the photos of another person. It can be from the same day or from a different day.',
         details: [
-          'Photos of another person',
-          'Same session day',
+          'All photos of another person',
           'Instant download',
           'High resolution',
           'No watermark',
@@ -153,31 +150,31 @@ export const translations = {
       questions: [
         {
           q: 'How do I find my photos?',
-          a: 'Select your surf school, the day of your session, and upload a selfie. The website will show you only the photos you appear in that day.',
+          a: 'Select your surf school, the day of your session, and upload a selfie. The website will show you only the photos where you appear that day.',
         },
         {
-          q: 'Why do I have to upload a selfie?',
+          q: 'Why do I need to upload a selfie?',
           a: 'We use facial recognition technology to identify your face and show you only your photos, without having to search through hundreds of images.',
         },
         {
           q: 'What happens to the selfie I upload?',
-          a: 'The selfie is used only to perform the search for that day and is not stored or used for other purposes.',
+          a: 'The selfie is used only to perform the search for that day and is not stored or used for any other purpose.',
         },
         {
-          q: 'Can I search for photos from multiple days with one selfie?',
-          a: 'No. Each search is performed per day. If you surfed on different days, you will need to upload a selfie for each session to find your photos.',
+          q: 'Can I search photos from multiple days with a single selfie?',
+          a: 'No. Each search is done per day. If you surfed on different days, you must upload a selfie for each session to find your photos.',
         },
         {
-          q: 'What if there are two or more people?',
-          a: 'Each person must upload their own selfie to find their photos. You can add each person\'s photos to the cart and continue searching without any problem.',
+          q: 'What should I do if we are two or more people?',
+          a: 'Each person must upload their own selfie to find their photos. You can add each person\'s photos to the cart and continue without any problem.',
         },
         {
-          q: 'Why do photos have a watermark?',
+          q: 'Why do the photos have a watermark?',
           a: 'Photos are displayed with a watermark to protect the photographer\'s work. After purchase, you can download them without a watermark.',
         },
         {
           q: 'What quality are the downloaded photos?',
-          a: 'Photos are downloaded in high quality, ready for personal use and social media.',
+          a: 'Photos are downloaded in high quality, ready for personal use, social media, and printing.',
         },
         {
           q: 'How long will my photos be available?',
@@ -189,14 +186,14 @@ export const translations = {
         },
         {
           q: 'Are the photos public?',
-          a: 'No. Photos are organized by school and day so that each customer accesses only their session.',
+          a: 'No. Photos are organized by school and day so that each client can access only their own session.',
         },
         {
-          q: 'Is payment secure?',
-          a: 'Yes. All payments are made through Stripe, a secure and reliable payment platform.',
+          q: 'Is the payment secure?',
+          a: 'Yes. All payments are processed through Stripe, a secure and reliable payment platform.',
         },
         {
-          q: 'What do I do if I can\'t find myself or have a problem?',
+          q: 'What should I do if I can\'t find myself or have a problem?',
           a: 'If you don\'t appear in the photos or have any issue, you can contact us and we will help you.',
         },
       ],

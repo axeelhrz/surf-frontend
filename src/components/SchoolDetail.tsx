@@ -212,9 +212,18 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
   };
 
   const handleAddAllToCart = () => {
-    if (analysisResult?.matches?.length) {
-      analysisResult.matches.forEach((match) => handleAddToCart(match.file));
-    }
+    if (!analysisResult?.matches?.length) return;
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const count = analysisResult.matches.length;
+    const firstFile = analysisResult.matches[0].file;
+    const packItem = {
+      id: `pack_${schoolName}_all`,
+      name: `${schoolName} - ${count} FOTOS`,
+      price: 35,
+      image: `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${firstFile}&watermark=true`,
+      photoCount: count,
+    };
+    onAddToCart(packItem);
   };
 
   const [viewerOpen, setViewerOpen] = useState(false);

@@ -159,6 +159,14 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
     }
   };
 
+  const formatDateForCart = (dateStr: string) => {
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
   const handleAddToCart = (filename: string) => {
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     const cartItem = {
@@ -171,9 +179,18 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
   };
 
   const handleAddAllToCart = () => {
-    if (analysisResult?.matches?.length) {
-      analysisResult.matches.forEach((match) => handleAddToCart(match.file));
-    }
+    if (!analysisResult?.matches?.length) return;
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+    const count = analysisResult.matches.length;
+    const firstFile = analysisResult.matches[0].file;
+    const packItem = {
+      id: `pack_${schoolName}_${date}`,
+      name: `${schoolName} - ${formatDateForCart(date)} - ${count} FOTOS`,
+      price: 35,
+      image: `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${firstFile}&watermark=true`,
+      photoCount: count,
+    };
+    onAddToCart(packItem);
   };
 
   const [viewerOpen, setViewerOpen] = useState(false);
