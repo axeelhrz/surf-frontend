@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './CartModal.css';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface CartItem {
   id: string;
@@ -19,6 +20,7 @@ interface CartModalProps {
 }
 
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveItem, totalPrice }) => {
+  const { t } = useLanguage();
   const [isProcessing, setIsProcessing] = useState(false);
 
   if (!isOpen) return null;
@@ -52,8 +54,8 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
             <div>
-              <h2>Tus Recuerdos</h2>
-              <p className="cart-subtitle">{getItemCount()} {getItemCount() === 1 ? 'artículo' : 'artículos'}</p>
+              <h2>{t.cart.title}</h2>
+              <p className="cart-subtitle">{getItemCount()} {getItemCount() === 1 ? t.cart.item : t.cart.items}</p>
             </div>
           </div>
           <button className="cart-modal-close" onClick={onClose} aria-label="Cerrar carrito">
@@ -75,10 +77,10 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
                   <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
               </div>
-              <h3>Tu carrito está vacío</h3>
-              <p>Explora nuestras fotos y añade tus recuerdos favoritos</p>
+              <h3>{t.cart.empty}</h3>
+              <p>{t.cart.emptyDesc}</p>
               <button className="btn-explore" onClick={onClose}>
-                Explorar Fotos
+                {t.cart.explorePhotos}
               </button>
             </div>
           ) : (

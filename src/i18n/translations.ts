@@ -218,8 +218,12 @@ export const translations = {
     },
     // Cart Modal
     cart: {
-      title: 'Your Cart',
+      title: 'Your Memories',
+      item: 'item',
+      items: 'items',
       empty: 'Your cart is empty',
+      emptyDesc: 'Explore our photos and add your favorite memories',
+      explorePhotos: 'Explore Photos',
       total: 'Total',
       checkout: 'Proceed to Checkout',
       remove: 'Remove',
@@ -478,8 +482,12 @@ export const translations = {
     },
     // Cart Modal
     cart: {
-      title: 'Tu Carrito',
+      title: 'Tus Recuerdos',
+      item: 'artículo',
+      items: 'artículos',
       empty: 'Tu carrito está vacío',
+      emptyDesc: 'Explora nuestras fotos y añade tus recuerdos favoritos',
+      explorePhotos: 'Explorar Fotos',
       total: 'Total',
       checkout: 'Proceder al Pago',
       remove: 'Eliminar',
