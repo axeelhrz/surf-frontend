@@ -298,10 +298,17 @@
   margin: 0;
 }
 
+/* En móvil/tablet la portada pegada al navbar (60px) */
+@media (max-width: 1024px) {
+  .school-hero {
+    margin-top: 60px;
+  }
+}
+
 @media (max-width: 768px) {
   .school-hero {
     height: 350px;
-    margin-top: 140px;
+    margin-top: 60px;
   }
 
   .btn-back-hero {
@@ -337,7 +344,7 @@
 @media (max-width: 480px) {
   .school-hero {
     height: 280px;
-    margin-top: 100px;
+    margin-top: 60px;
   }
 
   .btn-back-hero {
