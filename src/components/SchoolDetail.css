@@ -480,6 +480,16 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #fff;
+  padding: 0.75rem 0 1rem;
+  box-shadow: 0 2px 0 transparent;
+  transition: box-shadow 0.2s ease;
+}
+.matches-container-header.is-stuck {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .matches-container-header h4 {
@@ -493,6 +503,12 @@
   margin-top: 1.5rem;
   display: flex;
   justify-content: center;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: #fff;
+  padding: 1rem 0;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .btn-add-all-records {

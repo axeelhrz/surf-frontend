@@ -40,6 +40,7 @@ const App: React.FC = () => {
     const price = isPack && hasExistingPack ? 20 : item.price;
     const itemToAdd = { ...item, price };
     setCartItems([...next, itemToAdd]);
+    setShowCart(true);
   };
 
   const removeFromCart = (id: string) => {
