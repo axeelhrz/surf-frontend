@@ -32,11 +32,16 @@ const FoldersPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const [data, displayMeta] = await Promise.all([
-        adminApiService.getFolders(),
-        adminApiService.getFolderDisplayMetadata(),
-      ]);
+      const data = await adminApiService.getFolders();
       const list: Folder[] = Array.isArray(data) ? data : [];
+      let displayMeta: Record<string, { date?: string; text?: string }> = {};
+      try {
+        displayMeta = await adminApiService.getFolderDisplayMetadata();
+        if (!displayMeta || typeof displayMeta !== 'object') displayMeta = {};
+      } catch {
+        // Backend puede no tener aún /folders/display-metadata; la página carga igual
+        displayMeta = {};
+      }
       const metaOtras = displayMeta['OTRAS ESCUELAS'] || {};
       if (!list.some((f) => f.name === 'OTRAS ESCUELAS')) {
         list.push({
@@ -197,7 +202,9 @@ const FoldersPage: React.FC = () => {
   };
 
   const formatDate = (dateString: string) => {
+    if (!dateString) return '—';
     const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return '—';
     return new Intl.DateTimeFormat('es-ES', {
       day: '2-digit',
       month: 'short',

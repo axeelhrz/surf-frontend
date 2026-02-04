@@ -67,14 +67,15 @@ const PhotosPage: React.FC = () => {
     }
   }, [selectedFolder, selectedDay, searchParams]);
 
+  const folderPath = selectedFolder && selectedDay ? `${selectedFolder}/${selectedDay}` : '';
+
   const loadPhotos = React.useCallback(async () => {
     if (!selectedFolder || !selectedDay) return;
     
     try {
       setLoadingPhotos(true);
-      // Construir el path completo: folder/day
-      const folderPath = `${selectedFolder}/${selectedDay}`;
-      const data = await adminApiService.getFolderPhotos(folderPath);
+      const path = `${selectedFolder}/${selectedDay}`;
+      const data = await adminApiService.getFolderPhotos(path);
       setPhotos(data);
     } catch (err) {
       console.error('Error loading photos:', err);
@@ -83,6 +84,17 @@ const PhotosPage: React.FC = () => {
       setLoadingPhotos(false);
     }
   }, [selectedFolder, selectedDay]);
+
+  const handleDeletePhoto = async (filename: string) => {
+    if (!folderPath) return;
+    if (!window.confirm(`¿Eliminar la foto «${filename}»?\n\nEsta acción no se puede deshacer.`)) return;
+    try {
+      await adminApiService.deletePhoto(folderPath, filename);
+      await loadPhotos();
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error eliminando foto');
+    }
+  };
 
   useEffect(() => {
     loadFolders();
@@ -347,7 +359,9 @@ const PhotosPage: React.FC = () => {
                             border: '1px solid #e2e8f0',
                             borderRadius: '8px',
                             overflow: 'hidden',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            display: 'flex',
+                            flexDirection: 'column'
                           }}
                         >
                           <div style={{ 
@@ -372,7 +386,7 @@ const PhotosPage: React.FC = () => {
                               }}
                             />
                           </div>
-                          <div style={{ padding: '0.75rem' }}>
+                          <div style={{ padding: '0.75rem', flex: 1 }}>
                             <p style={{ 
                               fontSize: '0.875rem', 
                               fontWeight: '500',
@@ -392,10 +406,19 @@ const PhotosPage: React.FC = () => {
                             </p>
                             <p style={{ 
                               fontSize: '0.75rem', 
-                              color: '#a0aec0'
+                              color: '#a0aec0',
+                              marginBottom: '0.5rem'
                             }}>
                               {formatDate(photo.created_at)}
                             </p>
+                            <button
+                              type="button"
+                              onClick={() => handleDeletePhoto(photo.filename)}
+                              className="btn-danger"
+                              style={{ width: '100%', fontSize: '0.8rem', padding: '0.4rem 0.5rem' }}
+                            >
+                              Eliminar
+                            </button>
                           </div>
                         </div>
                       ))}

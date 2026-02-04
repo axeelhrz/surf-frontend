@@ -434,6 +434,24 @@ export const adminApiService = {
     }
   },
 
+  async deletePhoto(folderName: string, filename: string): Promise<void> {
+    try {
+      const params = new URLSearchParams();
+      params.set('folder_name', folderName);
+      params.set('filename', filename);
+      const response = await fetch(`${API_BASE_URL}/photos/delete?${params.toString()}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'Error eliminando foto');
+      }
+    } catch (error) {
+      console.error('Error en deletePhoto:', error);
+      throw error;
+    }
+  },
+
   // Payments
   async getPayments(): Promise<Payment[]> {
     try {

@@ -272,10 +272,10 @@ export const translations = {
       faqs: 'FAQs',
       memories: 'Recuerdos',
     },
-    // Home Page
+    // Home Page - HERO PRINCIPAL
     home: {
-      title: 'Encuentra Tus Momentos Perfectos de Surf',
-      subtitle: 'Fotografía profesional de surf en Lanzarote. Encuentra tus fotos fácilmente con nuestra tecnología de reconocimiento facial.',
+      title: 'Encuentra tus fotos de surf en segundos',
+      subtitle: 'Fotografía de surf en Lanzarote. Sube una foto y encuentra tus recuerdos al instante, sin buscar entre cientos de imágenes.',
       cta: 'Encontrar Mis Fotos',
       stats: {
         photos: 'Fotos',
@@ -283,24 +283,24 @@ export const translations = {
         surfers: 'Surfistas Felices',
       },
     },
-    // Schools Page
+    // Schools Page - ESCUELAS
     schools: {
       title: 'Escuelas de Surf',
       subtitle: 'Selecciona tu escuela de surf para encontrar tus fotos',
       viewPhotos: 'Ver Fotos',
-      introTitle: 'Tu escuela, tu día, tus fotos.',
-      descriptionMain: 'Selecciona la escuela con la que hiciste tu clase de surf.',
-      descriptionSecondary: 'Cada escuela tiene su propio espacio dentro de la web, donde encontrarás tus fotos organizadas por fecha.',
+      introTitle: 'Tu escuela, tu día, tus recuerdos',
+      descriptionMain: 'Selecciona la escuela con la que hiciste tu clase de surf y encuentra tu sesión organizada por fecha.',
+      descriptionSecondary: 'Sesiones diarias de fotografía de surf en Famara y La Santa.',
       loading: 'Cargando escuelas...',
       otherSchools: 'OTRAS ESCUELAS',
       valueHighQuality: 'Fotos en alta calidad',
       valueInstantDownload: 'Descarga inmediata',
       valueSecurePayment: 'Pago seguro',
     },
-    // How It Works Page
+    // How It Works Page - ACCESO A FOTOS (SELFIE)
     howItWorks: {
-      title: 'Cómo Funciona',
-      subtitle: 'Consigue tus fotos de surf en cuestión de minutos.',
+      title: 'Encuentra tus fotos de forma segura',
+      subtitle: 'Sube un selfie para que nuestro sistema identifique únicamente tus fotos de forma automática.',
       step1: {
         title: 'Elige tu escuela de surf',
         description: 'Selecciona la escuela donde hiciste tu clase',
@@ -311,7 +311,7 @@ export const translations = {
       },
       step3: {
         title: 'Sube un selfie',
-        description: 'La IA buscará tus fotos automáticamente',
+        description: 'Nuestro sistema identificará únicamente tus fotos de forma automática',
       },
       step4: {
         title: 'Visualiza tus fotos',
@@ -331,19 +331,19 @@ export const translations = {
       },
       smartSearch: {
         title: 'Búsqueda inteligente',
-        description: 'El reconocimiento facial busca solo en las fotos del día seleccionado, no en toda la web.',
+        description: 'Este proceso garantiza tu privacidad y evita que otras personas puedan acceder o comprar fotos que no les pertenecen.',
       },
       cta: 'Encuentra tus fotos',
     },
-    // About Me Page
+    // About Me Page - SOBRE MÍ
     aboutMe: {
-      label: 'Sobre mí',
+      label: 'Sobre Mí',
       title: 'Capturando tus mejores',
       titleHighlight: 'momentos en el agua',
-      intro: 'Soy <strong>Germán Abreu</strong>, fotógrafo especializado en surf y deportes acuáticos en Lanzarote.',
-      paragraph1: 'Trabajo junto a varias escuelas de surf para capturar los mejores momentos de sus alumnos en el mar.',
-      paragraph2: '<strong className="brand-name">Surf Photo Lanzarote</strong> nace de una idea sencilla: que cada persona pueda encontrar sus fotos de forma rápida y sin tener que buscar entre cientos de imágenes.',
-      mission: 'Mi objetivo es que te lleves un recuerdo auténtico de tu experiencia en Lanzarote, porque <span className="emphasis">las olas pasan… pero los recuerdos quedan.</span>',
+      intro: 'Soy <strong>Germán Abreu</strong>, fotógrafo especializado en surf y deportes acuáticos en Lanzarote. Vivo en La Santa y trabajo principalmente en Famara y en otros spots de surf de la isla.',
+      paragraph1: 'Después de años fotografiando a surfistas y alumnos de escuelas, detecté siempre el mismo problema: encontrar tus fotos entre cientos de imágenes era lento y poco práctico.',
+      paragraph2: 'Por eso nace <strong className="brand-name">Surf Photo Lanzarote</strong>, una forma sencilla, rápida y segura de que cada persona encuentre solo sus fotos, sin búsquedas interminables y respetando siempre la privacidad.',
+      mission: 'Mi objetivo es que te lleves un recuerdo auténtico de tu experiencia en el agua. Porque las olas pasan… pero los recuerdos se quedan.',
       stats: {
         experience: '+8 años',
         experienceLabel: 'Experiencia',
@@ -356,37 +356,35 @@ export const translations = {
       title: 'Precios',
       subtitle: 'Elige la opción que mejor se adapte a ti',
       plan1: {
-        title: 'Foto suelta',
+        title: 'Tu mejor recuerdo',
         price: 15,
         description: 'Una imagen individual en alta calidad',
         details: [
           'Descarga inmediata',
-          'Alta resolución (300 DPI)',
-          'Sin marca de agua',
+          'Alta resolución',
           'Formato JPG',
           'Válido para impresión',
+          'Sin marca de agua',
         ],
       },
       plan2: {
-        title: 'Pack completo',
+        title: 'Todos los recuerdos de tu sesión',
         price: 35,
-        description: 'Todas las fotos de tu sesión, mismo día y persona',
+        description: 'Todas las fotos de una misma persona en un mismo día.',
         details: [
           'Todas las fotos del día',
           'Descarga inmediata',
-          'Alta resolución (300 DPI)',
-          'Sin marca de agua',
+          'Alta resolución',
           'Formato JPG',
-          'Ahorra hasta 50%',
+          'Sin marca de agua',
         ],
       },
       plan3: {
         title: 'Día adicional',
         price: 20,
-        description: 'Añade otro día a tu pack',
+        description: 'Añade otro día a tu pack.',
         details: [
           'Todas las fotos del día extra',
-          'Mismo precio por día adicional',
           'Descarga inmediata',
           'Alta resolución',
           'Sin marca de agua',
@@ -395,10 +393,9 @@ export const translations = {
       plan4: {
         title: 'Persona adicional',
         price: 20,
-        description: 'Incluye otra persona en el mismo día',
+        description: 'Añade las fotos de otra persona. Puede ser del mismo día o de un día diferente.',
         details: [
-          'Fotos de otra persona',
-          'Mismo día de sesión',
+          'Todas las fotos de otra persona',
           'Descarga inmediata',
           'Alta resolución',
           'Sin marca de agua',
@@ -432,7 +429,7 @@ export const translations = {
         },
         {
           q: '¿Qué hago si somos dos o más personas?',
-          a: 'Cada persona debe subir su propio selfie para encontrar sus fotos. Puedes añadir las fotos de cada persona al carrito y continuar buscando sin problema.',
+          a: 'Cada persona debe subir su propio selfie para encontrar sus fotos. Puedes añadir las fotos de cada persona al carrito y continuar sin problema.',
         },
         {
           q: '¿Por qué las fotos tienen marca de agua?',
@@ -440,7 +437,7 @@ export const translations = {
         },
         {
           q: '¿Qué calidad tienen las fotos descargadas?',
-          a: 'Las fotos se descargan en alta calidad, listas para uso personal y redes sociales.',
+          a: 'Las fotos se descargan en alta calidad, listas para uso personal, redes sociales e impresión.',
         },
         {
           q: '¿Cuánto tiempo estarán disponibles mis fotos?',
