@@ -18,6 +18,11 @@ const FoldersPage: React.FC = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [imageRefreshKey, setImageRefreshKey] = useState(Date.now());
+  const [showMetaModal, setShowMetaModal] = useState(false);
+  const [metaFolder, setMetaFolder] = useState<string | null>(null);
+  const [metaDate, setMetaDate] = useState('');
+  const [metaText, setMetaText] = useState('');
+  const [savingMeta, setSavingMeta] = useState(false);
 
   useEffect(() => {
     loadFolders();
@@ -27,13 +32,70 @@ const FoldersPage: React.FC = () => {
     try {
       setLoading(true);
       setError(null);
-      const data = await adminApiService.getFolders();
-      console.log('📦 Carpetas cargadas:', data);
-      setFolders(data);
+      const [data, displayMeta] = await Promise.all([
+        adminApiService.getFolders(),
+        adminApiService.getFolderDisplayMetadata(),
+      ]);
+      const list: Folder[] = Array.isArray(data) ? data : [];
+      const metaOtras = displayMeta['OTRAS ESCUELAS'] || {};
+      if (!list.some((f) => f.name === 'OTRAS ESCUELAS')) {
+        list.push({
+          name: 'OTRAS ESCUELAS',
+          photo_count: 0,
+          created_at: '',
+          cover_image: undefined,
+          custom_date: metaOtras.date ?? '',
+          custom_text: metaOtras.text ?? '',
+          isVirtual: true,
+        });
+      }
+      for (const key of Object.keys(displayMeta)) {
+        if (key !== 'OTRAS ESCUELAS' && !list.some((f) => f.name === key)) {
+          const meta = displayMeta[key];
+          list.push({
+            name: key,
+            photo_count: 0,
+            created_at: '',
+            cover_image: undefined,
+            custom_date: meta?.date ?? '',
+            custom_text: meta?.text ?? '',
+            isVirtual: true,
+          });
+        }
+      }
+      setFolders(list);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error cargando carpetas');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleOpenMetaModal = (folderName: string) => {
+    const folder = folders.find((f) => f.name === folderName);
+    setMetaFolder(folderName);
+    setMetaDate(folder?.custom_date ?? '');
+    setMetaText(folder?.custom_text ?? '');
+    setShowMetaModal(true);
+  };
+
+  const handleSaveMeta = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!metaFolder) return;
+    try {
+      setSavingMeta(true);
+      await adminApiService.setFolderDisplayMetadata(metaFolder, { date: metaDate, text: metaText });
+      setShowMetaModal(false);
+      setMetaFolder(null);
+      setMetaDate('');
+      setMetaText('');
+      await loadFolders();
+      setSuccessMessage(`Fecha y texto de "${metaFolder}" guardados correctamente`);
+      setShowSuccessModal(true);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error guardando');
+    } finally {
+      setSavingMeta(false);
     }
   };
 
@@ -55,13 +117,28 @@ const FoldersPage: React.FC = () => {
   };
 
   const handleDeleteFolder = async (folderName: string) => {
-    if (!window.confirm(`¿Estás seguro de eliminar la carpeta "${folderName}"?`)) return;
+    if (!window.confirm(`¿Eliminar la carpeta «${folderName}» y todas sus fotos?\n\nEsta acción no se puede deshacer.`)) return;
 
     try {
       await adminApiService.deleteFolder(folderName);
       await loadFolders();
+      setSuccessMessage(`Carpeta «${folderName}» eliminada correctamente`);
+      setShowSuccessModal(true);
     } catch (err) {
       alert(err instanceof Error ? err.message : 'Error eliminando carpeta');
+    }
+  };
+
+  const handleRemoveVirtualFolder = async (folderName: string) => {
+    if (!window.confirm(`¿Quitar «${folderName}» de la lista?\n\nSolo se borrará la fecha y el texto; la carpeta no existe en el servidor.`)) return;
+
+    try {
+      await adminApiService.removeFolderDisplayMetadata(folderName);
+      await loadFolders();
+      setSuccessMessage(`«${folderName}» quitado de la lista`);
+      setShowSuccessModal(true);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error');
     }
   };
 
@@ -240,8 +317,16 @@ const FoldersPage: React.FC = () => {
                       {folder.cover_image ? 'Cambiar Portada' : 'Asignar Portada'}
                     </button>
                     <button
-                      onClick={() => handleDeleteFolder(folder.name)}
+                      onClick={() => handleOpenMetaModal(folder.name)}
+                      className="btn-secondary"
+                      title="Fecha y texto para mostrar en la web (p. ej. OTRAS ESCUELAS)"
+                    >
+                      Fecha y texto
+                    </button>
+                    <button
+                      onClick={() => folder.isVirtual ? handleRemoveVirtualFolder(folder.name) : handleDeleteFolder(folder.name)}
                       className="btn-danger"
+                      title={folder.isVirtual ? 'Quitar de la lista' : 'Eliminar carpeta y todas sus fotos'}
                     >
                       Eliminar
                     </button>
@@ -328,6 +413,55 @@ const FoldersPage: React.FC = () => {
                   </button>
                   <button type="submit" className="btn-primary" disabled={uploading}>
                     {uploading ? 'Subiendo...' : 'Subir Portada'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Fecha y texto */}
+        {showMetaModal && metaFolder && (
+          <div className="modal-overlay" onClick={() => setShowMetaModal(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '500px' }}>
+              <div className="modal-header">
+                <h2 className="modal-title">Fecha y texto de la carpeta</h2>
+                <button className="modal-close" onClick={() => setShowMetaModal(false)}>×</button>
+              </div>
+              <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
+                Se mostrarán en la web al entrar en esta escuela (útil para OTRAS ESCUELAS).
+              </p>
+              <form onSubmit={handleSaveMeta}>
+                <div className="form-group">
+                  <label className="form-label">Carpeta</label>
+                  <div style={{ fontWeight: 600, marginBottom: '0.5rem' }}>{metaFolder}</div>
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Fecha</label>
+                  <input
+                    type="text"
+                    className="form-input"
+                    placeholder="Ej: 4 febrero 2026"
+                    value={metaDate}
+                    onChange={(e) => setMetaDate(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Texto</label>
+                  <textarea
+                    className="form-input"
+                    rows={3}
+                    placeholder="Ej: Fotos de varias escuelas en Lanzarote"
+                    value={metaText}
+                    onChange={(e) => setMetaText(e.target.value)}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+                  <button type="button" onClick={() => setShowMetaModal(false)} className="btn-secondary" disabled={savingMeta}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn-primary" disabled={savingMeta}>
+                    {savingMeta ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
               </form>

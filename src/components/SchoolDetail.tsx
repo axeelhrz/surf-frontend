@@ -33,6 +33,7 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
   const [showResults, setShowResults] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [heroImage, setHeroImage] = useState<string>('');
+  const [folderMeta, setFolderMeta] = useState<{ date?: string; text?: string }>({});
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
 
   const staticHeroFallback: Record<string, string> = {
@@ -77,6 +78,19 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
 
     fetchHeroImage();
   }, [schoolName, apiUrl]);
+
+  useEffect(() => {
+    const loadMeta = async () => {
+      try {
+        const { apiService } = await import('../services/api');
+        const meta = await apiService.getFolderDisplayMetadata();
+        setFolderMeta(meta[schoolName] || {});
+      } catch {
+        setFolderMeta({});
+      }
+    };
+    loadMeta();
+  }, [schoolName]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -218,6 +232,13 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
             ← Volver
           </button>
           <h1 className="school-hero-title">{schoolName}</h1>
+          {(folderMeta.date || folderMeta.text) && (
+            <div className="school-hero-meta">
+              {folderMeta.date && <span className="school-hero-date">{folderMeta.date}</span>}
+              {folderMeta.date && folderMeta.text && <span className="school-hero-meta-sep"> · </span>}
+              {folderMeta.text && <span className="school-hero-text">{folderMeta.text}</span>}
+            </div>
+          )}
         </div>
       </div>
 

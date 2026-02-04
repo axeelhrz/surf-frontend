@@ -27,6 +27,15 @@ export interface Folder {
   created_at: string;
   cover_image?: string;
   days?: string[];
+  custom_date?: string;
+  custom_text?: string;
+  /** true si solo existe en metadata (ej. OTRAS ESCUELAS), no en disco */
+  isVirtual?: boolean;
+}
+
+export interface FolderDisplayMetadata {
+  date?: string;
+  text?: string;
 }
 
 export interface DayFolder {
@@ -157,6 +166,50 @@ export const adminApiService = {
       return data.folders;
     } catch (error) {
       console.error('Error en getFolders:', error);
+      throw error;
+    }
+  },
+
+  async getFolderDisplayMetadata(): Promise<Record<string, FolderDisplayMetadata>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/display-metadata`);
+      if (!response.ok) throw new Error('Error obteniendo metadata de carpetas');
+      const data = await response.json();
+      return data.metadata || {};
+    } catch (error) {
+      console.error('Error en getFolderDisplayMetadata:', error);
+      throw error;
+    }
+  },
+
+  async setFolderDisplayMetadata(folderName: string, meta: { date?: string; text?: string }): Promise<void> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/display-metadata`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folder_name: folderName, ...meta }),
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'Error guardando fecha/texto');
+      }
+    } catch (error) {
+      console.error('Error en setFolderDisplayMetadata:', error);
+      throw error;
+    }
+  },
+
+  async removeFolderDisplayMetadata(folderName: string): Promise<void> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/display-metadata?folder_name=${encodeURIComponent(folderName)}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.detail || 'Error quitando carpeta de la lista');
+      }
+    } catch (error) {
+      console.error('Error en removeFolderDisplayMetadata:', error);
       throw error;
     }
   },

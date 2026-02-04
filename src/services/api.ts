@@ -153,8 +153,8 @@ export const apiService = {
     }
   },
 
-  // Lista ligera para la web pública (solo nombre y portada; más rápido)
-  async getFoldersPublic(): Promise<{ name: string; cover_image: string | null }[]> {
+  // Lista ligera para la web pública (nombre, portada, custom_date, custom_text)
+  async getFoldersPublic(): Promise<{ name: string; cover_image: string | null; custom_date?: string; custom_text?: string }[]> {
     try {
       const response = await fetch(`${API_BASE_URL}/folders/public`);
       if (!response.ok) throw new Error('Error obteniendo carpetas');
@@ -163,6 +163,19 @@ export const apiService = {
     } catch (error) {
       console.error('Error obteniendo carpetas públicas:', error);
       throw error;
+    }
+  },
+
+  // Metadata de visualización por carpeta (fecha y texto para mostrar en detalle)
+  async getFolderDisplayMetadata(): Promise<Record<string, { date?: string; text?: string }>> {
+    try {
+      const response = await fetch(`${API_BASE_URL}/folders/display-metadata`);
+      if (!response.ok) return {};
+      const data = await response.json();
+      return data.metadata || {};
+    } catch (error) {
+      console.error('Error obteniendo metadata de carpetas:', error);
+      return {};
     }
   },
 

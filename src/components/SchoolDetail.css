@@ -90,6 +90,26 @@
   word-wrap: break-word;
 }
 
+.school-hero-meta {
+  margin-top: 0.75rem;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  max-width: 90%;
+}
+
+.school-hero-date {
+  font-weight: 600;
+}
+
+.school-hero-meta-sep {
+  opacity: 0.8;
+}
+
+.school-hero-text {
+  font-weight: 500;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
