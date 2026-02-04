@@ -1,12 +1,13 @@
+/* Escritorio: navbar blanco */
 .navbar {
-  background: #1a1a1a;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 }
 
 .navbar-wrapper {
@@ -55,7 +56,7 @@
 
 .nav-link {
   font-family: var(--font-primary);
-  color: rgba(255, 255, 255, 0.9);
+  color: #1a1a1a;
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
@@ -71,13 +72,13 @@
 
 .nav-link:hover {
   color: var(--primary, #B24A3B);
-  background: rgba(178, 74, 59, 0.2);
+  background: rgba(178, 74, 59, 0.1);
 }
 
 .nav-link.active {
   color: var(--primary, #B24A3B);
   font-weight: 600;
-  background: rgba(178, 74, 59, 0.15);
+  background: rgba(178, 74, 59, 0.1);
 }
 
 /* ============================================
@@ -101,21 +102,21 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: var(--font-primary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
 }
 
 .language-button:hover {
   border-color: var(--primary, #B24A3B);
-  background: rgba(178, 74, 59, 0.2);
-  color: #fff;
+  background: rgba(178, 74, 59, 0.1);
+  color: var(--primary, #B24A3B);
 }
 
 .language-flag {
@@ -130,7 +131,7 @@
 
 .language-arrow {
   transition: transform 0.3s ease;
-  stroke: rgba(255, 255, 255, 0.7);
+  stroke: #666;
 }
 
 .language-arrow.open {
@@ -142,10 +143,10 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background: #252525;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   min-width: 160px;
   overflow: hidden;
   z-index: 1000;
@@ -174,16 +175,16 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
+  color: #333;
   text-align: left;
 }
 
 .language-option:hover {
-  background: rgba(178, 74, 59, 0.2);
+  background: rgba(178, 74, 59, 0.1);
 }
 
 .language-option.active {
-  background: rgba(178, 74, 59, 0.25);
+  background: rgba(178, 74, 59, 0.15);
   color: var(--primary, #B24A3B);
   font-weight: 600;
 }
@@ -308,8 +309,60 @@
   }
 }
 
-/* Móvil: incluye tablet y teléfono en horizontal (landscape) para que siempre se vea barra + hamburguesa */
+/* Móvil: navbar negro cuando está colapsado */
 @media (max-width: 1024px) {
+  .navbar {
+    background: #1a1a1a;
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-link {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--primary, #B24A3B);
+    background: rgba(178, 74, 59, 0.2);
+  }
+
+  .language-button {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .language-button:hover {
+    color: #fff;
+  }
+
+  .language-arrow {
+    stroke: rgba(255, 255, 255, 0.7);
+  }
+
+  .language-menu {
+    background: #252525;
+    border-color: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  }
+
+  .language-option {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .language-option:hover {
+    background: rgba(178, 74, 59, 0.2);
+  }
+
+  .language-option.active {
+    background: rgba(178, 74, 59, 0.25);
+  }
+
+  .mobile-menu-button {
+    color: rgba(255, 255, 255, 0.95);
+  }
+
   .navbar-wrapper {
     flex-wrap: nowrap;
     justify-content: center;
@@ -498,7 +551,7 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  color: rgba(255, 255, 255, 0.95);
+  color: #1a1a1a;
   transition: color 0.3s ease;
   z-index: 1002;
 }
