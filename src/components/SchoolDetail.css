@@ -3,7 +3,7 @@
   background: white;
 }
 
-/* Hero Section con imagen de fondo */
+/* Hero Section con imagen de fondo - pegada al navbar, sin franja blanca */
 .school-hero {
   position: relative;
   height: 500px;
@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 160px;
+  margin-top: 85px;
   margin-bottom: 2rem;
   overflow: hidden;
 }
@@ -653,7 +653,7 @@
   }
 }
 
-/* En móvil/tablet la portada pegada al navbar (60px) */
+/* En móvil/tablet navbar 60px: portada pegada justo debajo */
 @media (max-width: 1024px) {
   .school-hero {
     margin-top: 60px;
