@@ -309,58 +309,22 @@
   }
 }
 
-/* Móvil: navbar negro cuando está colapsado */
+/* Móvil: barra superior blanca con logo centrado; solo el panel desplegable es negro */
 @media (max-width: 1024px) {
+  /* La barra de arriba sigue blanca */
   .navbar {
-    background: #1a1a1a;
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    background: #ffffff;
+    border-bottom-color: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   }
 
-  .nav-link {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .nav-link:hover,
-  .nav-link.active {
-    color: var(--primary, #B24A3B);
-    background: rgba(178, 74, 59, 0.2);
-  }
-
-  .language-button {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.95);
-  }
-
-  .language-button:hover {
-    color: #fff;
-  }
-
-  .language-arrow {
-    stroke: rgba(255, 255, 255, 0.7);
-  }
-
-  .language-menu {
-    background: #252525;
-    border-color: rgba(255, 255, 255, 0.15);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  }
-
-  .language-option {
-    color: rgba(255, 255, 255, 0.9);
-  }
-
-  .language-option:hover {
-    background: rgba(178, 74, 59, 0.2);
-  }
-
-  .language-option.active {
-    background: rgba(178, 74, 59, 0.25);
-  }
-
+  /* Hamburguesa oscura para verse en barra blanca */
   .mobile-menu-button {
-    color: rgba(255, 255, 255, 0.95);
+    color: #1a1a1a;
+  }
+
+  .mobile-menu-button:hover {
+    color: var(--primary, #B24A3B);
   }
 
   .navbar-wrapper {
