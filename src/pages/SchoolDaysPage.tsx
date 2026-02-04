@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import SchoolDays from '../components/SchoolDays';
+import Partners from '../components/Partners';
 import Footer from '../components/Footer';
 
 const SchoolDaysPage: React.FC = () => {
@@ -36,6 +37,7 @@ const SchoolDaysPage: React.FC = () => {
         onBack={handleBack}
         onSelectDay={handleSelectDay}
       />
+      <Partners />
       <Footer />
     </>
   );

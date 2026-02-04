@@ -1,6 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import DayPhotos from '../components/DayPhotos';
+import Partners from '../components/Partners';
 import Footer from '../components/Footer';
 
 interface CartItem {
@@ -35,6 +36,7 @@ const DayPhotosPage: React.FC<DayPhotosPageProps> = ({ onAddToCart }) => {
         onBack={handleBack}
         onAddToCart={onAddToCart}
       />
+      <Partners />
       <Footer />
     </>
   );
