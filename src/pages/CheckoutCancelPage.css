@@ -1,0 +1,78 @@
+.checkout-cancel-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f8f9fa 0%, #fff 100%);
+  padding: 120px 1.5rem 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkout-cancel-wrapper {
+  max-width: 420px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.checkout-cancel-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  background: #e0e0e0;
+  color: #666;
+  font-size: 2rem;
+  line-height: 64px;
+  border-radius: 50%;
+}
+
+.checkout-cancel-wrapper h1 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 0.5rem;
+}
+
+.checkout-cancel-wrapper p {
+  color: #666;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.checkout-cancel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-cancel-home,
+.btn-cancel-schools {
+  display: inline-block;
+  padding: 0.85rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-home {
+  background: var(--primary, #B24A3B);
+  color: white;
+}
+
+.btn-cancel-home:hover {
+  background: #a03d30;
+  transform: translateY(-2px);
+}
+
+.btn-cancel-schools {
+  background: transparent;
+  color: #1a1a1a;
+  border: 2px solid #ccc;
+}
+
+.btn-cancel-schools:hover {
+  border-color: #999;
+  background: #f5f5f5;
+}

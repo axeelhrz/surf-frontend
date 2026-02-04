@@ -32,7 +32,7 @@ const Footer: React.FC = () => {
         </div>
         <div className="footer-section">
           <h4>{t.footer.contact}</h4>
-          <p>{t.footer.email}</p>
+          <p><a href="mailto:info@surfphotolanzarote.com" className="footer-email">{t.footer.email}</a></p>
           <p>{t.footer.location}</p>
         </div>
       </div>

@@ -9,10 +9,10 @@ export const translations = {
       faqs: 'FAQs',
       memories: 'Memories',
     },
-    // Home Page - HERO MAIN
+    // Home Page - HERO MAIN (H1 y H2)
     home: {
-      title: 'Find your surf photos in seconds',
-      subtitle: 'Surf photography in Lanzarote. Upload a photo and find your memories instantly, without searching through hundreds of images.',
+      title: 'Surf Photography in Famara & La Santa',
+      subtitle: 'Find and buy your surf photos in Lanzarote',
       cta: 'Find My Photos',
       stats: {
         photos: 'Photos',
@@ -269,10 +269,10 @@ export const translations = {
       faqs: 'FAQs',
       memories: 'Recuerdos',
     },
-    // Home Page - HERO PRINCIPAL
+    // Home Page - HERO PRINCIPAL (H1 y H2)
     home: {
-      title: 'Encuentra tus fotos de surf en segundos',
-      subtitle: 'Fotografía de surf en Lanzarote. Sube una foto y encuentra tus recuerdos al instante, sin buscar entre cientos de imágenes.',
+      title: 'Fotografía de surf en Famara y La Santa',
+      subtitle: 'Encuentra y compra tus fotos de surf en Lanzarote',
       cta: 'Encontrar Mis Fotos',
       stats: {
         photos: 'Fotos',

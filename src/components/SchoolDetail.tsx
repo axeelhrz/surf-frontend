@@ -49,12 +49,12 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
     'OTRAS ESCUELAS': '/OTRAS.jpg',
   };
 
-  // Hero: usar portada de la carpeta del API; si no existe, foto aleatoria o estática
+  // Hero: portada del API (GET es más fiable que HEAD); si falla, foto aleatoria; OTRAS.jpg solo para "OTRAS ESCUELAS"
   useEffect(() => {
     const fetchHeroImage = async () => {
       try {
         const coverUrl = `${apiUrl}/folders/cover/${encodeURIComponent(schoolName)}`;
-        const coverCheck = await fetch(coverUrl, { method: 'HEAD' });
+        const coverCheck = await fetch(coverUrl, { method: 'GET' });
         if (coverCheck.ok) {
           setHeroImage(`${coverUrl}?t=${Date.now()}`);
           return;
@@ -68,11 +68,15 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
             return;
           }
         }
-        const fallback = staticHeroFallback[schoolName.toUpperCase()] || staticHeroFallback['OTRAS'] || '/OTRAS.jpg';
+        const upper = schoolName.toUpperCase();
+        const fallback = (upper === 'OTRAS ESCUELAS' || upper === 'OTRAS')
+          ? '/OTRAS.jpg'
+          : (staticHeroFallback[upper] || '/OTRAS.jpg');
         setHeroImage(fallback);
       } catch (err) {
         console.error('Error cargando imagen del hero:', err);
-        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || '/OTRAS.jpg');
+        const upper = schoolName.toUpperCase();
+        setHeroImage((upper === 'OTRAS ESCUELAS' || upper === 'OTRAS') ? '/OTRAS.jpg' : (staticHeroFallback[upper] || '/OTRAS.jpg'));
       }
     };
 

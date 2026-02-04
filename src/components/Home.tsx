@@ -20,9 +20,9 @@ const Home: React.FC = () => {
         
         <div className="hero-content">
           <h1 className="hero-title">{t.home.title}</h1>
-          <p className="hero-subtitle">
+          <h2 className="hero-subtitle">
             {t.home.subtitle}
-          </p>
+          </h2>
           <button className="btn btn-primary btn-large" onClick={() => {
             window.location.href = '/schools';
           }}>

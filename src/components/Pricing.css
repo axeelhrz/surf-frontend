@@ -52,6 +52,12 @@
   padding: 0 2rem;
 }
 
+.pricing-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
 .pricing-card {
   background: white;
   border: 2px solid #e0e0e0;
@@ -104,6 +110,102 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  position: relative;
+}
+
+.pricing-card-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  background: rgba(178, 74, 59, 0.15);
+  color: var(--primary, #B24A3B);
+  border-radius: 50%;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pricing-card.active .pricing-card-toggle {
+  background: var(--primary, #B24A3B);
+  color: white;
+}
+
+/* Detalles debajo de cada tarjeta (acordeón) */
+.pricing-card-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #f9f9f9;
+  border: 0 solid #e0e0e0;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  margin-top: -8px;
+  padding: 0 2rem;
+}
+
+.pricing-card-details.expanded {
+  max-height: 500px;
+  border-width: 2px;
+  border-color: var(--primary, #B24A3B);
+  padding: 1.5rem 2rem 2rem;
+}
+
+.pricing-card-details-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.pricing-card-details-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pricing-card-details-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: white;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.5;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.pricing-card-details-icon {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  background: var(--primary, #B24A3B);
+  border-radius: 50%;
+  position: relative;
+}
+
+.pricing-card-details-icon::after {
+  content: '';
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-top: -6px;
+  margin-left: -2px;
 }
 
 .pricing-card-title {
@@ -313,7 +415,7 @@
     gap: 1.5rem;
   }
 
-  .pricing-card.featured {
+  .pricing-card-item.featured {
     grid-column: 1 / -1;
     max-width: 400px;
     margin: 0 auto;
@@ -354,12 +456,17 @@
     padding: 1.5rem;
   }
 
-  .pricing-card.featured {
-    transform: scale(1);
+  .pricing-card-item.featured {
+    max-width: 100%;
   }
 
-  .pricing-details-section {
-    margin: 0 1.5rem 2rem;
+  .pricing-card-details {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .pricing-card-details.expanded {
+    padding: 1.25rem 1.5rem 1.5rem;
   }
 
   .details-section-header {
@@ -455,8 +562,13 @@
     padding: 0.3rem 0.8rem;
   }
 
-  .pricing-details-section {
-    margin: 0 1rem 1.5rem;
+  .pricing-card-details {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .pricing-card-details.expanded {
+    padding: 1rem;
   }
 
   .details-section-header {

@@ -51,8 +51,6 @@ const Pricing: React.FC = () => {
     setExpandedPlan(expandedPlan === id ? null : id);
   };
 
-  const selectedPlanData = expandedPlan ? pricingPlans.find(p => p.id === expandedPlan) : null;
-
   return (
     <section className="pricing" id="pricing">
       <div className="pricing-wrapper">
@@ -65,54 +63,37 @@ const Pricing: React.FC = () => {
 
         <div className="pricing-grid">
           {pricingPlans.map((plan) => (
-            <div 
-              key={plan.id}
-              className={`pricing-card ${plan.featured ? 'featured' : ''} ${expandedPlan === plan.id ? 'active' : ''}`}
-              onClick={() => togglePlan(plan.id)}
-            >
-              <div className="pricing-card-content">
-                <h3 className="pricing-card-title">{plan.title}</h3>
-                
-                <div className="pricing-card-price">
-                  <span className="price-amount">{plan.price}</span>
-                  <span className="price-currency">€</span>
-                </div>
-                
-                <p className="pricing-card-description">{plan.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Panel de detalles expandible - Debajo de todas las tarjetas */}
-        <div className={`pricing-details-section ${expandedPlan ? 'expanded' : ''}`}>
-          {selectedPlanData && (
-            <div className="details-section-content">
-              <div className="details-section-header">
-                <h3 className="details-section-title">{selectedPlanData.title}</h3>
-                <div className="details-section-price">
-                  <span className="details-price-amount">{selectedPlanData.price}</span>
-                  <span className="details-price-currency">€</span>
+            <div key={plan.id} className={`pricing-card-item ${plan.featured ? 'featured' : ''}`}>
+              <div
+                className={`pricing-card ${plan.featured ? 'featured' : ''} ${expandedPlan === plan.id ? 'active' : ''}`}
+                onClick={() => togglePlan(plan.id)}
+              >
+                <div className="pricing-card-content">
+                  <h3 className="pricing-card-title">{plan.title}</h3>
+                  <div className="pricing-card-price">
+                    <span className="price-amount">{plan.price}</span>
+                    <span className="price-currency">€</span>
+                  </div>
+                  <p className="pricing-card-description">{plan.description}</p>
+                  <span className="pricing-card-toggle" aria-expanded={expandedPlan === plan.id}>
+                    {expandedPlan === plan.id ? '−' : '+'}
+                  </span>
                 </div>
               </div>
-              
-              <div className="details-section-body">
-                <p className="details-section-description">{selectedPlanData.description}</p>
-                
-                <div className="details-divider"></div>
-                
-                <h4 className="details-list-title">{t.pricing.includes}</h4>
-                <ul className="details-list">
-                  {selectedPlanData.details.map((detail, index) => (
-                    <li key={index} className="details-list-item">
-                      <span className="details-list-icon"></span>
-                      <span className="details-list-text">{detail}</span>
+              {/* Descripción e INCLUDES debajo de cada tarjeta (estilo FAQ) */}
+              <div className={`pricing-card-details ${expandedPlan === plan.id ? 'expanded' : ''}`}>
+                <h4 className="pricing-card-details-title">{t.pricing.includes}</h4>
+                <ul className="pricing-card-details-list">
+                  {plan.details.map((detail, index) => (
+                    <li key={index} className="pricing-card-details-item">
+                      <span className="pricing-card-details-icon"></span>
+                      <span>{detail}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             </div>
-          )}
+          ))}
         </div>
 
         <div className="pricing-note">

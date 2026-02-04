@@ -111,22 +111,9 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick }) => {
         </button>
         
         <ul className={`navbar-menu ${mobileMenuOpen ? 'mobile-open' : ''}`}>
-          {navItems.map((item) => (
-            <li key={item.id}>
-              <Link 
-                to={item.path} 
-                className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
-                onClick={handleNavLinkClick}
-              >
-                {item.label}
-              </Link>
-            </li>
-          ))}
-          
-          {/* Mobile Actions inside menu */}
+          {/* En móvil: carrito e idioma primero (arriba del todo) */}
           {mobileMenuOpen && (
-            <div className="navbar-actions">
-              {/* Selector de idiomas */}
+            <div className="navbar-actions mobile-actions-top">
               <div className="language-selector">
                 <button 
                   className="language-button"
@@ -179,6 +166,18 @@ const Navbar: React.FC<NavbarProps> = ({ cartCount, onCartClick }) => {
               </button>
             </div>
           )}
+
+          {navItems.map((item) => (
+            <li key={item.id}>
+              <Link 
+                to={item.path} 
+                className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                onClick={handleNavLinkClick}
+              >
+                {item.label}
+              </Link>
+            </li>
+          ))}
         </ul>
 
         <div className={`navbar-actions desktop-actions ${mobileMenuOpen ? 'mobile-open' : ''}`}>

@@ -14,6 +14,8 @@ import DayPhotosPage from './pages/DayPhotosPage';
 import LegalNoticePage from './pages/LegalNoticePage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsConditionsPage from './pages/TermsConditionsPage';
+import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
+import CheckoutCancelPage from './pages/CheckoutCancelPage';
 import CartModal from './components/CartModal';
 
 interface CartItem {
@@ -75,6 +77,8 @@ const App: React.FC = () => {
           <Route path="/legal-notice" element={<LegalNoticePage />} />
           <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
           <Route path="/terms-conditions" element={<TermsConditionsPage />} />
+          <Route path="/checkout/success" element={<CheckoutSuccessPage />} />
+          <Route path="/checkout/cancel" element={<CheckoutCancelPage />} />
         </Routes>
 
         <CartModal 

@@ -34,19 +34,33 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Hero: usar portada de la carpeta del API; si no existe, imagen estática
+  // Hero: portada del API (GET es más fiable que HEAD); si falla, foto aleatoria de la carpeta; OTRAS.jpg solo para "OTRAS ESCUELAS"
   useEffect(() => {
     const fetchHeroImage = async () => {
       try {
         const coverUrl = `${apiBaseUrl}/folders/cover/${encodeURIComponent(schoolName)}`;
-        const res = await fetch(coverUrl, { method: 'HEAD' });
+        const res = await fetch(coverUrl, { method: 'GET' });
         if (res.ok) {
           setHeroImage(`${coverUrl}?t=${Date.now()}`);
           return;
         }
-        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || staticHeroFallback['OTRAS'] || '/OTRAS.jpg');
+        const listRes = await fetch(`${apiBaseUrl}/photos/list?folder_name=${encodeURIComponent(schoolName)}`);
+        if (listRes.ok) {
+          const data = await listRes.json();
+          if (data.photos && data.photos.length > 0) {
+            const randomPhoto = data.photos[Math.floor(Math.random() * data.photos.length)];
+            setHeroImage(`${apiBaseUrl}/photos/preview?folder_name=${encodeURIComponent(schoolName)}&filename=${encodeURIComponent(randomPhoto.filename)}&watermark=false`);
+            return;
+          }
+        }
+        const upper = schoolName.toUpperCase();
+        const fallback = (upper === 'OTRAS ESCUELAS' || upper === 'OTRAS')
+          ? '/OTRAS.jpg'
+          : (staticHeroFallback[upper] || '/OTRAS.jpg');
+        setHeroImage(fallback);
       } catch {
-        setHeroImage(staticHeroFallback[schoolName.toUpperCase()] || '/OTRAS.jpg');
+        const upper = schoolName.toUpperCase();
+        setHeroImage((upper === 'OTRAS ESCUELAS' || upper === 'OTRAS') ? '/OTRAS.jpg' : (staticHeroFallback[upper] || '/OTRAS.jpg'));
       }
     };
     fetchHeroImage();

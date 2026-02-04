@@ -61,7 +61,7 @@ const FAQ: React.FC = () => {
         <div className="faq-contact">
           <p className="contact-text">
             {t.faqs.contactText}{' '}
-            <a href="#footer" className="contact-link">
+            <a href="mailto:info@surfphotolanzarote.com" className="contact-link">
               {t.faqs.contactLink}
             </a>
           </p>

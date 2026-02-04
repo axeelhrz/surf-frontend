@@ -1,13 +1,12 @@
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
-  border-bottom: 1px solid rgba(178, 74, 59, 0.1);
+  background: #1a1a1a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
 }
 
 .navbar-wrapper {
@@ -56,7 +55,7 @@
 
 .nav-link {
   font-family: var(--font-primary);
-  color: #000;
+  color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-weight: 500;
   font-size: 0.9rem;
@@ -72,13 +71,13 @@
 
 .nav-link:hover {
   color: var(--primary, #B24A3B);
-  background: rgba(178, 74, 59, 0.08);
+  background: rgba(178, 74, 59, 0.2);
 }
 
 .nav-link.active {
   color: var(--primary, #B24A3B);
   font-weight: 600;
-  background: rgba(178, 74, 59, 0.1);
+  background: rgba(178, 74, 59, 0.15);
 }
 
 /* ============================================
@@ -102,20 +101,21 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1rem;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: var(--font-primary);
   font-size: 0.85rem;
   font-weight: 500;
-  color: #333;
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .language-button:hover {
   border-color: var(--primary, #B24A3B);
-  background: rgba(178, 74, 59, 0.05);
+  background: rgba(178, 74, 59, 0.2);
+  color: #fff;
 }
 
 .language-flag {
@@ -130,7 +130,7 @@
 
 .language-arrow {
   transition: transform 0.3s ease;
-  stroke: #666;
+  stroke: rgba(255, 255, 255, 0.7);
 }
 
 .language-arrow.open {
@@ -142,10 +142,10 @@
   position: absolute;
   top: calc(100% + 0.5rem);
   right: 0;
-  background: white;
-  border: 1px solid #e0e0e0;
+  background: #252525;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   min-width: 160px;
   overflow: hidden;
   z-index: 1000;
@@ -169,21 +169,21 @@
   gap: 0.8rem;
   width: 100%;
   padding: 0.8rem 1rem;
-  background: white;
+  background: transparent;
   border: none;
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
-  color: #333;
+  color: rgba(255, 255, 255, 0.9);
   text-align: left;
 }
 
 .language-option:hover {
-  background: rgba(178, 74, 59, 0.05);
+  background: rgba(178, 74, 59, 0.2);
 }
 
 .language-option.active {
-  background: rgba(178, 74, 59, 0.1);
+  background: rgba(178, 74, 59, 0.25);
   color: var(--primary, #B24A3B);
   font-weight: 600;
 }
@@ -233,8 +233,8 @@
   position: absolute;
   top: -8px;
   right: -8px;
-  background: var(--dark);
-  color: white;
+  background: #fff;
+  color: var(--primary, #B24A3B);
   border-radius: 50%;
   width: 24px;
   height: 24px;
@@ -243,8 +243,8 @@
   justify-content: center;
   font-size: 0.75rem;
   font-weight: 700;
-  border: 2px solid white;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 2px solid #1a1a1a;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 @media (max-width: 1200px) {
@@ -308,13 +308,15 @@
   }
 }
 
-@media (max-width: 768px) {
+/* Móvil: incluye tablet y teléfono en horizontal (landscape) para que siempre se vea barra + hamburguesa */
+@media (max-width: 1024px) {
   .navbar-wrapper {
     flex-wrap: nowrap;
     justify-content: center;
     gap: 1rem;
     padding: 0.8rem 1.5rem;
     height: 60px;
+    min-height: 56px;
     position: relative;
   }
 
@@ -350,9 +352,10 @@
     order: 1;
     position: absolute;
     right: 1.5rem;
+    z-index: 1002;
   }
 
-  /* Mobile menu container */
+  /* Mobile menu container - fondo oscuro igual que la barra */
   .navbar-menu {
     display: none;
     position: fixed;
@@ -360,11 +363,11 @@
     right: -100%;
     width: 300px;
     height: 100vh;
-    background: white;
+    background: #1a1a1a;
     flex-direction: column;
     align-items: flex-start;
     padding: 0;
-    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.5);
     z-index: 1001;
     transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: auto;
@@ -387,6 +390,18 @@
     }
   }
 
+  /* Carrito e idioma arriba del todo en móvil */
+  .navbar-menu .mobile-actions-top {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1.25rem 20px 1rem;
+    gap: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+    order: -1;
+  }
+
   /* Menu items container */
   .navbar-menu li {
     width: 100%;
@@ -395,7 +410,7 @@
   }
 
   .navbar-menu li:first-child {
-    margin-top: 80px;
+    margin-top: 0.5rem;
   }
 
   .nav-link {
@@ -406,33 +421,46 @@
     display: flex;
     justify-content: flex-start;
     margin-bottom: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
   }
 
-  /* Mobile actions inside menu */
-  .navbar-menu .navbar-actions {
-    display: flex;
-    position: static;
-    width: 100%;
-    background: transparent;
-    flex-direction: column;
-    align-items: stretch;
-    padding: 20px;
-    gap: 1rem;
-    border-top: 1px solid #e0e0e0;
-    margin-top: auto;
+  .navbar-menu .nav-link:hover,
+  .navbar-menu .nav-link.active {
+    color: var(--primary, #B24A3B);
   }
 
-  .navbar-menu .language-selector {
-    width: 100%;
-    order: 1;
-  }
-
-  .navbar-menu .language-button {
+  /* Mobile actions: idioma y carrito con estilo oscuro */
+  .navbar-menu .mobile-actions-top .language-button {
     width: 100%;
     padding: 1rem 1.2rem;
     font-size: 1rem;
     justify-content: space-between;
     border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  .navbar-menu .mobile-actions-top .language-menu {
+    position: static;
+    width: 100%;
+    margin-top: 0.5rem;
+    box-shadow: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: #252525;
+  }
+
+  .navbar-menu .mobile-actions-top .cart-button {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1rem;
+    justify-content: center;
+    border-radius: 8px;
+  }
+
+  .navbar-menu .mobile-actions-top .cart-icon {
+    width: 20px;
+    height: 20px;
   }
 
   .navbar-menu .language-code {
@@ -443,30 +471,10 @@
     font-size: 1.2rem;
   }
 
-  .navbar-menu .language-menu {
-    position: static;
-    width: 100%;
-    margin-top: 0.5rem;
-    box-shadow: none;
-    border: 1px solid #e0e0e0;
-  }
-
-  .navbar-menu .cart-button {
-    width: 100%;
-    padding: 1.2rem 1.5rem;
-    font-size: 1rem;
-    justify-content: center;
-    border-radius: 8px;
-    order: 2;
-  }
-
-  .navbar-menu .cart-icon {
-    width: 20px;
-    height: 20px;
-  }
-
   .mobile-menu-overlay {
     display: block;
+    pointer-events: auto;
+    background: rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -490,7 +498,7 @@
   border: none;
   cursor: pointer;
   padding: 0.5rem;
-  color: #333;
+  color: rgba(255, 255, 255, 0.95);
   transition: color 0.3s ease;
   z-index: 1002;
 }
@@ -511,7 +519,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0.5);
   z-index: 999;
   pointer-events: none;
 }
