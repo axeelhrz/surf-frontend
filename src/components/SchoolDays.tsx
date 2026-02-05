@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './SchoolDays.css';
 import { apiService } from '../services/api';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface SchoolDaysProps {
   schoolName: string;
@@ -29,6 +30,7 @@ const staticHeroFallback: Record<string, string> = {
 };
 
 const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay }) => {
+  const { t, language } = useLanguage();
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [heroImage, setHeroImage] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -96,7 +98,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
         }
       } catch (err) {
         console.error('Error loading days:', err);
-        setError('Error al cargar los días disponibles');
+        setError(t.schoolDays.errorLoadingDays);
         setAvailableDays([]);
       } finally {
         setLoading(false);
@@ -108,7 +110,8 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
 
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { 
+    const locale = language === 'es' ? 'es-ES' : 'en-GB';
+    return date.toLocaleDateString(locale, { 
       day: 'numeric',
       month: 'long', 
       year: 'numeric'
@@ -121,7 +124,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
       if (found) {
         onSelectDay(selectedDate);
       } else {
-        alert('No hay fotos disponibles para esa fecha');
+        alert(t.schoolDays.noPhotosForDate);
       }
     }
   };
@@ -133,7 +136,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
         <div className="school-hero-overlay"></div>
         <div className="school-hero-content">
           <button className="btn-back-hero" onClick={onBack}>
-            ← Volver
+            ← {t.schoolDays.back}
           </button>
           <h1 className="school-hero-title">{schoolName}</h1>
         </div>
@@ -142,7 +145,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
       <div className="school-days-content">
         {/* Búsqueda por fecha */}
         <div className="date-search-section">
-          <h2>Buscar por fecha</h2>
+          <h2>{t.schoolDays.searchByDate}</h2>
           <div className="date-search-container">
             <input
               type="date"
@@ -155,20 +158,20 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
               onClick={handleDateSearch}
               disabled={!selectedDate || loading}
             >
-              Buscar
+              {t.schoolDays.search}
             </button>
           </div>
         </div>
 
         {/* Listado de días */}
         <div className="days-section">
-          <h2>Días disponibles</h2>
-          <p className="days-subtitle">Selecciona un día para encontrar tus fotos</p>
+          <h2>{t.schoolDays.availableDays}</h2>
+          <p className="days-subtitle">{t.schoolDays.selectDaySubtitle}</p>
           
           {loading ? (
             <div style={{ textAlign: 'center', padding: '3rem' }}>
               <div className="loading-spinner"></div>
-              <p style={{ marginTop: '1rem', color: '#718096' }}>Cargando días disponibles...</p>
+              <p style={{ marginTop: '1rem', color: '#718096' }}>{t.schoolDays.loadingDays}</p>
             </div>
           ) : error ? (
             <div className="alert alert-error" style={{ 
@@ -189,10 +192,10 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
               textAlign: 'center'
             }}>
               <p style={{ fontSize: '1.1rem', marginBottom: '0.5rem' }}>
-                No hay días disponibles para esta escuela todavía.
+                {t.schoolDays.noDaysYet}
               </p>
               <p style={{ fontSize: '0.9rem', color: '#666' }}>
-                Las fotos se organizan por día. Vuelve pronto para ver nuevas sesiones.
+                {t.schoolDays.noDaysDesc}
               </p>
             </div>
           ) : (
@@ -216,7 +219,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
                     <div className="day-image-overlay"></div>
                     <div className="day-image-info">
                       <span className="photo-count">{day.photoCount}</span>
-                      <span className="photo-label">fotos</span>
+                      <span className="photo-label">{t.schoolDays.photos}</span>
                     </div>
                   </div>
                   <div className="day-info">

@@ -220,8 +220,9 @@ const SchoolDetail: React.FC<SchoolDetailProps> = ({ schoolName, onBack, onAddTo
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     const count = analysisResult.matches.length;
     const firstFile = analysisResult.matches[0].file;
+    // ID único para que cada pack añadido desde SchoolDetail se sume al carrito sin reemplazar
     const packItem = {
-      id: `pack_${schoolName}_all`,
+      id: `pack_${schoolName}_all_${Date.now()}`,
       name: `${schoolName} - ${count} FOTOS`,
       price: 35,
       image: `${apiUrl}/photos/preview?folder_name=${schoolName}&filename=${firstFile}&watermark=true`,

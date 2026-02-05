@@ -35,7 +35,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
   };
 
   const formatPrice = (price: number) => {
-    return price.toFixed(2);
+    return `€${price.toFixed(2)}`;
   };
 
   const getItemCount = () => {
@@ -121,7 +121,7 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
                       )}
                     </div>
                     <div className="cart-item-price-section">
-                      <span className="cart-item-price">${formatPrice(item.price)}</span>
+                      <span className="cart-item-price">{formatPrice(item.price)}</span>
                     </div>
                   </div>
 
@@ -151,16 +151,16 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
             <div className="cart-summary">
               <div className="cart-summary-row">
                 <span>Subtotal</span>
-                <span>${formatPrice(totalPrice)}</span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
               <div className="cart-summary-row">
                 <span>Descuento</span>
-                <span className="discount-text">-$0.00</span>
+                <span className="discount-text">-€0.00</span>
               </div>
               <div className="cart-summary-divider"></div>
               <div className="cart-summary-row cart-total">
                 <span>Total</span>
-                <span className="total-price">${formatPrice(totalPrice)}</span>
+                <span className="total-price">{formatPrice(totalPrice)}</span>
               </div>
             </div>
 

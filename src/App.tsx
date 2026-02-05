@@ -32,16 +32,18 @@ const App: React.FC = () => {
   const [showCart, setShowCart] = useState(false);
 
   const addToCart = (item: CartItem) => {
-    // Si es un pack, quitar antes cualquier pack con el mismo id (evitar duplicados)
-    const next = item.id.startsWith('pack_')
-      ? cartItems.filter((i) => i.id !== item.id)
-      : cartItems;
-    // Primer pack = 35 € (Pack completo), packs siguientes = 20 € (Día adicional)
-    const isPack = item.id.startsWith('pack_');
-    const hasExistingPack = next.some((i) => i.id.startsWith('pack_'));
-    const price = isPack && hasExistingPack ? 20 : item.price;
-    const itemToAdd = { ...item, price };
-    setCartItems([...next, itemToAdd]);
+    setCartItems((prevItems) => {
+      // Si es un pack, quitar antes cualquier pack con el mismo id (evitar duplicados)
+      const next = item.id.startsWith('pack_')
+        ? prevItems.filter((i) => i.id !== item.id)
+        : prevItems;
+      // Primer pack = 35 € (Pack completo), packs siguientes = 20 € (Día adicional)
+      const isPack = item.id.startsWith('pack_');
+      const hasExistingPack = next.some((i) => i.id.startsWith('pack_'));
+      const price = isPack && hasExistingPack ? 20 : item.price;
+      const itemToAdd = { ...item, price };
+      return [...next, itemToAdd];
+    });
     setShowCart(true);
   };
 
