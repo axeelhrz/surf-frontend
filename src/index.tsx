@@ -5,8 +5,8 @@ import App from './App';
 import AdminApp from './AdminApp';
 
 // Evitar que el navegador restaure el scroll al cambiar de ruta (lo controlamos con ScrollToTop)
-if ('scrollRestoration' in history) {
-  history.scrollRestoration = 'manual';
+if ('scrollRestoration' in window.history) {
+  window.history.scrollRestoration = 'manual';
 }
 
 const root = ReactDOM.createRoot(
