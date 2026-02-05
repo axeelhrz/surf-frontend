@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './SchoolDays.css';
 import { apiService } from '../services/api';
 import { useLanguage } from '../contexts/LanguageContext';
@@ -75,6 +75,16 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     thumbnailUrl: string;
   }>>([]);
 
+  const formatDate = useCallback((dateString: string): string => {
+    const date = new Date(dateString);
+    const locale = language === 'es' ? 'es-ES' : 'en-GB';
+    return date.toLocaleDateString(locale, {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
+  }, [language]);
+
   // Cargar días disponibles desde el backend; thumbnailUrl = portada del día (API)
   useEffect(() => {
     const loadDays = async () => {
@@ -106,17 +116,7 @@ const SchoolDays: React.FC<SchoolDaysProps> = ({ schoolName, onBack, onSelectDay
     };
 
     loadDays();
-  }, [schoolName]);
-
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const locale = language === 'es' ? 'es-ES' : 'en-GB';
-    return date.toLocaleDateString(locale, { 
-      day: 'numeric',
-      month: 'long', 
-      year: 'numeric'
-    });
-  };
+  }, [schoolName, formatDate, t.schoolDays.errorLoadingDays]);
 
   const handleDateSearch = () => {
     if (selectedDate) {

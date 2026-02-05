@@ -17,6 +17,7 @@ import TermsConditionsPage from './pages/TermsConditionsPage';
 import CheckoutSuccessPage from './pages/CheckoutSuccessPage';
 import CheckoutCancelPage from './pages/CheckoutCancelPage';
 import CartModal from './components/CartModal';
+import ScrollToTop from './components/ScrollToTop';
 
 interface CartItem {
   id: string;
@@ -59,6 +60,7 @@ const App: React.FC = () => {
     <LanguageProvider>
       <Router>
         <div className="App">
+          <ScrollToTop />
           <Navbar 
             cartCount={cartItems.length} 
             onCartClick={() => setShowCart(true)} 
