@@ -183,8 +183,9 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     const count = analysisResult.matches.length;
     const firstFile = analysisResult.matches[0].file;
+    // ID único para que cada pack añadido se sume al carrito sin reemplazar el anterior
     const packItem = {
-      id: `pack_${schoolName}_${date}`,
+      id: `pack_${schoolName}_${date}_${Date.now()}`,
       name: `${schoolName} - ${formatDateForCart(date)} - ${count} FOTOS`,
       price: 35,
       image: `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${firstFile}&watermark=true`,
@@ -198,6 +199,8 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
   const getMatchImageUrl = (filename: string) =>
     `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${filename}&watermark=true`;
+  const getMatchThumbUrl = (filename: string) =>
+    `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${filename}&watermark=true&max_width=400`;
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -350,9 +353,11 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
                         aria-label="Ver foto en grande"
                       >
                         <img
-                          src={getMatchImageUrl(match.file)}
+                          src={getMatchThumbUrl(match.file)}
                           alt={match.file}
                           className="match-image"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <span className="match-image-hint">Ver en grande</span>
                       </div>

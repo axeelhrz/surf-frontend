@@ -311,6 +311,22 @@ export const adminApiService = {
     }
   },
 
+  async deleteDayFolder(folderName: string, dayDate: string): Promise<void> {
+    try {
+      const response = await fetch(
+        `${API_BASE_URL}/folders/delete-day?folder_name=${encodeURIComponent(folderName)}&day_date=${encodeURIComponent(dayDate)}`,
+        { method: 'DELETE' }
+      );
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.detail || 'Error eliminando día');
+      }
+    } catch (error) {
+      console.error('Error en deleteDayFolder:', error);
+      throw error;
+    }
+  },
+
   // Photos
   async uploadPhotos(
     folderName: string, 

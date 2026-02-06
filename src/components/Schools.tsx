@@ -12,7 +12,6 @@ interface School {
   name: string;
   image: string;
   location: string;
-  isOtras?: boolean;
 }
 
 const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
@@ -50,18 +49,8 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
         image: folder.cover_image
           ? `${apiBaseUrl}/folders/cover/${encodeURIComponent(folder.name)}`
           : getSchoolImage(folder.name),
-        location: 'Lanzarote',
-        isOtras: false
+        location: 'Lanzarote'
       }));
-
-      // Agregar "OTRAS ESCUELAS" al final
-      schoolsFromFolders.push({
-        id: schoolsFromFolders.length + 1,
-        name: t.schools.otherSchools,
-        image: '/OTRAS.jpg',
-        location: 'Varias',
-        isOtras: true
-      });
 
       setSchools(schoolsFromFolders);
     } catch (error) {
@@ -110,18 +99,11 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
           image: '/VOLCANO.jpg',
           location: 'Lanzarote',
         },
-        {
-          id: 8,
-          name: t.schools.otherSchools,
-          image: '/OTRAS.jpg',
-          location: 'Varias',
-          isOtras: true,
-        },
       ]);
     } finally {
       setLoading(false);
     }
-  }, [getSchoolImage, t.schools.otherSchools, apiBaseUrl]);
+  }, [getSchoolImage, apiBaseUrl]);
 
   useEffect(() => {
     loadSchools();
@@ -156,7 +138,7 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
             {schools.map((school) => (
               <div 
                 key={school.id} 
-                className={`school-card ${school.isOtras ? 'school-card-otras' : ''}`}
+                className="school-card"
                 onClick={() => onSelectSchool(school.name)}
               >
                 <div className="school-image-wrapper">
@@ -169,17 +151,7 @@ const Schools: React.FC<SchoolsProps> = ({ onSelectSchool }) => {
                   />
                   <div className="school-overlay"></div>
                 </div>
-                <h3 className={`school-name ${school.isOtras ? 'school-name-otras' : ''}`}>
-                  {school.isOtras ? (
-                    <>
-                      {school.name.split(' ').map((word, index) => (
-                        <span key={index} className="otras-line">{word}</span>
-                      ))}
-                    </>
-                  ) : (
-                    school.name
-                  )}
-                </h3>
+                <h3 className="school-name">{school.name}</h3>
               </div>
             ))}
           </div>

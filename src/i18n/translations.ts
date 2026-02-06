@@ -11,8 +11,8 @@ export const translations = {
     },
     // Home Page - HERO MAIN (H1 y H2)
     home: {
-      title: 'Surf Photography in Famara & La Santa',
-      subtitle: 'Find and buy your surf photos in Lanzarote',
+      title: 'Find your surf photos in seconds',
+      subtitle: 'Surf photography in Lanzarote. Upload a photo and find your memories instantly, without searching through hundreds of images.',
       cta: 'Find My Photos',
       stats: {
         photos: 'Photos',
@@ -286,8 +286,8 @@ export const translations = {
     },
     // Home Page - HERO PRINCIPAL (H1 y H2)
     home: {
-      title: 'Fotografía de surf en Famara y La Santa',
-      subtitle: 'Encuentra y compra tus fotos de surf en Lanzarote',
+      title: 'Encuentra tus fotos de surf en segundos',
+      subtitle: 'Fotografía de surf en Famara y La Santa. Encuentra y compra tus fotos de surf en Lanzarote. Sube una foto y encuentra tus recuerdos al instante, sin buscar entre cientos de imágenes.',
       cta: 'Encontrar Mis Fotos',
       stats: {
         photos: 'Fotos',

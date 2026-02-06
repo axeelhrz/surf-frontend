@@ -309,8 +309,8 @@
   }
 }
 
-/* Móvil: barra superior blanca con logo centrado; solo el panel desplegable es negro */
-@media (max-width: 1024px) {
+/* Móvil y tablet (incluye teléfono en horizontal): barra blanca con hamburguesa */
+@media (max-width: 1280px) {
   /* La barra de arriba sigue blanca */
   .navbar {
     background: #ffffff;

@@ -56,6 +56,18 @@ const FolderDetailPage: React.FC = () => {
     }
   };
 
+  const handleDeleteDay = async (dayDate: string) => {
+    if (!window.confirm(`¿Eliminar el día «${dayDate}» y todas sus fotos?\n\nEsta acción no se puede deshacer.`)) return;
+
+    try {
+      await adminApiService.deleteDayFolder(decodeURIComponent(folderName || ''), dayDate);
+      await loadDays();
+      alert(`Día «${dayDate}» eliminado correctamente`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error eliminando día');
+    }
+  };
+
   const handleOpenCoverModal = (dayDate: string) => {
     setSelectedDay(dayDate);
     setCoverFile(null);
@@ -184,6 +196,13 @@ const FolderDetailPage: React.FC = () => {
                       style={{ flex: 1 }}
                     >
                       Portada
+                    </button>
+                    <button 
+                      className="btn-danger"
+                      onClick={(e) => { e.stopPropagation(); handleDeleteDay(day.date); }}
+                      title="Eliminar día"
+                    >
+                      Eliminar
                     </button>
                   </div>
                 </div>

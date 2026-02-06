@@ -42,19 +42,8 @@ const FoldersPage: React.FC = () => {
         // Backend puede no tener aún /folders/display-metadata; la página carga igual
         displayMeta = {};
       }
-      const metaOtras = displayMeta['OTRAS ESCUELAS'] || {};
-      if (!list.some((f) => f.name === 'OTRAS ESCUELAS')) {
-        list.push({
-          name: 'OTRAS ESCUELAS',
-          photo_count: 0,
-          created_at: '',
-          cover_image: undefined,
-          custom_date: metaOtras.date ?? '',
-          custom_text: metaOtras.text ?? '',
-          isVirtual: true,
-        });
-      }
       for (const key of Object.keys(displayMeta)) {
+        // Solo añadir carpetas con metadata que no existan en disco; OTRAS ESCUELAS se crea como las demás
         if (key !== 'OTRAS ESCUELAS' && !list.some((f) => f.name === key)) {
           const meta = displayMeta[key];
           list.push({
@@ -326,7 +315,7 @@ const FoldersPage: React.FC = () => {
                     <button
                       onClick={() => handleOpenMetaModal(folder.name)}
                       className="btn-secondary"
-                      title="Fecha y texto para mostrar en la web (p. ej. OTRAS ESCUELAS)"
+                      title="Fecha y texto para mostrar en la web"
                     >
                       Fecha y texto
                     </button>
@@ -436,7 +425,7 @@ const FoldersPage: React.FC = () => {
                 <button className="modal-close" onClick={() => setShowMetaModal(false)}>×</button>
               </div>
               <p style={{ fontSize: '0.9rem', color: '#666', marginBottom: '1rem' }}>
-                Se mostrarán en la web al entrar en esta escuela (útil para OTRAS ESCUELAS).
+                Se mostrarán en la web al entrar en esta escuela.
               </p>
               <form onSubmit={handleSaveMeta}>
                 <div className="form-group">

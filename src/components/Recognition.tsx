@@ -114,6 +114,8 @@ const Recognition: React.FC<RecognitionProps> = ({ onAddToCart }) => {
   const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
   const getMatchImageUrl = (filename: string) =>
     `${apiUrl}/photos/preview?folder_name=Surf&filename=${filename}&watermark=true`;
+  const getMatchThumbUrl = (filename: string) =>
+    `${apiUrl}/photos/preview?folder_name=Surf&filename=${filename}&watermark=true&max_width=400`;
 
   return (
     <section className="recognition" id="recognition">
@@ -299,9 +301,11 @@ const Recognition: React.FC<RecognitionProps> = ({ onAddToCart }) => {
                         aria-label="Ver foto en grande"
                       >
                         <img
-                          src={getMatchImageUrl(match.file)}
+                          src={getMatchThumbUrl(match.file)}
                           alt={match.file}
                           className="match-image"
+                          loading="lazy"
+                          decoding="async"
                         />
                         <span className="match-image-hint">Ver en grande</span>
                       </div>

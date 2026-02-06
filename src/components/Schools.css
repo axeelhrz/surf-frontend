@@ -4,6 +4,11 @@
   margin-top: 85px;
 }
 
+/* En la home: pegado al hero, sin franja blanca */
+.home-page .schools-page {
+  margin-top: 0;
+}
+
 /* ============================================
    SCHOOLS SECTION
    ============================================ */

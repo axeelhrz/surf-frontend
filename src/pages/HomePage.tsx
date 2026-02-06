@@ -14,13 +14,13 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="home-page">
       <Home />
       <Schools onSelectSchool={handleSelectSchool} />
       <Partners />
       <FAQ />
       <Footer />
-    </>
+    </div>
   );
 };
 
