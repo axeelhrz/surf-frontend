@@ -91,9 +91,16 @@ const CheckoutSuccessPage: React.FC = () => {
 
   const handleDownloadAll = () => {
     if (!data?.items.length) return;
-    data.items.forEach((item, i) => {
-      setTimeout(() => handleDownload(item), i * 400);
-    });
+    if (test === '1') {
+      // Modo prueba: descargar cada foto individualmente (no hay ZIP real)
+      data.items.forEach((item, i) => {
+        setTimeout(() => handleDownload(item), i * 400);
+      });
+      return;
+    }
+    if (!sessionId) return;
+    const url = `${apiUrl}/stripe/download-zip?session_id=${encodeURIComponent(sessionId)}`;
+    window.location.href = url;
   };
 
   const formatPrice = (amount: number, currency: string) => {
