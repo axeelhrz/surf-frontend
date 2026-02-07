@@ -422,10 +422,11 @@
     gap: 1.5rem;
   }
 
+  /* Featured card mismo tamaño que las demás en móvil/tablet */
   .pricing-card-item.featured {
-    grid-column: 1 / -1;
-    max-width: 400px;
-    margin: 0 auto;
+    grid-column: auto;
+    max-width: none;
+    margin: 0;
   }
 
   .pricing-card {
@@ -467,8 +468,11 @@
     padding: 1.5rem;
   }
 
+  /* Featured card mismo tamaño que las demás */
   .pricing-card-item.featured {
-    max-width: 100%;
+    grid-column: auto;
+    max-width: none;
+    margin: 0;
   }
 
   .pricing-card {
