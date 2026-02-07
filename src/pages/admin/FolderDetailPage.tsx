@@ -16,6 +16,7 @@ const FolderDetailPage: React.FC = () => {
   const [selectedDay, setSelectedDay] = useState<string | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [coverRefreshKey, setCoverRefreshKey] = useState(0);
 
   const loadDays = async () => {
     if (!folderName) return;
@@ -90,6 +91,7 @@ const FolderDetailPage: React.FC = () => {
       setShowCoverModal(false);
       setCoverFile(null);
       setSelectedDay(null);
+      setCoverRefreshKey((k) => k + 1);
       await loadDays();
       alert('Portada del día actualizada correctamente');
     } catch (err) {
@@ -161,12 +163,25 @@ const FolderDetailPage: React.FC = () => {
               {days.map((day) => (
                 <div key={day.date} className="day-card">
                   <div className="day-card-header">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                      <line x1="16" y1="2" x2="16" y2="6"></line>
-                      <line x1="8" y1="2" x2="8" y2="6"></line>
-                      <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
+                    <img
+                      src={`${process.env.REACT_APP_API_URL || 'http://localhost:8000'}/folders/${encodeURIComponent(folderName || '')}/day-cover/${encodeURIComponent(day.date)}?k=${coverRefreshKey}`}
+                      alt={`Portada ${day.date}`}
+                      className="day-card-cover-img"
+                      onError={(e) => {
+                        const target = e.currentTarget;
+                        target.style.display = 'none';
+                        const fallback = target.nextElementSibling;
+                        if (fallback) (fallback as HTMLElement).style.display = 'flex';
+                      }}
+                    />
+                    <div className="day-card-cover-fallback" style={{ display: 'none' }}>
+                      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                      </svg>
+                    </div>
                   </div>
                   <div className="day-card-body">
                     <h3 className="day-card-date">{day.date}</h3>
@@ -186,14 +201,12 @@ const FolderDetailPage: React.FC = () => {
                     <button 
                       className="btn-primary"
                       onClick={() => navigate(`/admin/photos?folder=${encodeURIComponent(folderName || '')}&day=${day.date}`)}
-                      style={{ flex: 1 }}
                     >
                       Ver Fotos
                     </button>
                     <button 
                       className="btn-secondary"
                       onClick={() => handleOpenCoverModal(day.date)}
-                      style={{ flex: 1 }}
                     >
                       Portada
                     </button>
@@ -333,11 +346,28 @@ const FolderDetailPage: React.FC = () => {
 
         .day-card-header {
           background: linear-gradient(135deg, #B24A3B 0%, #8a3a2d 100%);
-          padding: 1.5rem;
+          padding: 0;
+          height: 140px;
           display: flex;
           justify-content: center;
           align-items: center;
           color: white;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .day-card-cover-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+
+        .day-card-cover-fallback {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
         }
 
         .day-card-body {
@@ -385,13 +415,23 @@ const FolderDetailPage: React.FC = () => {
           padding: 1rem 1.5rem;
           border-top: 1px solid #e0e0e0;
           display: flex;
+          flex-wrap: wrap;
           gap: 0.5rem;
         }
 
-        .day-card-actions .btn-primary {
+        .day-card-actions .btn-primary,
+        .day-card-actions .btn-secondary {
           flex: 1;
+          min-width: 90px;
           padding: 0.75rem;
-          font-size: 0.9rem;
+          font-size: 0.85rem;
+        }
+
+        .day-card-actions .btn-danger {
+          flex: 1;
+          min-width: 90px;
+          padding: 0.75rem;
+          font-size: 0.85rem;
         }
 
         .empty-state {
