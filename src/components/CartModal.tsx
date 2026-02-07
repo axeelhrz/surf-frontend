@@ -11,6 +11,15 @@ interface CartItem {
   photoCount?: number;
 }
 
+interface CheckoutItem {
+  id: string;
+  filename: string;
+  school: string;
+  date: string;
+  price: number;
+  thumbnail?: string;
+}
+
 interface CartModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -19,19 +28,93 @@ interface CartModalProps {
   totalPrice: number;
 }
 
+function cartToCheckoutItems(items: CartItem[]): CheckoutItem[] {
+  return items.map((item) => {
+    let school = '';
+    let date = '';
+    let filename = item.name;
+
+    if (item.id.startsWith('pack_')) {
+      const parts = item.id.replace('pack_', '').split('_');
+      school = parts[0] || '';
+      if (parts[1] && parts[1] !== 'all') date = parts[1];
+      filename = item.photoCount
+        ? `Pack completo - ${item.photoCount} fotos`
+        : 'Pack completo';
+    } else {
+      const parts = item.id.split('_');
+      school = parts[0] || '';
+      if (parts.length >= 3) {
+        date = parts[1] || '';
+        filename = parts.slice(2).join('_');
+      } else if (parts.length === 2) {
+        filename = parts[1] || item.name;
+      }
+    }
+
+    return {
+      id: item.id,
+      filename,
+      school,
+      date,
+      price: item.price,
+      thumbnail: item.image,
+    };
+  });
+}
+
 const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveItem, totalPrice }) => {
   const { t } = useLanguage();
   const [isProcessing, setIsProcessing] = useState(false);
+  const [customerEmail, setCustomerEmail] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const handleCheckout = () => {
+  const handleCheckout = async () => {
+    if (!customerEmail.trim() || !customerName.trim()) {
+      setCheckoutError('Introduce tu email y nombre para continuar');
+      return;
+    }
+    if (items.length === 0) {
+      setCheckoutError('El carrito está vacío');
+      return;
+    }
+
     setIsProcessing(true);
-    // Aquí iría la lógica de pago
-    setTimeout(() => {
+    setCheckoutError(null);
+
+    try {
+      const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+      const checkoutItems = cartToCheckoutItems(items);
+
+      const response = await fetch(`${apiUrl}/stripe/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: checkoutItems,
+          customer_email: customerEmail.trim(),
+          customer_name: customerName.trim(),
+        }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        const detail = typeof data.detail === 'string' ? data.detail : 'Error al crear la sesión de pago';
+        throw new Error(detail);
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No se recibió la URL de pago. Verifica que Stripe esté configurado.');
+      }
+    } catch (err) {
       setIsProcessing(false);
-      alert('Procesando pago...');
-    }, 1500);
+      setCheckoutError(err instanceof Error ? err.message : 'Error al procesar el pago');
+    }
   };
 
   const formatPrice = (price: number) => {
@@ -147,6 +230,30 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
         {/* Footer */}
         {items.length > 0 && (
           <div className="cart-modal-footer">
+            {/* Datos para checkout Stripe */}
+            <div className="cart-checkout-form">
+              <input
+                type="email"
+                placeholder="Tu email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+                className="cart-input"
+                disabled={isProcessing}
+                required
+              />
+              <input
+                type="text"
+                placeholder="Tu nombre"
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                className="cart-input"
+                disabled={isProcessing}
+                required
+              />
+            </div>
+            {checkoutError && (
+              <p className="cart-checkout-error">{checkoutError}</p>
+            )}
             {/* Resumen de precios */}
             <div className="cart-summary">
               <div className="cart-summary-row">
