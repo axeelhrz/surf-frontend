@@ -26,6 +26,10 @@ interface CartItem {
   image: string;
   /** Número de fotos cuando es un pack (Pack Completo) */
   photoCount?: number;
+  /** Para packs: lista de nombres de archivo para descarga */
+  files?: string[];
+  school?: string;
+  date?: string;
 }
 
 const App: React.FC = () => {

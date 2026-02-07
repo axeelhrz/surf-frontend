@@ -18,6 +18,7 @@ interface CheckoutItem {
   date: string;
   price: number;
   thumbnail?: string;
+  files?: string[];
 }
 
 interface CartModalProps {
@@ -30,29 +31,31 @@ interface CartModalProps {
 
 function cartToCheckoutItems(items: CartItem[]): CheckoutItem[] {
   return items.map((item) => {
-    let school = '';
-    let date = '';
+    let school = (item as any).school ?? '';
+    let date = (item as any).date ?? '';
     let filename = item.name;
+    const files = (item as any).files as string[] | undefined;
 
     if (item.id.startsWith('pack_')) {
-      const parts = item.id.replace('pack_', '').split('_');
-      school = parts[0] || '';
-      if (parts[1] && parts[1] !== 'all') date = parts[1];
+      if (!school || !date) {
+        const parts = item.id.replace('pack_', '').split('_');
+        school = school || parts[0] || '';
+        if (parts[1] && parts[1] !== 'all') date = date || parts[1];
+      }
       filename = item.photoCount
         ? `Pack completo - ${item.photoCount} fotos`
         : 'Pack completo';
     } else {
-      const parts = item.id.split('_');
-      school = parts[0] || '';
-      if (parts.length >= 3) {
-        date = parts[1] || '';
-        filename = parts.slice(2).join('_');
-      } else if (parts.length === 2) {
-        filename = parts[1] || item.name;
+      if (!school || !date) {
+        const parts = item.id.split('_');
+        school = school || parts[0] || '';
+        if (parts.length >= 3) date = date || parts[1] || '';
+        if (parts.length >= 3) filename = parts.slice(2).join('_');
+        else if (parts.length === 2) filename = parts[1] || item.name;
       }
     }
 
-    return {
+    const out: CheckoutItem = {
       id: item.id,
       filename,
       school,
@@ -60,6 +63,8 @@ function cartToCheckoutItems(items: CartItem[]): CheckoutItem[] {
       price: item.price,
       thumbnail: item.image,
     };
+    if (files?.length) out.files = files;
+    return out;
   });
 }
 
@@ -72,9 +77,15 @@ const CartModal: React.FC<CartModalProps> = ({ isOpen, onClose, items, onRemoveI
 
   if (!isOpen) return null;
 
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
   const handleCheckout = async () => {
     if (!customerEmail.trim() || !customerName.trim()) {
       setCheckoutError('Introduce tu email y nombre para continuar');
+      return;
+    }
+    if (!isValidEmail(customerEmail)) {
+      setCheckoutError('Introduce un email válido (ej: tu@email.com)');
       return;
     }
     if (items.length === 0) {

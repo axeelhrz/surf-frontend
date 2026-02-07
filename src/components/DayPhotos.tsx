@@ -183,6 +183,7 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
     const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000';
     const count = analysisResult.matches.length;
     const firstFile = analysisResult.matches[0].file;
+    const files = analysisResult.matches.map((m) => m.file);
     // ID único para que cada pack añadido se sume al carrito sin reemplazar el anterior
     const packItem = {
       id: `pack_${schoolName}_${date}_${Date.now()}`,
@@ -190,6 +191,9 @@ const DayPhotos: React.FC<DayPhotosProps> = ({ schoolName, date, onBack, onAddTo
       price: 35,
       image: `${apiUrl}/photos/preview?folder_name=${schoolName}&day=${date}&filename=${firstFile}&watermark=true`,
       photoCount: count,
+      files,
+      school: schoolName,
+      date,
     };
     onAddToCart(packItem);
   };
